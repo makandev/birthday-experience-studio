@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import AxeBuilder from '@axe-core/playwright';
 import { readStoredProject } from '../browser-storage';
 async function writing(page: import('@playwright/test').Page) {
   await page.goto('/');
@@ -107,6 +108,7 @@ test('photos normalize orientation, preserve original, remove metadata and trans
   expect(html).not.toContain('PRIVATE_EXIF_COMMENT_SENTINEL');
   expect(html).not.toContain(photo.source.assetId);
   const src = html.match(/src="(data:image\/jpeg;base64,[^"]+)"/)![1];
+  expect(html.split(src)).toHaveLength(2);
   expect(
     Buffer.from(src.split(',')[1], 'base64').includes(
       Buffer.from('PRIVATE_EXIF_COMMENT_SENTINEL'),
@@ -154,6 +156,31 @@ test('photos normalize orientation, preserve original, remove metadata and trans
       .getByRole('img')
       .evaluate((image) => (image as HTMLImageElement).naturalWidth),
   ).toBe(12);
+  const view = page.locator('.photo-view');
+  const control = view.locator('summary');
+  const image = page.getByRole('img', { name: 'Our sunny breakfast.' });
+  await control.focus();
+  await page.keyboard.press('Enter');
+  await expect(view).toHaveAttribute('open', '');
+  await expect(control).toContainText('Zum Bildausschnitt zurück');
+  await expect(image).toHaveCSS('object-fit', 'contain');
+  await expect(image).toHaveCSS('max-height', 'none');
+  await expect(control).toBeFocused();
+  await page.setViewportSize({ width: 390, height: 844 });
+  const size = await image.boundingBox();
+  expect(size!.height / size!.width).toBeCloseTo(2, 1);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .setLegacyMode(true)
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await page.keyboard.press('Enter');
+  await expect(view).not.toHaveAttribute('open');
+  await expect(image).toHaveCSS('max-height', '650px');
 });
 
 test('large photos resize, risky formats and pixel bombs fail without losing authored text', async ({
@@ -236,6 +263,7 @@ test('external photos require explicit online consent and keep fallback text', a
   await expect.poll(() => requests.length).toBeGreaterThan(0);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(frame.locator('.external-photo')).not.toBeVisible();
+  await expect(frame.locator('.external-photo-view')).not.toBeVisible();
   await expect(frame.locator('.photo-description')).toContainText(
     'The original moment stays meaningful.',
   );

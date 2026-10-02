@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { renderExperience } from '../src/experience/render';
 import { imageHeader, validateProcessedDataUrl } from '../src/media/formats';
 import { createProject } from '../src/domain/project';
 import { resolvePhotoSources } from '../src/media/resolve';
@@ -116,5 +117,36 @@ describe('portable photo boundaries', () => {
       'Foto fehlt',
     );
     expect(reads).toBe(1);
+  });
+});
+
+describe('recipient photo exploration budget', () => {
+  it('uses one derivative payload when adding native uncropped viewing', () => {
+    const derivative = 'data:image/jpeg;base64,' + 'A'.repeat(512 * 1024);
+    const html = renderExperience({
+      schemaVersion: 1,
+      locale: 'de',
+      themeId: 'warm',
+      directionId: 'cinematic',
+      intensity: 1,
+      profile: 'offline',
+      externalDomains: [],
+      blocks: [
+        {
+          type: 'photo',
+          version: 1,
+          data: {
+            src: derivative,
+            alt: 'A shared moment',
+            caption: 'Birthday memory',
+            fit: 'cover',
+            position: 'bottom',
+          },
+        },
+      ],
+    });
+    expect(html.split(derivative)).toHaveLength(2);
+    expect(html.length - derivative.length).toBeLessThan(10_000);
+    expect(html).not.toMatch(/<(script|iframe|a)\b|https?:\/\//i);
   });
 });

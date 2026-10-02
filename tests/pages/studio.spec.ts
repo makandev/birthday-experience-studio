@@ -1,5 +1,20 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+// This cloud's Chromium lacks its proxy CA; Node already trusts the supplied CA.
+// Intercept only our fixed live origin, retain TLS verification in route.fetch,
+// and serve the actual verified responses into the temporary browser context.
+test.beforeEach(async ({ page }) => {
+  if (process.env.BES_LIVE_SMOKE === '1' && process.env.HTTPS_PROXY) {
+    await page.route(
+      'https://makandev.github.io/birthday-experience-studio/**',
+      async (route) => {
+        const response = await route.fetch();
+        await route.fulfill({ response });
+      },
+    );
+  }
+});
+
 test('production Pages subpath loads assets and creates an isolated offline gift', async ({
   page,
 }) => {

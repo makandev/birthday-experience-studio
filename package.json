@@ -20,7 +20,8 @@
     "build:standalone": "npm run build && node scripts/build-standalone.mjs",
     "pretest:e2e": "npm run build:standalone",
     "build:pages": "BES_PAGES_BUILD=1 npm run build",
-    "test:pages": "playwright test --config playwright.pages.config.ts"
+    "test:pages": "playwright test --config playwright.pages.config.ts",
+    "test:live": "BES_LIVE_SMOKE=1 npm run test:pages"
   },
   "dependencies": {
     "zod": "^4.3.6"

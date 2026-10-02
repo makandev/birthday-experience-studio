@@ -15,9 +15,9 @@ h1,h2{font-family:${plan.direction.typography === 'clean' ? 'system-ui,sans-seri
 .sparkles i{display:block;width:7px;height:7px;background:var(--accent);border-radius:50%;animation:${plan.intensity ? 'bes-sparkle' : 'none'} 1200ms ease-out 1;animation-delay:calc(var(--particle)*35ms)}
 @keyframes bes-sparkle{from{opacity:.6;transform:translateY(var(--motion-distance)) rotate(0)}to{opacity:.8;transform:translateY(0) rotate(45deg)}}
 body:has(#motion-off:checked) .motion-block,body:has(#motion-off:checked) .sparkles i{animation:none!important}
-body:has(#motion-off:checked) .external-photo{display:none}
+body:has(#motion-off:checked) .external-photo,body:has(#motion-off:checked) .external-photo-view{display:none}
 @media(max-width:640px){.sparkles i:nth-child(n+7){display:none}:root{--motion-distance:min(${plan.distancePx}px,6px)}}
-@media(prefers-reduced-motion:reduce){.motion-block,.sparkles i{animation:none!important;transform:none!important}.sparkles,.external-photo{display:none}.motion-control{display:none}}
+@media(prefers-reduced-motion:reduce){.motion-block,.sparkles i{animation:none!important;transform:none!important}.sparkles,.external-photo,.external-photo-view{display:none}.motion-control{display:none}}
 `;
 }
 export function finaleDecoration(
