@@ -90,12 +90,13 @@ export async function readPortableDraft(raw: string): Promise<DraftBundle> {
       if (
         media.source.type === 'local' &&
         media.source.assetId === entry.assetId
-      )
+      ) {
         media.source.assetId = asset.id;
-      media.width = asset.width;
-      media.height = asset.height;
-      media.size = asset.processed.size;
-      media.mimeType = 'image/jpeg';
+        media.width = asset.width;
+        media.height = asset.height;
+        media.size = asset.processed.size;
+        media.mimeType = 'image/jpeg';
+      }
     });
   }
   return { project, assets };
