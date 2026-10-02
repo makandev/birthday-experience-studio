@@ -62,7 +62,8 @@ test('vertical slice, restore, isolated preview and offline gift with no network
   await expect(
     frame.getByText('Wir gehen zusammen frühstücken.'),
   ).toBeVisible();
-  await page.getByLabel('Welche Stimmung passt?').selectOption('minimal');
+  await page.getByText('Bewegung und Farben anpassen', { exact: true }).click();
+  await page.getByLabel('Welche Farben passen?').selectOption('minimal');
   const downloadEvent = page.waitForEvent('download');
   await page
     .getByRole('button', { name: 'Geschenk erstellen', exact: false })

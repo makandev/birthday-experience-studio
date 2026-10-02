@@ -24,7 +24,7 @@ export class MediaController {
     private hooks: MediaHooks,
   ) {}
   panel(project: CreatorProject): string {
-    return `<details class="photo-workspace" ${project.media.length ? 'open' : ''}><summary>Fotos &amp; Erinnerungsmomente hinzufügen</summary><p>Deine Originale bleiben auf diesem Gerät erhalten. Für das Geschenk erzeugen wir kleinere Kopien ohne ursprüngliche Metadaten.</p><div id="photo-drop" class="media-drop"><label for="photo-files">Fotos auswählen oder hierher ziehen</label><input id="photo-files" type="file" multiple accept="image/jpeg,image/png,image/webp" ${this.busy ? 'disabled' : ''}><p class="field-help">JPEG, PNG oder unbewegtes WebP · bis 8 MB / 24 Megapixel pro Foto · höchstens 6 Fotos.</p></div><div class="photo-list">${project.media
+    return `<details id="media-workspace" class="photo-workspace" ${project.media.length ? 'open' : ''}><summary>Fotos &amp; Erinnerungsmomente hinzufügen</summary><p>Deine Originale bleiben auf diesem Gerät erhalten. Für das Geschenk erzeugen wir kleinere Kopien ohne ursprüngliche Metadaten.</p><div id="photo-drop" class="media-drop"><label for="photo-files">Fotos auswählen oder hierher ziehen</label><input id="photo-files" type="file" multiple accept="image/jpeg,image/png,image/webp" ${this.busy ? 'disabled' : ''}><p class="field-help">JPEG, PNG oder unbewegtes WebP · bis 8 MB / 24 Megapixel pro Foto · höchstens 6 Fotos.</p></div><div class="photo-list">${project.media
       .filter((m) => m.kind === 'image')
       .map((media) => {
         const block = project.experience.blocks.find(

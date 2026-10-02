@@ -14,3 +14,5 @@ Intensity 0 disables motion; 1–3 changes movement and sparkle quantity. Mobile
 The first implementation animates entrances on load and native reveal remains user-controlled. Viewport-triggered choreography, advanced timelines and soundtrack timing are future work; do not claim complete cinematic sequencing.
 
 Text opacity stays at 1 throughout every entrance to preserve contrast during motion, not only after it ends.
+
+External Online images cannot be normalized or guaranteed still. Reduced-motion and recipient motion-off hide their image elements while keeping captions/descriptions visible. This is a motion fallback, not a guarantee that no network request occurred; Online consent and export capability rules still apply. Local normalized JPEGs remain visible. Sparkles share the same translation budget as block entrances.

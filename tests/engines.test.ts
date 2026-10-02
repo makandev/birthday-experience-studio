@@ -70,6 +70,57 @@ describe('adaptive question engine', () => {
       activeQuestions(structuredClone(project)),
     );
   });
+  it('adapts Deep questions to dimension thresholds without deleting hidden answers', () => {
+    const project = createProject();
+    Object.assign(project.relationship.dimensions, {
+      closeness: 3,
+      trust: 3,
+      emotionality: 2,
+      yearsKnown: 4,
+    });
+    project.mode = 'deep';
+    const ids = () => activeQuestions(project).map((question) => question.id);
+    expect(ids()).not.toContain('everyday-care');
+    expect(ids()).not.toContain('quiet-strength');
+    expect(ids()).not.toContain('shared-change');
+    Object.assign(project.relationship.dimensions, {
+      closeness: 4,
+      trust: 4,
+      emotionality: 3,
+      yearsKnown: 5,
+    });
+    expect(ids()).toEqual(
+      expect.arrayContaining([
+        'everyday-care',
+        'quiet-strength',
+        'shared-change',
+      ]),
+    );
+    project.answers['quiet-strength'] = {
+      status: 'answered',
+      value: 'PRIVATE_HIDDEN_ANSWER',
+    };
+    project.relationship.dimensions.trust = 3;
+    expect(ids()).not.toContain('quiet-strength');
+    expect(project.answers['quiet-strength'].value).toBe(
+      'PRIVATE_HIDDEN_ANSWER',
+    );
+    expect(
+      writingHelpers.get('external-prompt')!.generate(project),
+    ).not.toContain('PRIVATE_HIDDEN_ANSWER');
+    project.mode = 'quick';
+    expect(ids()).not.toContain('everyday-care');
+    expect(ids()).not.toContain('shared-change');
+  });
+  it('keeps Quick compact across uncertainty, humor and professional branches', () => {
+    const project = createProject();
+    project.relationship.uncertain = true;
+    project.relationship.dimensions.context = 'professional';
+    project.answers.humor = { status: 'answered', value: 'yes' };
+    const count = activeQuestions(project).length;
+    expect(count).toBeGreaterThanOrEqual(6);
+    expect(count).toBeLessThanOrEqual(10);
+  });
   it('allows packs to add questions without changing UI or the engine', () => {
     questionPacks.register({
       id: 'test-extension',

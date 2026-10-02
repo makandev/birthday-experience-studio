@@ -28,3 +28,7 @@ Eine verständliche Stimmungswahl koordiniert Effekte; Bewegung kann auf 0 geste
 ## Fotos ohne Datenverlust
 
 Dateiauswahl und Drag/Drop sind Alternativen. Klar sichtbare Formate/Größenlimits, lokaler Verarbeitungsstatus, Alt-Text, Erinnerungstext und reversible Bildposition helfen Anfängern. Fehlgeschlagene Imports behalten vorhandene Texte. Originale und Geschenk-Kopien sind sprachlich getrennt; entfernte Bilder können wiederhergestellt werden. Online-Zustimmung benennt die Quellen und den Unterschied zu Offline.
+
+## Vorschau schrittweise anpassen
+
+Stimmung, Exportprofil, externe Zustimmung und Geschenk-Erstellung bleiben direkt sichtbar. Bewegung/Farben sowie Inhalt/Reihenfolge öffnen sich bei Bedarf in nativen Details. Geöffnete Bereiche und fokussierte Felder/Bausteine bleiben bei Neurendern erhalten; Foto-Bearbeitung bleibt ebenfalls offen. Diese Zustände sind lokale UI-Zustände und werden nicht exportiert.

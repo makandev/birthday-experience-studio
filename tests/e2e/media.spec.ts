@@ -238,6 +238,11 @@ test('external photos require explicit online consent and keep fallback text', a
     frame.getByText('The original moment stays meaningful.', { exact: true }),
   ).toBeVisible();
   await expect.poll(() => requests.length).toBeGreaterThan(0);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(frame.locator('.external-photo')).not.toBeVisible();
+  await expect(frame.locator('.photo-description')).toContainText(
+    'The original moment stays meaningful.',
+  );
   const requestCount = requests.length;
   await page
     .getByLabel('Wo soll das Geschenk funktionieren?')

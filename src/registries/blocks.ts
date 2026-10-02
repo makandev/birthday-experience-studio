@@ -54,6 +54,6 @@ export const blocks = new Registry<BlockDefinition>([
     label: 'Fotomoment',
     fields: ['alt', 'caption', 'fit', 'position'],
     render: (data) =>
-      `<section class="card photo-card"><figure><img class="photo-image" src="${escapeHtml(data.src)}" alt="${escapeHtml(data.alt)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="object-fit:${data.fit === 'cover' ? 'cover' : 'contain'};object-position:${data.position === 'top' ? 'top' : data.position === 'bottom' ? 'bottom' : 'center'}"><figcaption>${paragraphs(data.caption)}</figcaption><p class="photo-description">${escapeHtml(data.alt)}</p></figure></section>`,
+      `<section class="card photo-card"><figure><img class="photo-image${data.src.startsWith('https://') ? ' external-photo' : ''}" src="${escapeHtml(data.src)}" alt="${escapeHtml(data.alt)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="object-fit:${data.fit === 'cover' ? 'cover' : 'contain'};object-position:${data.position === 'top' ? 'top' : data.position === 'bottom' ? 'bottom' : 'center'}"><figcaption>${paragraphs(data.caption)}</figcaption><p class="photo-description">${escapeHtml(data.alt)}</p></figure></section>`,
   },
 ]);

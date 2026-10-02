@@ -4,7 +4,12 @@ export type Rule =
   | { kind: 'mode'; value: 'deep' }
   | { kind: 'answer'; id: string; equals: string }
   | { kind: 'context'; value: 'professional' }
-  | { kind: 'uncertain' };
+  | { kind: 'uncertain' }
+  | {
+      kind: 'dimension';
+      key: 'closeness' | 'trust' | 'emotionality' | 'yearsKnown';
+      minimum: number;
+    };
 export interface QuestionDefinition {
   id: string;
   version: number;
@@ -40,7 +45,7 @@ const q = (
 export const questionPacks = new Registry<QuestionPack>([
   {
     id: 'birthday-core',
-    version: 1,
+    version: 2,
     questions: [
       q(
         'connection',
@@ -139,6 +144,48 @@ export const questionPacks = new Registry<QuestionPack>([
         { rules: [{ kind: 'mode', value: 'deep' }], tags: ['deep'] },
       ),
       q(
+        'everyday-care',
+        'Welche kleine Geste zeigt, dass ihr füreinander da seid?',
+        'Ein alltäglicher Moment genügt. Teile nur, was sich für euch gut anfühlt.',
+        ['Du fragst nach, wie mein Tag war, und hörst wirklich zu.'],
+        {
+          rules: [
+            { kind: 'mode', value: 'deep' },
+            { kind: 'dimension', key: 'closeness', minimum: 4 },
+          ],
+          tags: ['deep'],
+        },
+      ),
+      q(
+        'quiet-strength',
+        'Was möchtest du würdigen, das andere vielleicht übersehen?',
+        'Es muss keine schwierige Geschichte sein. Kleine, stille Stärken zählen genauso.',
+        ['Du merkst, wenn jemand eine Pause braucht.'],
+        {
+          rules: [
+            { kind: 'mode', value: 'deep' },
+            { kind: 'dimension', key: 'trust', minimum: 4 },
+            { kind: 'dimension', key: 'emotionality', minimum: 3 },
+          ],
+          tags: ['deep'],
+        },
+      ),
+      q(
+        'shared-change',
+        'Was ist über die Jahre gewachsen oder gleich geblieben?',
+        'Du kannst eine Entwicklung oder eine vertraute Gemeinsamkeit beschreiben.',
+        [
+          'Unsere Wege ändern sich, aber für ein Gespräch finden wir immer Zeit.',
+        ],
+        {
+          rules: [
+            { kind: 'mode', value: 'deep' },
+            { kind: 'dimension', key: 'yearsKnown', minimum: 5 },
+          ],
+          tags: ['deep'],
+        },
+      ),
+      q(
         'tradition',
         'Welche kleine Tradition gehört zu euch?',
         'Vielleicht ein Ritual, ein Ort oder eine Nachricht.',
@@ -152,6 +199,8 @@ export function matchesRule(project: CreatorProject, rule: Rule): boolean {
   if (rule.kind === 'mode') return project.mode === rule.value;
   if (rule.kind === 'context')
     return project.relationship.dimensions.context === rule.value;
+  if (rule.kind === 'dimension')
+    return project.relationship.dimensions[rule.key] >= rule.minimum;
   if (rule.kind === 'uncertain') return project.relationship.uncertain;
   const answer = project.answers[rule.id];
   return answer?.status === 'answered' && answer.value === rule.equals;

@@ -20,8 +20,15 @@ test('coordinated directions, creator control, reduced motion and mobile effect 
   await page
     .getByLabel('Wie soll sich dein Geschenk anfühlen?')
     .selectOption('funny');
+  await expect(page.locator('#intensity')).not.toBeVisible();
+  await page.getByText('Bewegung und Farben anpassen', { exact: true }).click();
   await page.locator('#intensity').focus();
   await page.keyboard.press('End');
+  await expect(page.locator('#appearance-settings')).toHaveAttribute(
+    'open',
+    '',
+  );
+  await expect(page.locator('#intensity')).toBeFocused();
   const frame = page.frameLocator('#gift-preview');
   await expect(frame.locator('.sparkles i')).toHaveCount(12);
   await frame.getByLabel('Bewegung ausschalten').check();
@@ -32,7 +39,7 @@ test('coordinated directions, creator control, reduced motion and mobile effect 
       .evaluate((element) => getComputedStyle(element).animationName),
   ).toBe('none');
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.getByLabel('Welche Stimmung passt?').selectOption('minimal');
+  await page.getByLabel('Welche Farben passen?').selectOption('minimal');
   expect(
     await frame
       .locator('.motion-block')
@@ -108,4 +115,30 @@ test('director proposal is reviewed, hostile code fields rejected, valid changes
   await expect(
     page.getByLabel('Wie soll sich dein Geschenk anfühlen?'),
   ).toHaveValue('emotional');
+});
+
+test('advanced preview controls remain open and keyboard accessible during editing', async ({
+  page,
+}) => {
+  await preview(page);
+  const summary = page.locator('#block-settings summary');
+  await expect(page.locator('#block-settings input').first()).not.toBeVisible();
+  await summary.focus();
+  await page.keyboard.press('Enter');
+  const letter = page
+    .locator('#block-settings')
+    .getByLabel('Dein persönlicher Brief', { exact: true });
+  await letter.uncheck();
+  await expect(page.locator('#block-settings')).toHaveAttribute('open', '');
+  await expect(letter).not.toBeChecked();
+  await expect(letter).toBeFocused();
+  await letter.check();
+  await expect(
+    page.frameLocator('#gift-preview').getByText('You matter.'),
+  ).toBeVisible();
+  await page.getByText('Bewegung und Farben anpassen', { exact: true }).click();
+  await page.getByLabel('Welche Farben passen?').focus();
+  await page.getByLabel('Welche Farben passen?').selectOption('minimal');
+  await expect(page.getByLabel('Welche Farben passen?')).toBeFocused();
+  await expect(page.locator('#block-settings')).toHaveAttribute('open', '');
 });

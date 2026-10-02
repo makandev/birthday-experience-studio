@@ -5,6 +5,7 @@ Early development state, not a finished product. The full core remains zero-cost
 ## Verified and implemented
 
 - The entire 0.1 vertical slice was rechecked, committed (`1fc0cec`) and pushed to `codex/bes-foundations`; it had previously existed only as uncommitted workspace files.
+- Progressive disclosure for preview styling/order, stable keyboard focus and open editor sections. Core-Pack v2 adds Deep questions gated by closeness, trust, emotionality and shared duration; Quick stays compact.
 - Five-step Studio: person/relationship → adaptive Quick/Deep questions → writing → isolated preview → single-file recipient HTML.
 - Bounded draft export/import with review, up to eight inactive local gifts, real v1→v2 migration and historical fixtures. Imports do not overwrite the current gift; unknown/invalid data remains protected.
 - Declarative Emotional/Funny/Elegant/Cinematic directions coordinate theme, typography, preferred ordering, image presentation, finite motion/pacing and finale. Intensity 0–3, recipient motion-off, reduced-motion override, mobile caps and full text contrast during animation.
@@ -14,9 +15,9 @@ Early development state, not a finished product. The full core remains zero-cost
 - Manual provider-neutral Director prompt/proposal review supports known settings and existing block reordering; strict schemas reject tools/code/credential fields. Texts/answers stay unchanged and approved changes can be undone.
 - SECURITY.md, threat model, trust boundaries and ADRs accompany code. Community execution/API providers are not enabled.
 
-## Validation for the photo milestone
+## Validation for the current foundation cycle
 
-75 module tests and 14 browser tests pass. TypeScript, ESLint, formatting and production build pass. Browser checks cover complete creation, historical drafts, quotas/storage failures, hostile imports, HTML injection, private-data projection, EXIF orientation/removal, exact original preservation, fresh-browser photo transfer, network-free recipient content, consent and offline refusal, motion/undo, mobile width and core axe rules.
+77 module tests and 15 browser tests pass. TypeScript, ESLint, formatting and production build pass. Browser checks cover complete creation, historical drafts, quotas/storage failures, hostile imports, HTML injection, private-data projection, EXIF orientation/removal, exact original preservation, fresh-browser photo transfer, network-free recipient content, consent and offline refusal, motion/undo, mobile width and core axe rules.
 
 Browser validation uses system Chromium. Managed `file://` policy prevents direct file navigation; tests read the downloaded HTML and render its exact bytes with networking disabled. Firefox, Safari, real phones, assistive technologies and novice-user studies are still unrun. The browser-download CDN was denied during onboarding; no security verification or network policy was bypassed.
 
@@ -40,8 +41,7 @@ Completed milestones are committed and pushed to GitHub branch `codex/bes-founda
 
 ## Next priorities
 
-1. Improve progressive disclosure and deepen question rules using existing relationship dimensions.
-2. Add explicit local project deletion, asset-retention review/cleanup and cross-tab conflict protection without losing drafts.
-3. Extend coherent storytelling to memory/gallery/timeline and viewport-triggered choreography.
-4. Add local soundtrack assets and deliberate play/pause/volume with offline budgets and fallback.
-5. Broaden real-browser/device/accessibility checks; only then evaluate optional API integrations from current official sources.
+1. Add explicit local project deletion, asset-retention review/cleanup and cross-tab conflict protection without losing drafts.
+2. Extend coherent storytelling to memory/gallery/timeline and viewport-triggered choreography.
+3. Add local soundtrack assets and deliberate play/pause/volume with offline budgets and fallback.
+4. Broaden real-browser/device/accessibility checks; only then evaluate optional API integrations from current official sources.

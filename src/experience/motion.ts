@@ -13,10 +13,11 @@ h1,h2{font-family:${plan.direction.typography === 'clean' ? 'system-ui,sans-seri
 .motion-control{display:flex;align-items:center;gap:8px;font:.8rem system-ui,sans-serif;justify-content:flex-end;padding:8px}
 .sparkles{display:flex;justify-content:center;gap:10px;height:30px;overflow:hidden;pointer-events:none}
 .sparkles i{display:block;width:7px;height:7px;background:var(--accent);border-radius:50%;animation:${plan.intensity ? 'bes-sparkle' : 'none'} 1200ms ease-out 1;animation-delay:calc(var(--particle)*35ms)}
-@keyframes bes-sparkle{from{opacity:.6;transform:translateY(14px) rotate(0)}to{opacity:.8;transform:translateY(0) rotate(45deg)}}
+@keyframes bes-sparkle{from{opacity:.6;transform:translateY(var(--motion-distance)) rotate(0)}to{opacity:.8;transform:translateY(0) rotate(45deg)}}
 body:has(#motion-off:checked) .motion-block,body:has(#motion-off:checked) .sparkles i{animation:none!important}
-@media(max-width:640px){.sparkles i:nth-child(n+7){display:none}.motion-block{--motion-distance:min(${plan.distancePx}px,6px)}}
-@media(prefers-reduced-motion:reduce){.motion-block,.sparkles i{animation:none!important;transform:none!important}.sparkles{display:none}.motion-control{display:none}}
+body:has(#motion-off:checked) .external-photo{display:none}
+@media(max-width:640px){.sparkles i:nth-child(n+7){display:none}:root{--motion-distance:min(${plan.distancePx}px,6px)}}
+@media(prefers-reduced-motion:reduce){.motion-block,.sparkles i{animation:none!important;transform:none!important}.sparkles,.external-photo{display:none}.motion-control{display:none}}
 `;
 }
 export function finaleDecoration(

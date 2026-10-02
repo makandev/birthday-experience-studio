@@ -19,7 +19,7 @@ For a production bundle: `npm run build`, then `npm run preview`. Vite prints th
 
 Person/relationship → adaptive Quick/Deep questions with help/examples/skip/unknown → own or consciously approved guided text → photos and memory captions → isolated recipient preview → offline HTML gift.
 
-Choose Emotional, Funny, Elegant or Cinematic direction to coordinate colors, typography, order, pacing, photo style and finite effects. Adjust intensity 0–3, theme and block order. Reduced motion wins automatically; recipients can switch motion off.
+Choose Emotional, Funny, Elegant or Cinematic direction to coordinate colors, typography, order, pacing, photo style and finite effects. Open optional settings to adjust intensity 0–3, colors and block order; expanded sections and keyboard focus survive edits. Deep questions adapt to closeness, trust, emotionality and shared years. Reduced motion wins automatically; recipients can switch motion off.
 
 Six photo slots support local picker/drop, JPEG/PNG/still WebP detection, orientation normalization, original preservation and bounded re-encoded copies. Fit/position changes are non-destructive. Offline exports embed only selected gift copies; original filenames/EXIF/comments, private answers and original bytes stay out. Optional public HTTPS photos require Online mode and explicit consent and retain descriptive fallback text if unavailable.
 
