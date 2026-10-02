@@ -7,7 +7,7 @@ test('draft backup, reviewed legacy import and switching between retained gifts'
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
+  await page.locator('nav button[data-go="person"]').click();
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
     .fill('Current gift');

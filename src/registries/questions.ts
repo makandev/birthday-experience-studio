@@ -45,14 +45,14 @@ const q = (
 export const questionPacks = new Registry<QuestionPack>([
   {
     id: 'birthday-core',
-    version: 2,
+    version: 3,
     questions: [
       q(
         'connection',
         'Was verbindet euch?',
         'Ein kleiner Anfang reicht. Du musst eure Beziehung nicht perfekt benennen.',
         ['Wir kennen uns von der Arbeit und können über fast alles lachen.'],
-        { rules: [{ kind: 'uncertain' }] },
+        { rules: [{ kind: 'mode', value: 'deep' }, { kind: 'uncertain' }] },
       ),
       q(
         'qualities',
@@ -75,6 +75,7 @@ export const questionPacks = new Registry<QuestionPack>([
         [],
         {
           type: 'choice',
+          rules: [{ kind: 'mode', value: 'deep' }],
           options: [
             { value: 'yes', label: 'Ja, wir lachen gerne zusammen' },
             { value: 'no', label: 'Lieber ruhig und herzlich' },
@@ -87,7 +88,10 @@ export const questionPacks = new Registry<QuestionPack>([
         'Beschreibe den Insider so, dass er sich gut und freundlich anfühlt.',
         ['Unser ewiger Streit um das letzte Stück Kuchen.'],
         {
-          rules: [{ kind: 'answer', id: 'humor', equals: 'yes' }],
+          rules: [
+            { kind: 'mode', value: 'deep' },
+            { kind: 'answer', id: 'humor', equals: 'yes' },
+          ],
           tags: ['humor'],
         },
       ),
@@ -96,6 +100,7 @@ export const questionPacks = new Registry<QuestionPack>([
         'Wofür möchtest du Danke sagen?',
         'Du kannst mit „Danke, dass du …“ anfangen.',
         ['Danke, dass du auch an den schwierigen Tagen für mich da bist.'],
+        { rules: [{ kind: 'mode', value: 'deep' }] },
       ),
       q(
         'professional',
@@ -103,7 +108,10 @@ export const questionPacks = new Registry<QuestionPack>([
         'Etwas Konkretes ist persönlicher als ein großes Kompliment.',
         ['Du bleibst auch dann gelassen, wenn alles gleichzeitig passiert.'],
         {
-          rules: [{ kind: 'context', value: 'professional' }],
+          rules: [
+            { kind: 'mode', value: 'deep' },
+            { kind: 'context', value: 'professional' },
+          ],
           tags: ['professional'],
         },
       ),
@@ -112,6 +120,7 @@ export const questionPacks = new Registry<QuestionPack>([
         'Was wünschst du dieser Person für das neue Lebensjahr?',
         'Es darf etwas Kleines sein: Zeit, Mut oder gemeinsame Momente.',
         ['Mehr Zeit für dich und viele kleine Abenteuer.'],
+        { rules: [{ kind: 'mode', value: 'deep' }] },
       ),
       q(
         'boundaries',
@@ -120,7 +129,7 @@ export const questionPacks = new Registry<QuestionPack>([
         [
           'Keine Witze über das Alter und keine schwierigen Familiengeschichten.',
         ],
-        { tags: ['private'] },
+        { rules: [{ kind: 'mode', value: 'deep' }], tags: ['private'] },
       ),
       q(
         'tone',

@@ -1,17 +1,19 @@
 import { z } from 'zod';
 import { projectSchema, type CreatorProject } from '../domain/project';
 import { directions } from '../registries/motion';
-import { recommendDirection } from './motion';
 import { recommendBlocks } from './composition';
 
-// The seed is explicitly recipient-visible authoring, never a questionnaire answer.
+export function publicBirthdayLetter(name: string, publicMessage = ''): string {
+  const recipient = z.string().trim().min(1).max(120).parse(name);
+  const message = z.string().trim().max(2000).parse(publicMessage);
+  return `Hallo ${recipient},\n\n${message || 'Heute ist dein Tag. Ich wünsche dir Freude, Zuversicht und viele schöne Momente in deinem neuen Lebensjahr.'}\n\nAlles Gute zum Geburtstag!`;
+}
+// Public authoring only; private answers are never seed input.
 export function createMagicStart(
   project: CreatorProject,
-  publicMessage: string,
+  publicMessage = '',
 ): CreatorProject {
   const next = projectSchema.parse(project);
-  const name = z.string().trim().min(1).max(120).parse(next.recipient.name);
-  const message = z.string().trim().min(1).max(2000).parse(publicMessage);
   if (
     next.experience.blocks.length ||
     next.writing.wish.trim() ||
@@ -20,14 +22,13 @@ export function createMagicStart(
     throw new Error(
       'Dieses Geschenk hat bereits eine Komposition. Bearbeite sie in der Vorschau.',
     );
-  next.recipient.name = name;
+  next.recipient.name = next.recipient.name.trim();
   next.writing.method = 'self';
-  next.writing.letter = `Hallo ${name},\n\n${message}\n\nAlles Gute zum Geburtstag!`;
+  next.writing.letter = publicMessage.trim()
+    ? publicBirthdayLetter(next.recipient.name, publicMessage)
+    : next.writing.letter.trim() || publicBirthdayLetter(next.recipient.name);
   next.writing.wish =
     'Ich wünsche dir ein neues Lebensjahr mit vielen schönen Momenten.';
-  next.experience.directionId = recommendDirection(
-    next,
-  ) as CreatorProject['experience']['directionId'];
   next.experience.themeId = directions.get(
     next.experience.directionId,
   )!.themeId;

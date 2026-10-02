@@ -1,3 +1,4 @@
+import { assertOfflineRuntime } from './runtime-contract';
 import { describe, it, expect } from 'vitest';
 import { createProject } from '../src/domain/project';
 import { syncComposition } from '../src/engines/composition';
@@ -84,11 +85,10 @@ describe('recipient-safe single HTML export', () => {
     expect(html).toContain('&lt;script&gt;');
     expect(html).toContain('&amp; goodbye');
   });
-  it('has no scripts, links, remote assets or creator UI and includes a restrictive CSP', () => {
+  it('allows only its pinned local runtime, no links or remote assets or creator UI and includes a restrictive CSP', () => {
     const html = exportHtml(fixture());
-    expect(html).not.toMatch(
-      /<(script|link|iframe|form)\b|https?:\/\/|\bsrc=|\bhref=/i,
-    );
+    assertOfflineRuntime(html);
+    expect(html).not.toMatch(/https?:\/\//i);
     expect(html).toContain("default-src 'none'");
     expect(html).toContain("form-action 'none'");
     expect(html).toContain('prefers-reduced-motion');

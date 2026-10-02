@@ -1,3 +1,4 @@
+import { recipientStation } from '../recipient-navigation';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
@@ -10,11 +11,14 @@ test('vertical slice, restore, isolated preview and offline gift with no network
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
+  await page.locator('nav button[data-go="person"]').click();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Anna');
   await page
     .getByRole('button', { name: 'Weiter zu eurer Geschichte' })
     .click();
+  await page
+    .getByLabel('Wie viel Raum möchtest du eurer Geschichte geben?')
+    .selectOption('deep');
   await page
     .getByLabel('Was schätzt du besonders an dieser Person?')
     .fill('Du hörst immer zu.');
@@ -43,7 +47,9 @@ test('vertical slice, restore, isolated preview and offline gift with no network
     .fill('PRIVATE_BOUNDARY_NOT_EXPORTED');
   await page.getByRole('button', { name: 'Nächste Frage' }).click();
   await page.getByLabel('Wie soll sich das Geschenk').selectOption('warm');
-  await page.getByRole('button', { name: 'Weiter zu meinen Worten' }).click();
+  await page
+    .getByRole('button', { name: 'Ich möchte jetzt schreiben' })
+    .click();
   await page
     .getByLabel('Dein persönlicher Brief')
     .fill('Liebe Anna, danke für dein offenes Ohr.');
@@ -54,13 +60,16 @@ test('vertical slice, restore, isolated preview and offline gift with no network
     .getByLabel('Eine kleine Überraschung', { exact: false })
     .fill('Wir gehen zusammen frühstücken.');
   await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
+  await page.locator('#manual-preview > summary').click();
   const frame = page.frameLocator('#gift-preview');
+  await recipientStation(frame, 'letter');
   await expect(
     frame.getByText('Liebe Anna, danke für dein offenes Ohr.'),
   ).toBeVisible();
   await expect(
     frame.getByText('Wir gehen zusammen frühstücken.'),
   ).not.toBeVisible();
+  await recipientStation(frame, 'surprise');
   await frame.getByText('Eine kleine Überraschung für dich').click();
   await expect(
     frame.getByText('Wir gehen zusammen frühstücken.'),
@@ -85,9 +94,11 @@ test('vertical slice, restore, isolated preview and offline gift with no network
   await page.goto('about:blank');
   await context.setOffline(true);
   await page.setContent(html);
+  await recipientStation(page, 'letter');
   await expect(
     page.getByText('Liebe Anna, danke für dein offenes Ohr.'),
   ).toBeVisible();
+  await recipientStation(page, 'surprise');
   await page.getByText('Eine kleine Überraschung für dich').click();
   await expect(page.getByText('Wir gehen zusammen frühstücken.')).toBeVisible();
   const giftAccessibility = await new AxeBuilder({ page })
@@ -103,7 +114,7 @@ test('guided writing requires approval, reset can be cancelled and undone', asyn
   page,
 }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
+  await page.locator('nav button[data-go="person"]').click();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Alex');
   await page
     .getByRole('button', { name: 'Weiter zu eurer Geschichte' })
@@ -134,11 +145,7 @@ test('guided writing requires approval, reset can be cancelled and undone', asyn
   );
   await page.getByRole('button', { name: 'Neu anfangen', exact: true }).click();
   await page.getByRole('button', { name: 'Neues Geschenk beginnen' }).click();
-  await expect(
-    page.getByRole('heading', {
-      name: 'Ein Geschenk, das nur du machen kannst.',
-    }),
-  ).toBeVisible();
+  await expect(page.locator('#magic-form')).toBeVisible();
   await page
     .getByRole('button', { name: 'Letzte Änderung rückgängig machen' })
     .click();
@@ -171,7 +178,7 @@ test('unreadable drafts remain protected and hostile text is inert', async ({
       STORAGE_KEY,
     ),
   ).toBe('{broken');
-  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
+  await page.locator('nav button[data-go="person"]').click();
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
     .fill('<img src=x onerror=alert(1)>');
@@ -185,8 +192,11 @@ test('unreadable drafts remain protected and hostile text is inert', async ({
     .getByLabel('Dein persönlicher Brief')
     .fill('<script>window.hacked=true</script>');
   await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
+  await page.locator('#manual-preview > summary').click();
   const frame = page.frameLocator('#gift-preview');
-  await expect(frame.locator('script')).toHaveCount(0);
+  await recipientStation(frame, 'letter');
+  await expect(frame.locator('script[data-bes-runtime="1"]')).toHaveCount(1);
+  await expect(frame.locator('script:not([data-bes-runtime])')).toHaveCount(0);
   await expect(frame.locator('img')).toHaveCount(0);
   await expect(
     frame.getByText('<script>window.hacked=true</script>'),
@@ -215,7 +225,7 @@ test('mobile layout and core accessibility checks', async ({ page }) => {
     path: 'test-results/studio-mobile.png',
     fullPage: true,
   });
-  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
+  await page.locator('nav button[data-go="person"]').click();
   await check();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Sam');
   await page
@@ -228,6 +238,7 @@ test('mobile layout and core accessibility checks', async ({ page }) => {
   await check();
   await page.getByLabel('Dein persönlicher Brief').fill('Du bist wunderbar.');
   await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
+  await page.locator('#manual-preview > summary').click();
   await check();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator('nav button[data-go="start"]').click();
@@ -251,7 +262,7 @@ test('blocked storage gives a warning while editing remains usable', async ({
   await expect(
     page.getByRole('status').filter({ hasText: 'Dein Browser erlaubt' }),
   ).toBeVisible();
-  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
+  await page.locator('nav button[data-go="person"]').click();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Sam');
   await expect(page.locator('#save-status')).toHaveText(
     'Speichern nicht möglich – Seite bitte offen lassen',

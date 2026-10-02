@@ -1,93 +1,84 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
-// This cloud's Chromium lacks its proxy CA; Node already trusts the supplied CA.
-// Intercept only our fixed live origin, retain TLS verification in route.fetch,
-// and serve the actual verified responses into the temporary browser context.
-test.beforeEach(async ({ page }) => {
-  if (process.env.BES_LIVE_SMOKE === '1' && process.env.HTTPS_PROXY) {
-    await page.route(
-      'https://makandev.github.io/birthday-experience-studio/**',
-      async (route) => {
-        const response = await route.fetch();
-        await route.fulfill({ response });
-      },
-    );
-  }
-});
+import { verifiedLiveResponses } from '../live-origin';
+test.beforeEach(async ({ page }) => verifiedLiveResponses(page));
 
-test('production Pages subpath loads assets and creates an isolated offline gift', async ({
+test('production Pages preview-first loads subpath assets and downloads an isolated staged gift', async ({
   page,
 }) => {
   const errors: string[] = [];
-  const failed: string[] = [];
+  const failures: string[] = [];
   const assets: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
-  page.on('requestfailed', (request) => failed.push(request.url()));
-  page.on('response', (response) => {
-    if (response.status() >= 400) failed.push(response.url());
-    if (/\/assets\//.test(response.url())) assets.push(response.url());
+  page.on('pageerror', (e) => errors.push(e.message));
+  page.on('requestfailed', (r) => failures.push(r.url()));
+  page.on('response', (r) => {
+    if (r.status() >= 400) failures.push(r.url());
+    if (/\/assets\//.test(r.url())) assets.push(r.url());
   });
   await page.goto('./');
-  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
-    .fill('Pages smoke recipient');
+    .fill('Pages recipient');
+  await page.getByLabel('Was verbindet euch?').selectOption('colleague');
   await page
-    .getByRole('button', { name: 'Weiter zu eurer Geschichte' })
+    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
     .click();
+  const frame = page.frameLocator('#gift-preview');
+  await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
+  await expect(frame.locator('body')).toHaveAttribute(
+    'data-direction',
+    'elegant',
+  );
+  await frame.locator('#stage-next').click();
+  await expect(frame.locator('body')).toHaveAttribute(
+    'data-scene',
+    'curiosity',
+  );
   await page
-    .getByRole('button', { name: 'Ich möchte jetzt schreiben' })
+    .getByRole('button', { name: 'Direkt das ganze Geschenk ansehen' })
     .click();
-  await page
-    .getByLabel('Dein persönlicher Brief')
-    .fill('A personal Pages birthday gift');
-  await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
-  await expect(
-    page
-      .frameLocator('#gift-preview')
-      .getByText('A personal Pages birthday gift', { exact: true }),
-  ).toBeVisible();
   const event = page.waitForEvent('download');
-  await page
-    .getByRole('button', { name: 'Geschenk erstellen', exact: false })
-    .click();
-  const file = await event;
-  const gift = await readFile((await file.path())!, 'utf8');
-  expect(gift).not.toMatch(/<(script|link|iframe)\b|https?:\/\//i);
+  await page.locator('#download').click();
+  const html = await readFile((await (await event).path())!, 'utf8');
+  expect(html.match(/<script\b/g)).toHaveLength(1);
+  expect(html).not.toMatch(/<(link|iframe)\b|https?:\/\//i);
   expect(assets.length).toBeGreaterThanOrEqual(2);
   expect(
     assets.every((url) => url.includes('/birthday-experience-studio/assets/')),
   ).toBe(true);
   expect(errors).toEqual([]);
-  expect(failed).toEqual([]);
+  expect(failures).toEqual([]);
 });
-
-test('production Pages Magic Start reaches a real recipient preview', async ({
+test('production Pages recipient opener reads only public gift data with no upload', async ({
   page,
 }) => {
-  const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('./');
+  await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Gift reader');
   await page
-    .getByRole('button', { name: 'Schnell zur ersten Vorschau' })
+    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
     .click();
-  await page
-    .getByLabel('Wie heißt die Geburtstagsperson?')
-    .fill('Pages Magic recipient');
-  await page.getByLabel('Was verbindet euch?').selectOption('colleague');
-  await page
-    .getByLabel('Was möchtest du ihr oder ihm sagen?')
-    .fill('Danke für die schöne Zusammenarbeit.');
-  await page
-    .getByRole('button', { name: 'Meine erste Vorschau erstellen' })
-    .click();
-  await expect(
-    page.getByLabel('Wie soll sich dein Geschenk anfühlen?'),
-  ).toHaveValue('elegant');
-  await expect(
-    page
-      .frameLocator('#gift-preview')
-      .getByText('Danke für die schöne Zusammenarbeit.', { exact: false }),
-  ).toBeVisible();
-  expect(errors).toEqual([]);
+  await page.locator('#iphone-delivery summary').click();
+  const event = page.waitForEvent('download');
+  await page.locator('#recipient-export').click();
+  const raw = await readFile((await (await event).path())!, 'utf8');
+  await page.goto('./#gift');
+  // Hash switching reloads out of the creator. The optional opener must load
+  // before asserting that reading the selected gift itself makes no requests.
+  await expect(page.locator('#recipient-file')).toBeVisible();
+  await page.waitForLoadState('load');
+  const requests: string[] = [];
+  page.on('request', (r) => requests.push(r.url()));
+  await page.locator('#recipient-file').setInputFiles({
+    name: 'gift.bes-gift.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(raw),
+  });
+  const frame = page.frameLocator('#recipient-preview');
+  await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
+  await frame.locator('#stage-next').click();
+  await expect(frame.locator('body')).toHaveAttribute(
+    'data-scene',
+    'curiosity',
+  );
+  expect(requests).toEqual([]);
 });

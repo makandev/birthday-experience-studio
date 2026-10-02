@@ -4,6 +4,12 @@ import { createMagicStart } from '../src/engines/magic-start';
 import { exporters } from '../src/export/html';
 
 describe('explicit public Magic Start', () => {
+  it('preserves an already authored public letter when creating a first composition', () => {
+    const p = createProject();
+    p.recipient.name = 'Anna';
+    p.writing.letter = 'My existing letter';
+    expect(createMagicStart(p).writing.letter).toBe('My existing letter');
+  });
   it('makes a coherent gift from a public seed without mutating or reading private answers', () => {
     const project = createProject();
     project.recipient.name = '  Anna  ';
@@ -36,6 +42,7 @@ describe('explicit public Magic Start', () => {
     project.recipient.name = 'Kim';
     project.relationship.typeId = 'colleague';
     project.relationship.dimensions.context = 'professional';
+    project.experience.directionId = 'elegant';
     const result = createMagicStart(
       project,
       'Die Zusammenarbeit mit dir macht Freude.',
@@ -51,7 +58,7 @@ describe('explicit public Magic Start', () => {
     const project = createProject();
     expect(() => createMagicStart(project, 'A public sentence')).toThrow();
     project.recipient.name = 'Sam';
-    expect(() => createMagicStart(project, '  ')).toThrow();
+    expect(createMagicStart(project).workflow.step).toBe('preview');
     expect(() => createMagicStart(project, 'a'.repeat(2001))).toThrow();
     const result = createMagicStart(project, 'A public sentence');
     expect(() => createMagicStart(result, 'Replace it')).toThrow();
@@ -67,7 +74,8 @@ describe('explicit public Magic Start', () => {
       '<script>fetch("https://evil.invalid")</script>',
     );
     const html = exporters.get('single-html')!.export(result);
-    expect(html).not.toMatch(/<script|<img\b/i);
+    expect(html).not.toMatch(/<script>|<img\b/i);
+    expect(html.match(/<script\b/g)).toHaveLength(1);
     expect(html).toContain('&lt;script&gt;');
   });
 });

@@ -37,6 +37,7 @@ describe('versioned domain and registries', () => {
 describe('adaptive question engine', () => {
   it('branches on humor and ignores stale answers when the branch changes', () => {
     const project = createProject();
+    project.mode = 'deep';
     expect(activeQuestions(project).map((q) => q.id)).not.toContain('insider');
     project.answers.humor = { status: 'answered', value: 'yes' };
     expect(activeQuestions(project).map((q) => q.id)).toContain('insider');
@@ -53,6 +54,7 @@ describe('adaptive question engine', () => {
   it('handles uncertain and professional relationships', () => {
     const project = createProject();
     project.relationship.uncertain = true;
+    project.mode = 'deep';
     project.relationship.dimensions.context = 'professional';
     expect(activeQuestions(project).map((q) => q.id)).toEqual(
       expect.arrayContaining(['connection', 'professional']),
@@ -118,8 +120,12 @@ describe('adaptive question engine', () => {
     project.relationship.dimensions.context = 'professional';
     project.answers.humor = { status: 'answered', value: 'yes' };
     const count = activeQuestions(project).length;
-    expect(count).toBeGreaterThanOrEqual(6);
-    expect(count).toBeLessThanOrEqual(10);
+    expect(count).toBe(3);
+    expect(activeQuestions(project).map((q) => q.id)).toEqual([
+      'qualities',
+      'memory',
+      'tone',
+    ]);
   });
   it('allows packs to add questions without changing UI or the engine', () => {
     questionPacks.register({

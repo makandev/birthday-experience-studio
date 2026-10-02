@@ -21,7 +21,10 @@
     "pretest:e2e": "npm run build:standalone",
     "build:pages": "BES_PAGES_BUILD=1 npm run build",
     "test:pages": "playwright test --config playwright.pages.config.ts",
-    "test:live": "BES_LIVE_SMOKE=1 npm run test:pages"
+    "test:live": "BES_LIVE_SMOKE=1 npm run test:pages",
+    "test:mobile": "playwright test --config playwright.mobile.config.ts",
+    "test:mobile:pages": "BES_MOBILE_PAGES=1 npm run test:mobile",
+    "test:mobile:live": "BES_LIVE_SMOKE=1 npm run test:mobile"
   },
   "dependencies": {
     "zod": "^4.3.6"

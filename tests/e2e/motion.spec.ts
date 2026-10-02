@@ -1,8 +1,9 @@
+import { recipientStation } from '../recipient-navigation';
 import { test, expect } from '@playwright/test';
 import { readStoredProject } from '../browser-storage';
 async function preview(page: import('@playwright/test').Page) {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
+  await page.locator('nav button[data-go="person"]').click();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Sam');
   await page
     .getByRole('button', { name: 'Weiter zu eurer Geschichte' })
@@ -12,6 +13,7 @@ async function preview(page: import('@playwright/test').Page) {
     .click();
   await page.getByLabel('Dein persönlicher Brief').fill('You matter.');
   await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
+  await page.locator('#manual-preview > summary').click();
 }
 test('coordinated directions, creator control, reduced motion and mobile effect budgets', async ({
   page,
@@ -30,7 +32,7 @@ test('coordinated directions, creator control, reduced motion and mobile effect 
   );
   await expect(page.locator('#intensity')).toBeFocused();
   const frame = page.frameLocator('#gift-preview');
-  await expect(frame.locator('.sparkles i')).toHaveCount(12);
+  await expect(frame.locator('.gold-field i')).toHaveCount(12);
   await frame.getByLabel('Bewegung ausschalten').check();
   expect(
     await frame
@@ -46,12 +48,12 @@ test('coordinated directions, creator control, reduced motion and mobile effect 
       .first()
       .evaluate((element) => getComputedStyle(element).animationName),
   ).toBe('none');
-  await expect(frame.locator('.sparkles')).not.toBeVisible();
+  await expect(frame.locator('.gold-field')).not.toBeVisible();
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await frame
-      .locator('.sparkles i')
+      .locator('.gold-field i')
       .evaluateAll(
         (elements) =>
           elements.filter((el) => getComputedStyle(el).display !== 'none')
@@ -59,6 +61,7 @@ test('coordinated directions, creator control, reduced motion and mobile effect 
       ),
   ).toBeLessThanOrEqual(6);
   await page.reload();
+  await page.locator('#manual-preview > summary').click();
   await expect(
     page.getByLabel('Wie soll sich dein Geschenk anfühlen?'),
   ).toHaveValue('funny');
@@ -129,6 +132,7 @@ test('advanced preview controls remain open and keyboard accessible during editi
   await expect(letter).not.toBeChecked();
   await expect(letter).toBeFocused();
   await letter.check();
+  await recipientStation(page.frameLocator('#gift-preview'), 'letter');
   await expect(
     page.frameLocator('#gift-preview').getByText('You matter.'),
   ).toBeVisible();

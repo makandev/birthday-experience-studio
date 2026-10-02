@@ -1,0 +1,17 @@
+# ADR 0006 — Staged local recipient experience and result-first creation
+
+Status: implemented; validation and physical-device/qualitative acceptance tracked in STATUS.
+
+The user correction supersedes the script-free scroll renderer as the primary recipient target. The same safe projected content should form seven sequential stations plus a closing epilogue, with a time-aware welcome, personal choice, memory/photo beat, delayed letter, surprise and a roughly 13.5-second cinematic finale. This is a focused birthday flow, not a general page or executable extension platform.
+
+A single maintained, static inline runtime handles progression, local clock, bounded confetti, accessible focus, skip/replay and motion controls. Its content is independent of creator/import/AI text; no eval, dynamic script, network, storage, provider or tool execution. A fixed SHA-256 CSP allowlist is checked against the actual runtime in tests; script-src does not permit arbitrary inline code. Rendered creator text is escaped HTML and never interpolated into JavaScript. The preview adds only sandbox allow-scripts, never allow-same-origin. Restrictive network/form/base policy remains. JavaScript-blocked output has a readable chronological HTML fallback, including native details.
+
+Scenes use existing allowlisted block content exactly once, grouping by semantic role; creator order remains within each station. No CreatorProject/portable/workspace schema change is needed. The optional recipient-only data-file delivery adapter is in ADR 0007. Local normalized photo bytes remain single-payload and originals remain private. Community/AI output stays declarative untrusted data; it cannot replace the runtime.
+
+Persistent gentle light/particles and finite confetti have explicit desktop/mobile budgets. Reduced motion and recipient motion-off take priority, reveal the finale without waiting, and stop effects. A visible skip control avoids forcing a 13.5-second delay. Non-JS fallback has no animation. Unknown/missing selected assets still block export.
+
+Magic Start becomes result-first: safe defaults, name as the essential input, optional relationship/vibe/public sentence/photo and immediate staged preview. Detailed questions are optional after value; Quick is short and Deep is not a first-run requirement. No invented intimate facts or automatic private-answer copying. This updates ADRs 0001/0003's recipient runtime/finite-effect restrictions while preserving their trust separation and budgets in the new scope.
+
+Quality gates must cover stages, choice, late message, finale timing/skip/reduced motion, no-network exact gift bytes, CSP/runtime hash, XSS, no-JS fallback, bounded effects and existing storage/import/migration tests. Qualitative comparison with the user's original benchmark remains a user/novice acceptance check.
+
+Primary controls use semantic click/keyboard activation and matched touch pointer activation (same pointer, <=8px movement, <=800ms). Scroll/cancel does not advance; subsequent compatibility click is deduplicated. This addresses a reproduced mobile opaque-frame click-coordinate defect without removing sandbox isolation. Native details remain the no-JS fallback; enhanced summaries preserve their toggle/keyboard semantics. Tests assert one tap/one station, cancel/scroll and keyboard behavior.

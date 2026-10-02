@@ -13,8 +13,11 @@ export const writingHelpers = new Registry<WritingHelper>([
     version: 1,
     label: 'Textvorschlag aus meinen Antworten',
     generate: (project) => {
+      const active = new Set(
+        activeQuestions(project).map((question) => question.id),
+      );
       const get = (id: string) =>
-        project.answers[id]?.status === 'answered'
+        active.has(id) && project.answers[id]?.status === 'answered'
           ? project.answers[id].value.trim()
           : '';
       return [

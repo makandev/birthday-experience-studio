@@ -872,3 +872,140 @@ dialog p {
     width: 100%;
   }
 }
+
+.first-start {
+  max-width: 500px;
+  margin-top: 24px;
+}
+.first-start > label {
+  display: block;
+  font-weight: 600;
+  margin: 18px 0 8px;
+  font-size: 0.85rem;
+}
+.vibe-chips {
+  border: 0;
+  padding: 0;
+  margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.vibe-chips legend {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.vibe-chips label {
+  position: relative;
+  cursor: pointer;
+}
+.vibe-chips input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.vibe-chips span {
+  display: block;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--cream);
+  font-size: 0.8rem;
+}
+.vibe-chips input:checked + span {
+  border-color: var(--accent);
+  background: #f8eee7;
+}
+.vibe-chips input:focus-visible + span {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.preview-first-layout {
+  display: grid;
+  gap: 20px;
+  max-width: 980px;
+  margin: auto;
+}
+.review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.preview-review {
+  padding: 20px;
+}
+#review-vibes {
+  margin-top: 15px;
+}
+#manual-preview {
+  margin-top: 18px;
+}
+.detail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+.detail-chips button {
+  border: 1px solid var(--line);
+  background: var(--cream);
+  border-radius: 24px;
+  padding: 10px 14px;
+  min-height: 44px;
+  color: var(--ink);
+  font-size: 0.8rem;
+}
+
+/* Mobile primary controls remain reachable without viewport or touch hacks. */
+button,
+summary,
+.vibe-chips label {
+  touch-action: manipulation;
+}
+button,
+summary,
+.vibe-chips span {
+  min-height: 44px;
+}
+button {
+  min-width: 44px;
+}
+.site-footer {
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+dialog {
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+@media (max-width: 640px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+  #gift-preview {
+    height: 720px;
+    height: min(780px, 90svh);
+    min-height: 540px;
+  }
+  .review-actions > button {
+    flex: 1 1 140px;
+  }
+}
+.recipient-shell {
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: max(18px, env(safe-area-inset-top))
+    max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom));
+}
+.recipient-shell iframe {
+  display: block;
+  width: 100%;
+  height: calc(100svh - 100px);
+  min-height: 540px;
+}

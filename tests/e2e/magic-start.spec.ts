@@ -2,137 +2,126 @@ import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
 import { readStoredProject } from '../browser-storage';
+import { recipientStation } from '../recipient-navigation';
 
-test('Magic Start saves its public seed, restores it and creates an editable offline gift', async ({
+test('two actions to first opening; confirm, public detail, optional photo and full staged gift', async ({
   page,
   context,
 }) => {
   const errors: string[] = [];
-  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
-  await page
-    .getByRole('button', { name: 'Schnell zur ersten Vorschau' })
-    .click();
-  await expect(page.locator('#magic-name')).toBeFocused();
+  // Defaults need no extra interaction: fill name, press preview = two actions.
+  await expect(page.locator('#magic-form textarea')).toHaveCount(0);
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Anna');
-  await page.getByLabel('Was verbindet euch?').selectOption('friend');
   await page
-    .getByLabel('Was möchtest du ihr oder ihm sagen?')
-    .fill('Danke, dass du immer ein offenes Ohr hast.');
-  await expect(page.locator('#save-status')).toHaveText(
-    'Auf diesem Gerät gespeichert',
-  );
-  await page.reload();
-  await page
-    .getByRole('button', { name: 'Schnell zur ersten Vorschau' })
+    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
     .click();
-  await expect(page.locator('#magic-name')).toHaveValue('Anna');
-  await expect(page.locator('#magic-message')).toHaveValue(
-    'Danke, dass du immer ein offenes Ohr hast.',
-  );
+  const frame = page.frameLocator('#gift-preview');
+  await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
+  await expect(
+    frame.getByRole('heading', { name: /Alles Gute zum Geburtstag/ }),
+  ).toBeVisible();
+  await expect(frame.locator('.letter-reveal')).not.toBeVisible();
+  await expect(page.locator('#download')).not.toBeVisible();
+  const initial = await readStoredProject(page);
+  expect(initial.answers).toEqual({});
+  await page.getByRole('button', { name: 'Gefällt mir', exact: true }).click();
+  await expect(page.locator('#public-detail')).toBeFocused();
+  await page.locator('#public-detail').fill('Danke für dein offenes Ohr.');
+  await page.getByRole('button', { name: 'Meine Worte ansehen' }).click();
+  await expect(frame.locator('body')).toHaveAttribute('data-scene', 'letter');
+  await expect(
+    frame.getByText('Danke für dein offenes Ohr.', { exact: true }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Gefällt mir', exact: true }).click();
+  await expect(
+    page.getByRole('button', { name: 'Ohne Foto weiter' }),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Ohne Foto weiter' }).click();
+  await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
+  await expect(page.locator('#download')).toBeVisible();
+  expect((await readStoredProject(page)).answers).toEqual({});
   expect(
     (
       await new AxeBuilder({ page })
+        .exclude('#gift-preview')
+        .options({ iframes: false })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
         .analyze()
     ).violations,
   ).toEqual([]);
-  await page
-    .getByRole('button', { name: 'Meine erste Vorschau erstellen' })
-    .click();
-  await expect(page.locator('h1')).toBeFocused();
-  await expect(
-    page
-      .frameLocator('#gift-preview')
-      .getByText('Danke, dass du immer ein offenes Ohr hast.', {
-        exact: false,
-      }),
-  ).toBeVisible();
-  const project = await readStoredProject(page);
-  expect(project.answers).toEqual({});
-  expect(
-    project.experience.blocks.filter((b) => b.enabled).map((b) => b.type),
-  ).toEqual(['intro', 'letter', 'wish', 'finale']);
   const event = page.waitForEvent('download');
-  await page
-    .getByRole('button', { name: 'Geschenk erstellen', exact: false })
-    .click();
+  await page.locator('#download').click();
   const html = await readFile((await (await event).path())!, 'utf8');
-  expect(html).not.toMatch(/<(script|link|iframe)\b|https?:\/\//i);
-  await page
-    .getByRole('button', { name: 'Text bearbeiten & Fotos ergänzen' })
-    .click();
-  await expect(page.getByLabel('Dein persönlicher Brief')).toContainText(
-    'Danke, dass du immer ein offenes Ohr hast.',
+  expect(html.match(/<script\b/g)).toHaveLength(1);
+  expect(html).not.toMatch(/<(link|iframe)\b|https?:\/\//i);
+  await page.reload();
+  await expect(page.locator('#gift-preview')).toBeVisible();
+  expect((await readStoredProject(page)).writing.letter).toContain(
+    'Danke für dein offenes Ohr.',
   );
-  await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
-  await page
-    .getByRole('button', { name: 'Mit Fragen persönlicher machen' })
-    .click();
-  await page.locator('#question-mode').focus();
-  await page
-    .getByLabel('Wie viel Raum möchtest du eurer Geschichte geben?')
-    .selectOption('deep');
-  await expect(page.locator('#question-mode')).toBeFocused();
-  expect((await readStoredProject(page)).mode).toBe('deep');
   await page.goto('about:blank');
   await context.setOffline(true);
   await page.setContent(html);
+  await expect(page.locator('body')).toHaveAttribute('data-scene', 'opening');
   await expect(
-    page.getByText('Danke, dass du immer ein offenes Ohr hast.', {
-      exact: false,
-    }),
+    page.getByText('Danke für dein offenes Ohr.', { exact: true }),
+  ).not.toBeVisible();
+  await recipientStation(page, 'letter');
+  await expect(
+    page.getByText('Danke für dein offenes Ohr.', { exact: true }),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });
 
-test('mobile Magic Start keeps validation, back/undo and professional tone understandable', async ({
+test('mobile vibe alternatives preserve public text with undo; professional defaults and optional Deep', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
-  await page
-    .getByRole('button', { name: 'Schnell zur ersten Vorschau' })
-    .click();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill(' ');
   await page
-    .getByLabel('Was möchtest du ihr oder ihm sagen?')
-    .fill('Danke für die gute Zusammenarbeit.');
-  await page
-    .getByRole('button', { name: 'Meine erste Vorschau erstellen' })
+    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
     .click();
   await expect(page.locator('#magic-error')).toContainText(
     'Bitte gib einen Namen',
   );
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Kim');
   await page.getByLabel('Was verbindet euch?').selectOption('colleague');
-  await page.getByRole('button', { name: 'Zurück zum Start' }).click();
-  await expect(page.locator('#magic-start')).toBeFocused();
+  await expect(page.locator('#magic-vibe-elegant')).toBeChecked();
   await page
-    .getByRole('button', { name: 'Schnell zur ersten Vorschau' })
+    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
     .click();
-  await page
-    .getByRole('button', { name: 'Meine erste Vorschau erstellen' })
-    .click();
-  await expect(
-    page.getByLabel('Wie soll sich dein Geschenk anfühlen?'),
-  ).toHaveValue('elegant');
+  await page.getByRole('button', { name: 'Anders machen' }).click();
+  await page.getByRole('button', { name: 'Fröhlich', exact: true }).click();
+  expect((await readStoredProject(page)).experience.directionId).toBe('funny');
   await page
     .getByRole('button', { name: 'Letzte Änderung rückgängig machen' })
     .click();
-  await page
-    .getByRole('button', { name: 'Schnell zur ersten Vorschau' })
-    .click();
-  await expect(page.locator('#magic-message')).toHaveValue(
-    'Danke für die gute Zusammenarbeit.',
+  expect((await readStoredProject(page)).experience.directionId).toBe(
+    'elegant',
   );
-  const dimensions = await page.locator('dialog[open]').evaluate((dialog) => ({
-    width: dialog.getBoundingClientRect().width,
-    viewport: innerWidth,
-  }));
-  expect(dimensions.width).toBeLessThanOrEqual(dimensions.viewport);
-  await page.screenshot({
-    path: 'test-results/magic-start-mobile.png',
-    fullPage: true,
-  });
+  await page.getByRole('button', { name: 'Überrasch mich' }).click();
+  expect((await readStoredProject(page)).writing.letter).toContain('Hallo Kim');
+  await page.getByRole('button', { name: 'Eine Erinnerung ergänzen' }).click();
+  await page
+    .getByRole('button', { name: 'Ein herzliches Danke', exact: true })
+    .click();
+  await page.getByRole('button', { name: 'Meine Worte ansehen' }).click();
+  await page
+    .getByRole('button', { name: 'Direkt das ganze Geschenk ansehen' })
+    .click();
+  await page
+    .getByRole('button', { name: 'Mehr erzählen · freiwillig' })
+    .click();
+  await page
+    .getByLabel('Wie viel Raum möchtest du eurer Geschichte geben?')
+    .selectOption('deep');
+  expect((await readStoredProject(page)).mode).toBe('deep');
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true);
 });

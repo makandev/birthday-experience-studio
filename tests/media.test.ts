@@ -1,3 +1,4 @@
+import { assertOfflineRuntime } from './runtime-contract';
 import { describe, it, expect } from 'vitest';
 import { renderExperience } from '../src/experience/render';
 import { imageHeader, validateProcessedDataUrl } from '../src/media/formats';
@@ -146,7 +147,8 @@ describe('recipient photo exploration budget', () => {
       ],
     });
     expect(html.split(derivative)).toHaveLength(2);
-    expect(html.length - derivative.length).toBeLessThan(10_000);
-    expect(html).not.toMatch(/<(script|iframe|a)\b|https?:\/\//i);
+    expect(html.length - derivative.length).toBeLessThan(30_000);
+    assertOfflineRuntime(html);
+    expect(html).not.toMatch(/<(iframe|a)\b|https?:\/\//i);
   });
 });

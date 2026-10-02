@@ -1,10 +1,11 @@
+import { recipientStation } from '../recipient-navigation';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
 import { readStoredProject } from '../browser-storage';
 async function writing(page: import('@playwright/test').Page) {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
+  await page.locator('nav button[data-go="person"]').click();
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
     .fill('Photo recipient');
@@ -94,7 +95,9 @@ test('photos normalize orientation, preserve original, remove metadata and trans
     .getByLabel('Deine Worte zu diesem Moment')
     .fill('A memory just for you.');
   await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
+  await page.locator('#manual-preview > summary').click();
   const frame = page.frameLocator('#gift-preview');
+  await recipientStation(frame, 'moments');
   await expect(
     frame.getByRole('img', { name: 'Our sunny breakfast.' }),
   ).toBeVisible();
@@ -139,6 +142,7 @@ test('photos normalize orientation, preserve original, remove metadata and trans
   await otherPage
     .getByRole('button', { name: 'Geprüften Entwurf öffnen' })
     .click();
+  await recipientStation(otherPage.frameLocator('#gift-preview'), 'moments');
   await expect(
     otherPage
       .frameLocator('#gift-preview')
@@ -148,6 +152,7 @@ test('photos normalize orientation, preserve original, remove metadata and trans
   await page.goto('about:blank');
   await context.setOffline(true);
   await page.setContent(html);
+  await recipientStation(page, 'moments');
   await expect(
     page.getByRole('img', { name: 'Our sunny breakfast.' }),
   ).toBeVisible();
@@ -240,6 +245,7 @@ test('external photos require explicit online consent and keep fallback text', a
     .getByLabel('Was zeigt dieses Foto?')
     .fill('The original moment stays meaningful.');
   await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
+  await page.locator('#manual-preview > summary').click();
   await expect(page.locator('#preview-error')).toContainText(
     'Offline-Geschenke',
   );
@@ -256,6 +262,7 @@ test('external photos require explicit online consent and keep fallback text', a
     .getByLabel('Ich möchte diese externen Fotos verwenden.', { exact: false })
     .check();
   const frame = page.frameLocator('#gift-preview');
+  await recipientStation(frame, 'moments');
   await page.locator('#gift-preview').scrollIntoViewIfNeeded();
   await expect(
     frame.getByText('The original moment stays meaningful.', { exact: true }),
@@ -296,6 +303,8 @@ test('IndexedDB failure keeps text creation usable', async ({ page }) => {
   );
   await expect(page.locator('.photo-editor')).toHaveCount(0);
   await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
+  await page.locator('#manual-preview > summary').click();
+  await recipientStation(page.frameLocator('#gift-preview'), 'letter');
   await expect(
     page
       .frameLocator('#gift-preview')

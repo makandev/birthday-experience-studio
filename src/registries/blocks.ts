@@ -30,7 +30,7 @@ export const blocks = new Registry<BlockDefinition>([
     label: 'Geburtstagswunsch',
     fields: ['text'],
     render: (data) =>
-      `<section class="card wish"><p class="eyebrow">Für dein neues Lebensjahr</p><h2>Mein Wunsch für dich</h2>${paragraphs(data.text)}</section>`,
+      `<section class="card wish"><p class="eyebrow">Für dein neues Lebensjahr</p><details class="wish-envelope"><summary>Ein kleiner Wunsch für dich ✧</summary><div class="revealed"><h2>Mein Wunsch für dich</h2>${paragraphs(data.text)}</div></details></section>`,
   },
   {
     id: 'reveal',
