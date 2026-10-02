@@ -6,7 +6,7 @@ Tell BES about the person, add memories/photos, and assemble a personal interact
 
 ## Live Studio / GitHub Pages
 
-Public Studio URL: <https://makandev.github.io/birthday-experience-studio/>. Pages is now enabled with GitHub Actions as its source. The preceding checked main was deployed successfully and verified at the real URL; STATUS records which newer development changes are actually live. The repository is public following the user's visibility change. No paid service or new account is required.
+Public Studio URL: <https://makandev.github.io/birthday-experience-studio/>. Pages is now enabled with GitHub Actions as its source. The current staged/preview-first/Safari development package was deployed successfully and verified at the real URL with Chromium and mobile WebKit; STATUS records the exact source checkpoint and evidence. The repository is public following the user's visibility change. No paid service or new account is required.
 
 `.github/workflows/pages.yml` deploys checked `main` pushes (or a manual run on `main`): locked npm install, TypeScript, lint, formatting, module tests, production build, mobile WebKit/Chromium touch checks and a Chromium production-subpath gift-creation smoke test must pass before only `dist/` is uploaded. Deployment uses GitHub's short-lived workflow token/OIDC, never application credentials. `npm run build:pages` selects `/birthday-experience-studio/`; normal development/builds retain `/`. The Studio has no path-based client router.
 
