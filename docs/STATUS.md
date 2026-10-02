@@ -1,47 +1,52 @@
-# BES 0.2 – evolving foundation milestones
+# BES 0.2 — storage integrity and focused product foundations
 
-Early development state, not a finished product. The full core remains zero-cost, local-first and useful without accounts, paid APIs, servers or AI providers.
+Early evolving development, not a finished product. Core creation remains zero-cost and useful without accounts, paid APIs, mandatory servers/cloud or AI. PRODUCT_VISION defines commitments; this file reports implementation and evidence.
 
-## Verified and implemented
+## Implemented
 
-- The entire 0.1 vertical slice was rechecked, committed (`1fc0cec`) and pushed to `codex/bes-foundations`; it had previously existed only as uncommitted workspace files.
-- Progressive disclosure for preview styling/order, stable keyboard focus and open editor sections. Core-Pack v2 adds Deep questions gated by closeness, trust, emotionality and shared duration; Quick stays compact.
-- Five-step Studio: person/relationship → adaptive Quick/Deep questions → writing → isolated preview → single-file recipient HTML.
-- Bounded draft export/import with review, up to eight inactive local gifts, real v1→v2 migration and historical fixtures. Imports do not overwrite the current gift; unknown/invalid data remains protected.
-- Declarative Emotional/Funny/Elegant/Cinematic directions coordinate theme, typography, preferred ordering, image presentation, finite motion/pacing and finale. Intensity 0–3, recipient motion-off, reduced-motion override, mobile caps and full text contrast during animation.
-- Explicit Offline/Restricted and Standard/Online profiles with dependency checks. External photos require deliberate source consent; imports clear it. Missing/unsupported dependencies fail closed; descriptions remain when online images fail.
-- Six local photos via picker/drop: raster signatures and dimensions before decode, normalized orientation, canvas-sized/compressed metadata-free JPEG copies, original preservation in IndexedDB, non-destructive display position, block-aware direction styling and embedded offline export.
-- Portable photo drafts include gift-sized derivatives, not originals; imports reprocess and remap IDs before confirmed activation. Originals can be separately downloaded from their source device.
-- Manual provider-neutral Director prompt/proposal review supports known settings and existing block reordering; strict schemas reject tools/code/credential fields. Texts/answers stay unchanged and approved changes can be undone.
-- SECURITY.md, threat model, trust boundaries and ADRs accompany code. Community execution/API providers are not enabled.
+- 0.1 baseline was verified, first committed as 1fc0cec and pushed; the preceding foundation cycle reached 3c60498 on codex/bes-foundations.
+- Five-step Studio, Quick/Deep adaptive questions with help/examples/skip/unknown, guided/manual writing, conscious public-text review, isolated preview and standalone offline gift HTML.
+- Direction-based finite motion/typography/colors/media styling/order recommendations, intensity 0–3, recipient motion-off, reduced-motion/mobile budgets and full contrast.
+- Offline/Restricted and Standard/Online capability profiles; selected missing/unsupported dependencies fail closed. Online photos require deliberate source consent and persistent descriptive fallback.
+- Six raster photos with bounded picker/drop, orientation normalization, metadata-free compressed JPEG gift copies and separate original retention. Portable drafts carry derivatives, not originals.
+- Manual provider-neutral Director review accepts only known settings/existing ordering/private question ideas; no provider calls, key fields, automatic question installation or arbitrary community execution.
 
-## Validation for the current foundation cycle
+## Storage Integrity & Safe Concurrency milestone
 
-77 module tests and 15 browser tests pass. TypeScript, ESLint, formatting and production build pass. Browser checks cover complete creation, historical drafts, quotas/storage failures, hostile imports, HTML injection, private-data projection, EXIF orientation/removal, exact original preservation, fresh-browser photo transfer, network-free recipient content, consent and offline refusal, motion/undo, mobile width and core axe rules.
+- Canonical up-to-nine-project collection, project/recovery roots and asset additions/removals now share IndexedDB v2 transactions. CreatorProject/portable schemas remain compatible at v2/bes-draft v1.
+- Monotone workspace/project revisions plus writer/commit timestamp metadata; comparison happens inside the transaction. Same-profile stale saves/deletions cannot overwrite newer data or resurrect deleted projects. Broadcast/storage/focus hints are optional; no-hint races are tested.
+- Central confirmed deletion removes project/recovery state and only exclusively unreferenced asset pairs. All media references count, including disabled/unused media; shared references survive.
+- Bounded same-project undo snapshots are retention roots. Normal mutations use reference deltas, not full asset scans. Initial migration and confirmed key-only cleanup reclaim historical orphans; explicit cleanup releases undo and is idempotent in effect.
+- Confirmed imports commit media and project together; collisions/quotas/aborts leave neither partial activation nor persistent staging bytes. Failed image attachment removes only its local pending reference, preserving other text.
+- Legacy DB asset bytes survive the store upgrade. Active/library/valid backups migrate once with historical project validation. Exact validated localStorage copies retire after commit through a retry journal; interrupted retirement fences writes. Unknown/overflow backups retain their bytes and block GC. Future/corrupt canonical state is preserved and privately backupable.
+- Conflict input stays in the losing tab for private text backup and explicit saved-state adoption. A deleted asset may prevent complete photo recovery; no automatic force overwrite/merge.
 
-Browser validation uses system Chromium. Managed `file://` policy prevents direct file navigation; tests read the downloaded HTML and render its exact bytes with networking disabled. Firefox, Safari, real phones, assistive technologies and novice-user studies are still unrun. The browser-download CDN was denied during onboarding; no security verification or network policy was bypassed.
+## Audit D1–D7 / B1 disposition
 
-## Persistence
+DECISIONS separates accepted/open/historical decisions; DATA_MODEL and EXPORT_ARCHITECTURE describe current schemas/media/profiles rather than old present-tense claims. ROADMAP distinguishes implemented foundations from goals and classifies focused NOW/NEXT/LATER/EXPERIMENT/REJECTED ideas. PRODUCT_VISION/INTEGRATIONS/SECURITY capture Magic Start, coherent Surprise Me, provider neutrality, isolated credentials, whole-process Director goals, optional hosting/audio and later adoption without claiming implementation. ADR 0005 documents complete reference/recovery/retention and failure semantics.
 
-Completed milestones are committed and pushed to GitHub branch `codex/bes-foundations`. `main` remains on its original documentation baseline until integration. Saving a cloud config draft is not a merge or release. Generated bundles, node_modules, screenshots and browser reports are ignored.
+B1 is fixed: reprocessing a portable photo updates only matching local media. Different photos, shared references and external/unavailable metadata have a regression fixture. Standalone Studio testing is reproducible with `npm run build:standalone`; browser pretests rebuild its exact bytes and test offline creation. It is a trusted Studio bundle with JavaScript, unlike recipient gifts.
 
-## Known limitations and risks
+## Validation
 
-- Browser storage/drafts are unencrypted and not guaranteed durable. Use backups; one active browser tab is supported. Cross-tab edit conflict handling remains open.
-- Local library capacity is bounded; no project-deletion/archive UI yet. Storage rollback is best effort, not a cross-key transaction.
-- Removing photos retains local original/derivative bytes for undo and other gifts; permanent orphan cleanup is not implemented. A failed cross-store activation may leave unreferenced derivative copies, not overwrite previous originals.
-- Portable drafts contain compressed gift copies, not the original archive. Transparency is flattened; unsupported SVG/GIF/HEIC/animated WebP are rejected, APNG becomes a still.
-- External image availability and host cookies/IP visibility cannot be guaranteed. No server-side proxy, media authentication or credential fields exist.
-- A private fact deliberately copied into public text/captions is public. A projection cannot determine the author's sharing intentions.
-- Motion starts on load; full viewport-triggered cinematic sequencing is not implemented. No audio/video playback yet; only their source/kind architecture is prepared and selected unsupported media is refused.
-- Director follow-up ideas are private suggestions only. No automatic question installation or provider calls. Concrete APIs require current official-doc review and a separate credential/backend design.
-- The Studio has no service worker; offline first-load/reload is not guaranteed. Recipient Offline HTML is independent of a server.
-- UI still has a small central workflow controller; media interaction is now separate. Further editors should be separated without rewriting the domain/engines.
-- Tooling prints non-failing upstream annotations/deprecation notices. No failing check is treated as passing.
+Full storage milestone gates passed on 2026-10-02: 99 module tests in eight files, 21 Chromium browser tests, TypeScript, lint, formatting, production build and reproducible standalone build. Evidence includes storage transactions, legacy/journal retry, quotas/collisions, concurrent saves/deletion, foreign-media regression, real shared-profile tabs, independent context isolation, no-hint conflict handling, original preservation, explicit GC and offline standalone creation. No failing check is treated as passing.
 
-## Next priorities
+Browser checks use system Chromium (`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium`). Managed file navigation is blocked; exact downloaded HTML is tested offline on the test origin. Firefox/Safari/real phones, file-origin Studio persistence, assistive technologies and novice studies are still unrun. Non-failing upstream Zod build annotations remain visible.
 
-1. Add explicit local project deletion, asset-retention review/cleanup and cross-tab conflict protection without losing drafts.
-2. Extend coherent storytelling to memory/gallery/timeline and viewport-triggered choreography.
-3. Add local soundtrack assets and deliberate play/pause/volume with offline budgets and fallback.
-4. Broaden real-browser/device/accessibility checks; only then evaluate optional API integrations from current official sources.
+## Persistence and integration policy
+
+Work continues in the same BES task on codex/bes-foundations, with coherent commits and no force/history rewrite. The user's updated policy permits main integration/push only after quality, documentation, security/privacy, migration/compatibility and remote synchronization gates pass. Main integration is repository work, not a public deployment or release. Generated assets/reports/node_modules remain ignored.
+
+## Known limits
+
+- Browser storage/files are unencrypted, may be blocked/full/evicted and are not permanent. Logical deletion is not forensic secure erasure. Pending saves may be lost on abrupt closure: wait for saved status and keep backups.
+- Collection-wide conflict fencing is conservative, including unrelated gift edits. No automatic merge; independent profiles/contexts do not share storage. Close older BES builds before upgrading; they cannot join the IDB protocol.
+- Unknown/overflow legacy backups quarantine cleanup; automatic repair of their uncertain ownership is not implemented. Corrupt/future canonical workspaces cannot be overwritten or restarted automatically. Raw recovery backups are private evidence without photo binaries and are not normal import files.
+- Only a bounded last undo state is retained per project. Cleanup intentionally ends it; switching/reloading can discard live undo even while an old retention snapshot survives until next save/cleanup.
+- No asset lease protects an export in flight from another tab's confirmed permanent deletion. A missing read fails safely; already downloaded gift HTML is independent.
+- Portable backups have compressed gift copies, not original archives; transparency is flattened and unsupported formats remain rejected. Online host availability/IP/cookie privacy cannot be guaranteed.
+- No audio/video playback, full viewport choreography, Magic Start/Surprise Me, public pack loader or API providers yet. Studio offline first-load/reload has no service-worker guarantee; recipient Offline HTML is independent of a server.
+
+## Next recommended bounded milestone
+
+Improve the beginner path to a convincing first preview: a small Magic Start using existing safe text/photo/composition primitives, with optional Quick/Deep refinement. Start with a short UX review, choose few changes with concrete value and avoid generic orchestration/framework work. Then select one strong experience improvement, followed by browser/mobile/accessibility stabilization. Known storage recovery limits get focused fixes when evidence requires them, not an expanded foundation program.

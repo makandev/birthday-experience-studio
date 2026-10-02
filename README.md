@@ -31,8 +31,8 @@ Optional manual AI help shows exactly what would be shared. The provider-neutral
 
 - Creator draft files contain private answers and photo copies. Share the recipient HTML, not the draft.
 - Gift texts/captions are explicitly public. Review guided/AI content; private facts copied into them are still visible.
-- Browser data is unencrypted and can be blocked, full or deleted. Save important drafts/originals separately. One active editing tab is currently supported.
-- Removing photos from a gift retains local asset bytes for recovery; permanent cleanup is future work. Photo draft import restores compressed copies, not originals.
+- Browser data is unencrypted and can be blocked, full or deleted. Save important drafts/originals separately. Same-profile tabs use transactional revision checks: conflicts keep local input and require explicit adoption of the saved version. Wait for the saved indicator before closing.
+- The last recovery snapshot retains removed photos. Confirmed project deletion and confirmed cleanup remove only unreferenced bytes; cleanup ends retained undo. Photo draft import restores compressed copies, not originals.
 - Photo limits: six / 8 MiB original / 24 MP input / 1600 px and 2 MP output / 512 KiB JPEG derivative. Gift limit: 6 MiB. Portable draft limit: 8 MiB with 2 MiB project text.
 - Online hosts may see recipient IP/cookies; consent and no-referrer do not guarantee anonymity. Offline images must be local/embedded.
 - Recipient Offline HTML needs no server. Studio offline first-load/reload is not guaranteed; no service worker yet. Development-only Vite HMR is not a product integration.
@@ -78,6 +78,8 @@ src/
   studio/       Workflow and separate photo controller
 ```
 
+A reproducible single-file Studio test artifact is available via `npm run build:standalone`: open `dist/BES-Test-0.2.html` in a browser. It bundles the current trusted Studio CSS/JavaScript, unlike script-free recipient gifts. File-origin persistence varies by browser; keep explicit draft backups. Browser tests rebuild this artifact automatically and exercise its exact bytes offline on the test origin; managed file navigation remains unverified.
+
 Read `AGENTS.md` and relevant docs before architectural work. See [current status](docs/STATUS.md), [architecture](docs/ARCHITECTURE.md), [media](docs/MEDIA.md), [motion](docs/MOTION.md), [integrations](docs/INTEGRATIONS.md), [decisions](docs/DECISIONS.md), [security](SECURITY.md) and [threat model](docs/THREAT_MODEL.md).
 
-Community extensibility is safe declarative birthday content, not arbitrary executable code. Audio/video playback, cleanup, full choreography and concrete API providers remain future milestones.
+Community extensibility is safe declarative birthday content, not arbitrary executable code. Audio/video playback, full choreography, quarantine repair and concrete API providers remain future milestones. After full quality/security/privacy/migration gates, the current user policy permits autonomous main integration; no paid services or third-party-domain deployment follows from that permission.

@@ -1,31 +1,21 @@
-# Privacy
+# Current privacy boundaries
 
-BES is local-first.
+BES is local-first and online-capable, with no telemetry, analytics, mandatory account, cloud synchronization or AI calls. Creator answers/context/memories are sensitive private data. Only explicitly public gift text/captions and selected media derivatives cross the allowlisted recipient projection. Review guided/AI content: copied private facts are public once placed in gift text. Native reveal/hidden messages are not encryption.
 
-Early versions must have no telemetry, analytics, accounts, hidden network calls or automatic cloud synchronization.
+## Drafts, original photos and storage
 
-Creator inputs may include intimate relationship details and memories. Treat them as sensitive application data.
+Canonical projects, bounded recovery snapshots and local original/processed asset pairs share IndexedDB transactions. Creator backups include private answers, filenames and gift photo copies; original archives stay on the source device and require separate backup. Send recipient HTML, not a creator draft. Portable import remaps only matching local sources; unrelated media metadata remains intact.
 
-Exports use an explicit allowlist/projection. Tests should include assertions that private answer fields and internal metadata do not appear in generated recipient HTML.
+Central confirmed deletion removes the project/recovery and only exclusively unreferenced asset pairs; shared/disabled media references retain bytes. Validated legacy source values retire after initialization with a retry journal, avoiding private duplicates in localStorage. Unknown legacy backups remain quarantined and inhibit binary cleanup. Cleanup explicitly ends undo; logical deletion is not forensic secure erasure. Downloaded files, independent browser profiles and backups are not deleted by a local project operation.
 
-External AI assistance is manual: BES prepares a prompt, the user chooses an external service, then optionally pastes the result back. Clearly show what information the generated prompt contains before copying it.
+## Parallel editing and failures
 
-## Konkrete Grenzen in 0.1
+Same-profile tabs use canonical revision fencing; notifications never authorize writes. Conflicts keep input in this tab for a private text backup and explicit adoption of saved data. If another tab permanently deletes an asset, complete photo backup/export may fail safely; saved HTML is independent. Browser data is unencrypted, not guaranteed durable, and may be blocked, full or evicted. Pending asynchronous saves can be lost on sudden closure; wait for the saved indicator and maintain separate file backups. No unsafe localStorage autosave fallback.
 
-Alle Rohantworten bleiben im CreatorProject. Geführtes Schreiben zeigt einen Vorschlag in einem Dialog, der ausdrücklich übernommen werden muss. Ab diesem Moment ist der übernommene Text recipient-visible; die Allowlist kann private Inhalte im vom Creator freigegebenen Text nicht erkennen.
+## Optional sharing/integrations
 
-Die KI-Anweisung ist erst nach Wahl des externen Schreibmodus sichtbar und zeigt exakt die Daten, die beim manuellen Kopieren weitergegeben würden. Grenzen können darin enthalten sein, um den Dienst zum Weglassen dieser Inhalte aufzufordern; der Nutzer wird darauf hingewiesen. Keine API-Anfrage wird ausgeführt.
+Manual external-AI writing shows exactly the active answers/name/boundaries that would be shared. The Director prompt instead includes only explicitly public gift text. No provider call happens automatically; the independent chosen service's signup/pricing can vary. Credentials belong in neither workflow, project, file, HTML, prompt, URL, log, Git nor community pack. Concrete browser/backend providers need official-documentation/security/licensing review and must never expose client secrets or make cloud mandatory.
 
-Ein Entwurf und eine Backup-Kopie liegen unverschlüsselt im Browserprofil. Keine dauerhafte Verfügbarkeit versprechen: Speicher kann blockiert/voll oder vom Browser gelöscht sein. Speicherfehler sind sichtbar; unbekannte/beschädigte Entwürfe bleiben bis zur bewussten Entscheidung unberührt. Exportierte Geschenke sind nicht verschlüsselt, und aufklappbare Inhalte sind für jeden mit Zugriff auf die Datei lesbar.
+Online photos require deliberate source consent, origin-bounded CSP and no-referrer; hosts can still see recipient IP/cookies, availability is not guaranteed, and descriptions remain as fallback. Offline/Restricted gifts have no required external requests. Optional future hosting must preserve these privacy boundaries and never be mandatory.
 
-## Entwurfsdateien und Sammlung
-
-Creator-Sicherungen enthalten private Antworten. Sie sind keine Empfängergeschenke. Import wird geprüft und bestätigt; das aktuelle Geschenk bleibt lokal erhalten. Bis zu acht inaktive Geschenke sind möglich. Keine Zugangsdaten in Projekten; unbekannte Root-Felder werden zurückgewiesen. Ein Speicherversagen lässt die bestehende Sammlung unberührt beziehungsweise versucht ihren Rollback.
-
-## Optionale Regie-Ideen
-
-Der manuelle Director-Prompt enthält nur explizite Geschenktexte und ist vor Weitergabe sichtbar. Seine privaten Frageideen werden nicht automatisch gespeichert oder exportiert. Kein API-Anbieter und keine Zugangsdatenfelder sind implementiert. Externe Medienzustimmung wird beim Import gelöscht; Online-Fotos können die IP-Adresse der Empfängerperson an einen gewählten Dienst offenlegen.
-
-## Fotos
-
-Originale verbleiben lokal in IndexedDB und können separat gesichert werden. Für Empfänger werden nur neu encodierte Pixelkopien ohne ursprüngliche EXIF-/Kommentar-Metadaten freigegeben. Auch portable Creator-Sicherungen enthalten nur Geschenk-Fotokopien, zusammen mit privaten Antworten und Dateinamen. Entfernen aus dem Geschenk löscht lokale Bilddateien noch nicht endgültig; sie bleiben für Wiederherstellung und andere Geschenke erhalten. Browserdaten sind unverschlüsselt. Externe Online-Hosts können Empfänger-IP und gegebenenfalls eigene Cookies sehen; no-referrer ist kein Anonymitätsversprechen.
+Historical storage tradeoffs are in ADRs 0001/0002/0004; ADR 0005 defines current transactional behavior. No perfect privacy inference, durability or prompt-injection immunity is claimed.

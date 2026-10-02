@@ -1,49 +1,30 @@
-# Architecture
+# Current BES architecture
 
-Status: initial architecture contract; implementation may refine it through documented decisions.
+BES is a focused local-first birthday app, not a generic platform. Use the simplest concrete modules that protect current product behavior. TypeScript/Vite and native DOM UI remain; no frontend foundation rewrite or new runtime dependency.
 
-## Layers
+| Boundary      | Implementation                                                                                                                   |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Domain        | `domain/project.ts`: CreatorProject v2, bounded schema and historical v1 migration                                               |
+| Configuration | Maintained registries for relationships/questions/themes/blocks/directions; safe declarative future packs, never downloaded code |
+| Engines       | Deterministic question, writing, composition and motion logic independent of DOM                                                 |
+| Studio        | Workflow plus media controller; creator editing/review/confirmation and asynchronous saved/conflict status                       |
+| Persistence   | Shared `bes-media` IndexedDB v2, transactional WorkspaceRepository; old localStorage modules are read-only migration adapters    |
+| Media         | Bounded raster decode/re-encoding, immutable originals/derivatives, source resolution and portable copies                        |
+| Recipient     | Explicit projection and trusted script-free HTML/CSS renderer; isolated preview shares exporter                                  |
+| Integrations  | Provider-neutral manual capability catalog and structured proposal validation; no concrete API/key broker                        |
 
-1. **Domain** — versioned CreatorProject and recipient/relationship/writing/experience models.
-2. **Registries** — relationship definitions, question packs, blocks, themes, writing helpers, exporters.
-3. **Engines** — adaptive question evaluation, composition/recommendation, preview projection, export sanitization.
-4. **Studio UI** — beginner-first authoring workflow.
-5. **Experience Runtime** — minimal recipient-facing runtime.
-6. **Persistence** — local drafts, restore, migrations.
-7. **Export** — projects sanitized into recipient-safe portable artifacts.
+## Storage integrity and concurrency
 
-Dependencies should point toward stable domain contracts rather than UI components.
+`persistence/database.ts` owns versioned connection/retry/upgrade behavior. `workspace.ts` validates a bounded collection, maintains revision/writer/timestamp metadata and runs save/activation/deletion/GC in readwrite transactions covering roots and binaries. `notifications.ts` offers BroadcastChannel plus storage/focus hints, but safety depends only on transactional read/check/write. Studio serializes its own writes and freezes persistent mutation after a conflict, retaining local input for backup and explicit canonical adoption.
 
-## Extension model
+References from every media entry and recovery snapshot retain asset pairs, independent of block activation. Normal edits compare reference sets; one initialization scan and confirmed key-only GC find old orphan assets. Confirmed project deletion removes the central entry/recovery and exclusively unreferenced bytes atomically. Asset collisions/quotas/aborts roll back both stores. Migration adds the workspace store, validates old data, retains unknown sources and retires exact validated legacy copies via a crash-retry journal. See ADR 0005 and DATA_MODEL for limits.
 
-Prefer typed registrations over central switch statements. Extensions need stable IDs and versions where relevant.
+## Trust and capabilities
 
-## Privacy boundary
+CreatorProject is never serialized as recipient HTML. JSON/import/media/API/AI/community/repository text is untrusted data, not instructions. Schema/byte/codec/capability checks and escaped rendering protect explicit boundaries; SECURITY/THREAT_MODEL state residual risks.
 
-CreatorProject is never serialized directly into an exported Experience. Export uses an explicit projection/allowlist into an ExportExperience model.
+Offline/Restricted embeds required local assets; Standard/Online allows deliberate sources with fallback; future hosting stays optional. Media source contracts reserve audio/video without claiming playback. Future local audio requires intentional recipient start and accessible controls.
 
-## Offline requirement
+Magic Start/Surprise Me should compose the existing safe birthday primitives, not add a generic orchestration layer. Director's eventual whole-process proposals stay validated data. Concrete optional providers require official-doc/cost/signup/security/licensing review and safe browser/backend classification; credentials remain outside projects/artifacts/prompts/logs/URLs/Git/packs. Core operation never depends on their free tiers.
 
-Core creation and exported gifts must not require network access. External-AI help is a manual copy/paste workflow in early versions.
-
-## Engineering
-
-Use TypeScript, tests, linting/formatting and accessible semantic HTML. Framework selection should be made by the implementing agent and recorded as an ADR after comparing build complexity, long-term maintenance, bundle/export requirements and beginner-facing performance.
-
-## Implementierter Stand 0.1
-
-Die oben beschriebenen Grenzen sind in `src/` umgesetzt: `domain/`, `registries/`, `engines/`, `studio/`, `experience/`, `persistence/`, `export/`. Der Stack ist TypeScript + Vite, vorerst ohne UI-Framework; siehe [ADR 0001](adr/0001-typescript-local-first-vertical-slice.md).
-
-Die Fach-Engines sind unabhängig vom Browser. Zod validiert das v1-Projekt an Restore-/Exportgrenzen. Die kleine Studio-UI verwaltet Schritte und Eingaben; Eingaben speichern sofort lokal, Schrittwechsel rendern die Oberfläche neu. Vorschau und Export teilen den Empfänger-Renderer, die Vorschau wird mit leerer iframe-Sandbox isoliert. Empfänger-Interaktion nutzt natives `details`, kein Studio-Bundle.
-
-## Sichere Entwurfsverwaltung
-
-Schema v2 und reale v1-Migration ergänzen die bestehenden Grenzen. `security/json.ts` prüft JSON-Budgets und reservierte Keys; `persistence/drafts.ts` trennt Creator-Sicherung vom Empfängerexport. `persistence/library.ts` behält bis zu acht inaktive Projekte und versucht bei fehlgeschlagenen Speicherwechseln einen Rollback. Keine automatische Löschung, keine Garantie für Mehrtab-Transaktionen.
-
-## Koordinierte Experience und optionale Regie
-
-Deklarative Directions verbinden Theme, Typografie, Reihenfolge, Medienstil, Pacing und endliche Effekte. Preview/Export teilen denselben scriptfreien Renderer. `integrations/` bietet bisher ausschließlich manuelle Vorschläge; strikte Vorschlagsschemas prüfen Daten vor Bestätigung und Anwendung. Siehe MOTION.md, INTEGRATIONS.md und ADR 0003.
-
-## Lokale Medien
-
-Binärdaten liegen getrennt in IndexedDB; CreatorProject enthält nur begrenzte Metadaten und Quellenreferenzen. `media/` verarbeitet Rasterfotos, löst aktive Derivate auf und prüft portable Sicherungen. `studio/media.ts` kapselt den Medien-Controller. Preview-/Download-Snapshots verhindern, dass verspätete Asset-Lesevorgänge neuere Auswahl überschreiben. Siehe MEDIA.md und ADR 0004.
+Historical architecture proof tradeoffs are in ADRs 0001–0004. ADR 0005 supersedes their localStorage/cross-store atomicity limits; pending product features are in ROADMAP/STATUS, not implicit architecture commitments.

@@ -32,3 +32,7 @@ Dateiauswahl und Drag/Drop sind Alternativen. Klar sichtbare Formate/Größenlim
 ## Vorschau schrittweise anpassen
 
 Stimmung, Exportprofil, externe Zustimmung und Geschenk-Erstellung bleiben direkt sichtbar. Bewegung/Farben sowie Inhalt/Reihenfolge öffnen sich bei Bedarf in nativen Details. Geöffnete Bereiche und fokussierte Felder/Bausteine bleiben bei Neurendern erhalten; Foto-Bearbeitung bleibt ebenfalls offen. Diese Zustände sind lokale UI-Zustände und werden nicht exportiert.
+
+## Safe storage choices
+
+Saved status means the asynchronous transaction completed; pending/failed/conflict states are distinct. Conflicts preserve this tab's input and offer private backup before explicit canonical adoption. Deletion and permanent cleanup have separate clear confirmations; cleanup explicitly ends undo. Do not expose revisions/transaction mechanics as normal product steps.

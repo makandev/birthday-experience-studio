@@ -19,9 +19,9 @@ Themes style blocks without owning their semantic content.
 
 ## Implementierter Stand
 
-Die Block-Registry definiert `intro`, `letter`, `wish`, `reveal`, jeweils v1 mit erlaubten Textfeldern und Empfänger-Renderer. Native `details` liefert die erste Interaktion ohne Scripts. Komposition empfiehlt die Grundstruktur nach vorhandenen Geschenktexten; Aktivierung und Reihenfolge bleiben unter Kontrolle des Creators. Inhaltsänderungen aktualisieren bekannte Instanzen, ohne Reihenfolge/Aktivierung zu überschreiben.
+Die Block-Registry definiert `intro`, `letter`, `wish`, `reveal`, `finale` und `photo`, jeweils v1 mit erlaubten Textfeldern und Empfänger-Renderer. Native `details` liefert die erste Interaktion ohne Scripts. Komposition empfiehlt die Grundstruktur nach vorhandenen Geschenktexten; Aktivierung und Reihenfolge bleiben unter Kontrolle des Creators. Inhaltsänderungen aktualisieren bekannte Instanzen, ohne Reihenfolge/Aktivierung zu überschreiben.
 
-Themes Warm/Klar/Festlich sind separate Registrierungen mit Farb-/Typografietokens. Unbekannte Theme-IDs verwenden Warm. Weitergehende Beziehungssignale, Medien und viele Blockarten bleiben Folgearbeit.
+Themes Warm/Klar/Festlich sind separate Registrierungen mit Farb-/Typografietokens. Unbekannte Theme-IDs verwenden Warm. Weitergehende Beziehungssignale und ausgewählte zusätzliche Blockarten bleiben Folgearbeit; lokale Fotomomente sind implementiert.
 
 ## Richtungen und Abschluss
 
@@ -30,3 +30,7 @@ Emotional, Fröhlich, Elegant und Filmisch koordinieren Darstellung und Reihenfo
 ## Fotomoment
 
 Ein expliziter Foto-Baustein verbindet Bild mit eigenem Alt-Text und Erinnerungstext. Contain/Cover und Mitte/Oben/Unten sind nichtdestruktive Anzeigeoptionen. Direction wählt weiche, Polaroid- oder breite Präsentation. Neue Fotos werden neben bestehenden Fotomomenten beziehungsweise nach der Begrüßung eingeordnet, ohne vorhandene Bausteine umzubauen. Weitergehende Galerie-/Timeline-/Fullscreen-Varianten bleiben Folgearbeit.
+
+## Focused next product value
+
+Magic Start should yield a convincing first birthday experience from few inputs using these safe primitives; Quick/Deep can refine it. Surprise Me should offer coherent alternative arcs from the same content, not random effects. Neither is currently implemented. Select a small number of strong experience improvements by user value/wow/simplicity/maintenance, not every candidate block listed above.

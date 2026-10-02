@@ -15,14 +15,14 @@ Transactional project/asset persistence, central confirmed deletion, reference/r
 
 ## Bounded next sequence and product discovery
 
-| Class | Selected direction | Rationale |
-| --- | --- | --- |
-| NOW | Finish storage/concurrency, import regression and documentation gates | Prevent loss before more visible features |
-| NEXT | Improve beginner onboarding/Magic Start and the direct path to a convincing first preview | Few inputs, visible value, less creator complexity |
-| NEXT | Select one coherent storytelling/media improvement after a short UX review | Quality/wow benefit outweighs breadth; do not implement every candidate block |
-| LATER | Local soundtrack, safe public packs, optional sharing and public-adoption assets | Only when their concrete benefit justifies a bounded milestone |
-| EXPERIMENT | Surprise Me alternatives using the existing safe composition primitives | Test usefulness without a generic orchestration framework |
-| REJECTED | Generic site/AI/plugin platform, enterprise layers or mandatory cloud/free-tier dependencies | Outside the focused product and zero-cost contract |
+| Class      | Selected direction                                                                           | Rationale                                                                     |
+| ---------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| NOW        | Finish storage/concurrency, import regression and documentation gates                        | Prevent loss before more visible features                                     |
+| NEXT       | Improve beginner onboarding/Magic Start and the direct path to a convincing first preview    | Few inputs, visible value, less creator complexity                            |
+| NEXT       | Select one coherent storytelling/media improvement after a short UX review                   | Quality/wow benefit outweighs breadth; do not implement every candidate block |
+| LATER      | Local soundtrack, safe public packs, optional sharing and public-adoption assets             | Only when their concrete benefit justifies a bounded milestone                |
+| EXPERIMENT | Surprise Me alternatives using the existing safe composition primitives                      | Test usefulness without a generic orchestration framework                     |
+| REJECTED   | Generic site/AI/plugin platform, enterprise layers or mandatory cloud/free-tier dependencies | Outside the focused product and zero-cost contract                            |
 
 After the few highest-value experience improvements, stabilize browser/mobile/accessibility and release quality. Known storage quarantine/export-lease limits should get focused fixes when evidence requires them, not a month-long foundation program. Broader device checks are part of stabilization and should accompany meaningful UI work.
 
