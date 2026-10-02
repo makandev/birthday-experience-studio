@@ -1,3 +1,4 @@
+import { connectLocalAi, acceptAiGift } from '../ai-fixture';
 import { verifiedLiveResponses } from '../live-origin';
 import { test, expect, type Locator } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -16,10 +17,12 @@ test('touch creator: minimum-input opening, public refinement, optional photo an
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('./');
+  await connectLocalAi(page);
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Anna');
   await comfortable(
-    page.getByRole('button', { name: 'Meinen ersten Moment ansehen' }),
+    page.getByRole('button', { name: 'Mit KI mein Geschenk gestalten' }),
   );
+  await acceptAiGift(page);
   const frame = page.frameLocator('#gift-preview');
   await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
   await comfortable(frame.locator('#stage-next'));
@@ -139,10 +142,12 @@ test('primary download is standalone HTML on every device and runs offline with 
 }) => {
   test.setTimeout(60000);
   await page.goto('./');
+  await connectLocalAi(page);
   await page.locator('#magic-name').fill('Sam');
   await comfortable(
-    page.getByRole('button', { name: 'Meinen ersten Moment ansehen' }),
+    page.getByRole('button', { name: 'Mit KI mein Geschenk gestalten' }),
   );
+  await acceptAiGift(page);
   await comfortable(
     page.getByRole('button', { name: 'Eine Erinnerung ergänzen' }),
   );
@@ -224,10 +229,12 @@ test('prepared public file sharing stays inside the intentional user gesture and
     });
   });
   await page.goto('./');
+  await connectLocalAi(page);
   await page.locator('#magic-name').fill('Share recipient');
   await page
-    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
+    .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })
     .tap();
+  await acceptAiGift(page);
   const delivery = page.locator('#iphone-delivery');
   if ((await delivery.getAttribute('open')) === null)
     await delivery.locator('summary').tap();

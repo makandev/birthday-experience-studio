@@ -29,6 +29,7 @@ summary {
 }
 button {
   cursor: pointer;
+  min-height: 44px;
 }
 button:disabled {
   cursor: not-allowed;
@@ -467,7 +468,7 @@ blockquote {
   padding: 8px 0;
   text-decoration: underline;
   text-underline-offset: 4px;
-  min-height: 38px;
+  min-height: 44px;
 }
 .finish-questions {
   display: block;
@@ -564,8 +565,8 @@ blockquote {
   color: var(--ink);
   border: 1px solid var(--line);
   border-radius: 5px;
-  min-width: 34px;
-  min-height: 34px;
+  min-width: 44px;
+  min-height: 44px;
 }
 .export-note {
   background: #f6f0e9;
@@ -1076,4 +1077,36 @@ dialog {
   .preview-label {
     margin: 6px 0;
   }
+}
+#ai-dialog {
+  width: min(92vw, 720px);
+}
+#ai-dialog section {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line, #ddd);
+}
+#ai-dialog h3 {
+  font-size: 1.1rem;
+}
+#ai-review {
+  width: min(94vw, 900px);
+}
+#ai-review-preview {
+  width: 100%;
+  height: 65svh;
+  min-height: 420px;
+  border: 1px solid #bda877;
+  border-radius: 20px;
+  background: #faf3e4;
+}
+#ai-review .actions {
+  position: sticky;
+  bottom: 0;
+  background: var(--paper, #fffaf3);
+  padding: 12px 0;
+}
+#ai-auth-link {
+  display: block;
+  padding: 12px;
+  min-height: 44px;
 }

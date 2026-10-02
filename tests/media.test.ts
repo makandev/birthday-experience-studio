@@ -147,7 +147,7 @@ describe('recipient photo exploration budget', () => {
       ],
     });
     expect(html.split(derivative)).toHaveLength(2);
-    expect(html.length - derivative.length).toBeLessThan(30_000);
+    expect(html.length - derivative.length).toBeLessThan(40_000);
     assertOfflineRuntime(html);
     expect(html).not.toMatch(/<(iframe|a)\b|https?:\/\//i);
   });

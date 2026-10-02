@@ -1,3 +1,4 @@
+import { connectLocalAi, acceptAiGift } from '../ai-fixture';
 import { test, expect } from '@playwright/test';
 import { createProject } from '../../src/domain/project';
 import { createMagicStart } from '../../src/engines/magic-start';
@@ -154,8 +155,10 @@ test('mobile creator compares a playable alternative and edits public copy at th
 }) => {
   await verifiedLiveResponses(page);
   await page.goto('./');
+  await connectLocalAi(page);
   await page.locator('#magic-name').fill('Alex');
   await page.locator('#magic-form button[type="submit"]').tap();
+  await acceptAiGift(page);
   const frame = page.frameLocator('#gift-preview');
   await page.getByText('Zwei Geschenkwege vergleichen', { exact: true }).tap();
   await page.locator('[data-review-variant="challenger"]').tap();

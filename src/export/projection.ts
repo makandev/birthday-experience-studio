@@ -1,3 +1,4 @@
+import type { AnimationProgram } from '../domain/animation';
 import { parseProject, type CreatorProject } from '../domain/project';
 import { blocks } from '../registries/blocks';
 import { themes } from '../registries/themes';
@@ -12,6 +13,7 @@ export interface ExportExperience {
   intensity: number;
   profile: 'offline' | 'online';
   externalDomains: string[];
+  animation?: AnimationProgram;
   composition?: {
     version: 1;
     variant: 'champion' | 'challenger';
@@ -76,6 +78,14 @@ export function projectExperience(
     externalDomains: capabilities.externalDomains,
     themeId: themes.get(project.experience.themeId)?.id ?? 'warm',
     blocks: exported,
+    ...(project.experience.animation
+      ? {
+          animation: {
+            version: 1 as const,
+            source: project.experience.animation.source,
+          },
+        }
+      : {}),
     ...(project.experience.composition
       ? {
           composition: {

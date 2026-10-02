@@ -1,3 +1,4 @@
+import { animationProgramSchema } from '../domain/animation';
 import { z } from 'zod';
 import { parseBoundedJson } from '../security/json';
 import { blocks } from '../registries/blocks';
@@ -19,6 +20,7 @@ const envelope = z.strictObject({
     intensity: z.number().int().min(0).max(3),
     profile: z.literal('offline'),
     externalDomains: z.array(z.never()).length(0),
+    animation: animationProgramSchema.optional(),
     composition: z
       .strictObject({
         version: z.literal(1),

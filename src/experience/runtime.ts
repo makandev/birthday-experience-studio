@@ -1,5 +1,8 @@
+import { ANIMATION_HOST_HTML } from './animation-host';
 // Trusted static runtime. Never interpolate recipient, imported or AI data here.
-export const RECIPIENT_RUNTIME = String.raw`(() => {
+export const RECIPIENT_RUNTIME =
+  `(()=>{const BES_ANIMATION_HOST=${JSON.stringify(ANIMATION_HOST_HTML).replace(/</g, '\\u003c')};\n` +
+  String.raw`(() => {
 'use strict';
 const originalScenes = [...document.querySelectorAll('.gift-scene')];
 let scenes = [...originalScenes];
@@ -33,9 +36,54 @@ let current = 0;
 let frame = 0;
 let timers = [];
 let clockTimer = 0;
-const moving = () => intensity > 0 && !reduce.matches && !motionOff.checked && !document.hidden;
+let animationFrame = 0, animationHost = null, animationPending = false, animationSequence = 0, animationAt = 0;
+const animationCanvas = document.getElementById('ai-animation');
+const animationContext = animationCanvas?.getContext('2d');
+const moving = () => intensity > 0 && !matchMedia('(prefers-reduced-motion: reduce)').matches && !motionOff.checked && !document.hidden;
 const clearFinale = () => { timers.forEach(clearTimeout); timers = []; };
 const stopConfetti = () => { cancelAnimationFrame(frame); frame = 0; if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); };
+function animationStop() {
+ document.body.dataset.animationActive='false';cancelAnimationFrame(animationFrame); animationFrame=0;animationPending=false;
+ animationHost?.contentWindow?.postMessage({type:'bes-animation-stop'},'*');
+ if(animationContext)animationContext.clearRect(0,0,animationCanvas.width,animationCanvas.height);
+}
+function animationStart() {
+ if(!animationCanvas||!moving()||document.body.dataset.animationFailed==='true')return;
+ if(!animationHost){
+  animationHost=document.createElement('iframe');animationHost.hidden=true;animationHost.sandbox='allow-scripts';
+  animationHost.srcdoc=BES_ANIMATION_HOST;
+  animationHost.onload=()=>{animationHost.contentWindow.postMessage({type:'bes-animation-init',source:document.getElementById('animation-program').content.textContent},'*'); animationPending=false;animationLoop(performance.now());};
+  document.body.append(animationHost);
+ }else{
+  animationHost.contentWindow.postMessage({type:'bes-animation-init',source:document.getElementById('animation-program').content.textContent},'*');animationPending=false;animationLoop(performance.now());
+ }
+}
+function animationLoop(now){
+ cancelAnimationFrame(animationFrame);
+ if(!moving()||document.body.dataset.animationFailed==='true'){animationStop();return;}
+ if(!animationPending&&now-animationAt>=33){
+  animationAt=now;animationPending=true;animationSequence++;
+  animationHost.contentWindow.postMessage({type:'bes-animation-tick',request:animationSequence,input:{time:now/1000,scene:scenes[current].dataset.scene,phase:Number(document.body.dataset.finalePhase)||0,width:Math.min(innerWidth,4096),height:Math.min(innerHeight,4096),intensity}},'*');
+ }
+ animationFrame=requestAnimationFrame(animationLoop);
+}
+addEventListener('message',event=>{
+ if(!animationHost||event.source!==animationHost.contentWindow)return;
+ if(event.data?.type==='bes-animation-failed'){document.body.dataset.animationFailureKind=event.data.reason;document.body.dataset.animationFailed='true';animationStop();return;}
+ if(!moving()||event.data?.request!==animationSequence||event.data?.type!=='bes-animation-frame'||!Array.isArray(event.data.commands)||event.data.commands.length>160||!animationContext)return;
+ animationPending=false;
+ const width=Math.min(innerWidth,2048),height=Math.min(innerHeight,2048);
+ animationCanvas.width=width;animationCanvas.height=height;
+ const ctx=animationContext, scale=Math.min(width,height);
+ for(const c of event.data.commands.slice(0,innerWidth<640?96:160)){
+  ctx.save();ctx.globalAlpha=c.alpha;ctx.fillStyle=c.color;ctx.strokeStyle=c.color;ctx.shadowColor=c.color;ctx.shadowBlur=Math.min(24,(c.glow||0)*24);
+  if(c.kind==='circle'){ctx.beginPath();ctx.arc(c.x*width,c.y*height,c.r*scale,0,Math.PI*2);ctx.fill();}
+  if(c.kind==='line'){ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(c.x*width,c.y*height);ctx.lineTo(c.x2*width,c.y2*height);ctx.stroke();}
+  if(c.kind==='rect')ctx.fillRect(c.x*width,c.y*height,c.w*width,c.h*height);
+  ctx.restore();
+ }
+ document.body.dataset.animationActive='true';
+});
 function burst(strong = false) {
   stopConfetti();
   if (!moving() || !ctx) return;
@@ -92,11 +140,11 @@ function finishFinale() {
   next.disabled = false; document.body.dataset.finaleComplete = 'true'; document.getElementById('finale-status').textContent = 'Dein Abschluss ist bereit.';
 }
 function startFinale() {
-  document.body.dataset.finaleComplete = 'false';
+  document.body.dataset.finaleComplete = 'false';document.body.dataset.finalePhase='0';
   messages.forEach(message => message.classList.remove('active'));
   if (!moving()) { finishFinale(); return; }
   next.disabled = true; messages[0].classList.add('active'); if (!challenger) burst(true);
-  const phase = index => { messages.forEach((message, i) => message.classList.toggle('active', i === index)); if (index === 2) finaleEffect(); };
+  const phase = index => { document.body.dataset.finalePhase=String(index); messages.forEach((message, i) => message.classList.toggle('active', i === index)); if (index === 2) finaleEffect(); };
   timers = [setTimeout(() => phase(1), phaseMs), setTimeout(() => phase(2), phaseMs * 2), setTimeout(() => { next.disabled = false; document.body.dataset.finaleComplete = 'true'; document.getElementById('finale-status').textContent = 'Dein Abschluss ist bereit.'; }, phaseMs * 3)];
 }
 function updateClock() {
@@ -123,6 +171,7 @@ function show(index, focus = true) {
   if (sceneIs('finale')) startFinale(); else if (index > 0 && index < scenes.length - 1 && (!challenger || document.body.dataset.archetype === 'playful' && sceneIs('surprise'))) burst();
 }
 function motionChanged() {
+  if(moving())animationStart();else animationStop();
   document.body.dataset.paused = moving() ? 'false' : 'true';
   motionOff.disabled = reduce.matches || intensity === 0;
   if (!moving()) { stopConfetti(); if (sceneIs('finale')) finishFinale(); }
@@ -197,12 +246,12 @@ document.querySelectorAll('summary').forEach(summary => activate(summary, event 
 motionOff.addEventListener('change', motionChanged);
 reduce.addEventListener('change', motionChanged);
 document.addEventListener('visibilitychange', () => { updateClock(); motionChanged(); });
-window.addEventListener('pagehide', () => { clearFinale(); stopConfetti(); clearInterval(clockTimer); });
+window.addEventListener('pagehide', () => { clearFinale(); stopConfetti(); animationStop(); clearInterval(clockTimer); });
 document.body.classList.add('enhanced'); motionChanged();
 const previewIndex = scenes.findIndex(scene => scene.dataset.scene === document.body.dataset.previewScene);
 show(previewIndex >= 0 ? previewIndex : 0, false);
 if (previewIndex >= 0 && scenes[previewIndex].dataset.scene === 'letter') document.querySelector('.letter-reveal').open = true;
-})();`;
+})();})();`;
 // Regenerate deliberately after runtime edits; the module test pins the exact bytes.
 export const RECIPIENT_RUNTIME_HASH =
-  'Dl0arhHlFucR6jDKYEQkoLjjwCXPh94gIgsGWee1oHw=';
+  'Ipny7R69pr0w/kdd9zvArl/nuJ6dw079clp7Q62JWIQ=';

@@ -1,3 +1,4 @@
+import { connectLocalAi, acceptAiGift } from '../ai-fixture';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { verifiedLiveResponses } from '../live-origin';
@@ -16,13 +17,15 @@ test('production Pages preview-first loads subpath assets and downloads an isola
     if (/\/assets\//.test(r.url())) assets.push(r.url());
   });
   await page.goto('./');
+  await connectLocalAi(page);
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
     .fill('Pages recipient');
   await page.getByLabel('Was verbindet euch?').selectOption('colleague');
   await page
-    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
+    .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })
     .click();
+  await acceptAiGift(page);
   const frame = page.frameLocator('#gift-preview');
   await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
   await expect(frame.locator('body')).toHaveAttribute(
@@ -53,10 +56,12 @@ test('production Pages recipient opener reads only public gift data with no uplo
   page,
 }) => {
   await page.goto('./');
+  await connectLocalAi(page);
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Gift reader');
   await page
-    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
+    .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })
     .click();
+  await acceptAiGift(page);
   await page.locator('#iphone-delivery summary').click();
   const event = page.waitForEvent('download');
   await page.locator('#recipient-export').click();

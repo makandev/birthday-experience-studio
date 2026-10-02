@@ -1,22 +1,25 @@
+import { connectLocalAi, acceptAiGift } from '../ai-fixture';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
 import { readStoredProject } from '../browser-storage';
 import { recipientStation } from '../recipient-navigation';
 
-test('two actions to first opening; confirm, public detail, optional photo and full staged gift', async ({
+test('AI-generated opening after explicit connection/review; confirm, public detail, optional photo and full staged gift', async ({
   page,
   context,
 }) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
-  // Defaults need no extra interaction: fill name, press preview = two actions.
+  await connectLocalAi(page);
+  // Once connected: name, generate, review and adopt. Connection adds first-use setup.
   await expect(page.locator('#magic-form textarea')).toHaveCount(0);
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Anna');
   await page
-    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
+    .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })
     .click();
+  await acceptAiGift(page);
   const frame = page.frameLocator('#gift-preview');
   await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
   await expect(frame.getByRole('heading', { name: /Anna/ })).toBeVisible();
@@ -78,9 +81,10 @@ test('mobile vibe alternatives preserve public text with undo; professional defa
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
+  await connectLocalAi(page);
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill(' ');
   await page
-    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
+    .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })
     .click();
   await expect(page.locator('#magic-error')).toContainText(
     'Bitte gib einen Namen',
@@ -89,9 +93,10 @@ test('mobile vibe alternatives preserve public text with undo; professional defa
   await page.getByLabel('Was verbindet euch?').selectOption('colleague');
   await expect(page.locator('#magic-vibe-elegant')).toBeChecked();
   await page
-    .getByRole('button', { name: 'Meinen ersten Moment ansehen' })
+    .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })
     .click();
-  await page.getByRole('button', { name: 'Anders machen' }).click();
+  await acceptAiGift(page);
+  await page.getByRole('button', { name: 'Stimmung ändern' }).click();
   await page.getByRole('button', { name: 'Fröhlich', exact: true }).click();
   expect((await readStoredProject(page)).experience.directionId).toBe('funny');
   await page
@@ -101,7 +106,9 @@ test('mobile vibe alternatives preserve public text with undo; professional defa
     'elegant',
   );
   await page.getByRole('button', { name: 'Überrasch mich' }).click();
-  expect((await readStoredProject(page)).writing.letter).toContain('Hallo Kim');
+  expect((await readStoredProject(page)).writing.letter).toContain(
+    'Ein fiktiver öffentlicher Geburtstagsgruß.',
+  );
   await page.getByRole('button', { name: 'Eine Erinnerung ergänzen' }).click();
   await page
     .getByRole('button', { name: 'Ein herzliches Danke', exact: true })
