@@ -13,21 +13,16 @@ BES is an evolving 0.x product; version labels do not imply every aspiration is 
 
 Transactional project/asset persistence, central confirmed deletion, reference/recovery-aware GC, revision fencing, migration/retirement journal and failure/multi-tab tests. Completion is determined by the full quality gates in STATUS, not by roadmap placement. Include audit repairs: documentation consolidation, foreign-photo metadata regression and reproducible standalone testing.
 
-## Bounded next sequence and product discovery
+## Lean discovery and next sequence
 
-| Class      | Selected direction                                                                           | Rationale                                                                     |
-| ---------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| NOW        | Finish external Pages activation/live verification while independent work continues          | Prevent loss before more visible features                                     |
-| NOW        | Validate bounded Magic Start and first-preview flow                                          | Few inputs, visible value, less creator complexity                            |
-| NEXT       | Select one coherent storytelling/media improvement after a short UX review                   | Quality/wow benefit outweighs breadth; do not implement every candidate block |
-| LATER      | Local soundtrack, safe public packs, optional sharing and public-adoption assets             | Only when their concrete benefit justifies a bounded milestone                |
-| EXPERIMENT | Surprise Me alternatives using the existing safe composition primitives                      | Test usefulness without a generic orchestration framework                     |
-| REJECTED   | Generic site/AI/plugin platform, enterprise layers or mandatory cloud/free-tier dependencies | Outside the focused product and zero-cost contract                            |
+| Class      | Selected direction                                                                             | Rationale                                                         |
+| ---------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| NOW        | Complete staged recipient / preview-first / Safari delivery gates and actual iPhone acceptance | Core wow, low effort and tappable delivery outrank breadth        |
+| NEXT       | Targeted novice/mobile/accessibility polish of this same short flow                            | Resolve observed friction and quality gaps, not add more settings |
+| LATER      | Local soundtrack, safe packs, optional hosted sharing and public-adoption assets               | Concrete birthday value and bounded scope required                |
+| EXPERIMENT | Alternative coherent story arcs beyond current coordinated direction variants                  | Compare emotional value before adding an engine framework         |
+| REJECTED   | Generic site/AI/plugin platform, enterprise layers, mandatory cloud/free-tier core             | Outside product contract                                          |
 
-After the few highest-value experience improvements, stabilize browser/mobile/accessibility and release quality. Known storage quarantine/export-lease limits should get focused fixes when evidence requires them, not a month-long foundation program. Broader device checks are part of stabilization and should accompany meaningful UI work.
+Current implementation adds seven stages + closing, deliberate choice/message reveal, cinematic payoff and a name/defaults-first confirmation loop. Quick now has three optional questions; Deep is after first value. Native uncropped photo inspection uses one derivative payload. These replace the old next-gallery/scroll-only priorities. See STATUS for gates actually run, pending physical-device acceptance and live HEAD. No automated test proves the qualitative Original Experience Benchmark acceptance bar.
 
-Longer-term goals remain in PRODUCT_VISION, not an unlimited implementation backlog. Concrete providers require official documentation/security/licensing review; hosted sharing stays optional. Before a 1.0 claim, meet data compatibility, privacy/export, offline reliability, accessibility/device and novice usability gates. No roadmap item makes BES permanently finished.
-
-The user-authorized early public Studio channel is GitHub Pages from checked main, with a production-subpath browser gate. Complete activation/live verification when network/API access is available; this bounded delivery work is checked alongside independent UX work and introduces no hosting dependency into the core.
-
-The first Magic Start now reuses existing letter/wish/direction primitives, keeps inputs/public review/undo and offers Quick/Deep/photo refinement. Discovery selected recipient photo exploration as the next small experience improvement: let recipients see the uncropped gift copy using native HTML, without duplicate image bytes, scripts, a gallery framework or new data schema. Fullscreen galleries/video and broader choreography stay LATER.
+GitHub Pages is activated and serves checked main; every integration checks workflow, subpath assets and real live smoke. Optional Safari recipient file reading is local after the page loads; no cloud upload/mandatory hosting for the core. Development preview deployment allows iPhone acceptance but is not a release claim. Before release, satisfy iPhone delivery/taps, accessibility/novice quality, privacy/export, storage/migration and Offline gates. Do not expand the roadmap or call BES permanently finished.

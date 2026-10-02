@@ -29,14 +29,14 @@ Eine verständliche Stimmungswahl koordiniert Effekte; Bewegung kann auf 0 geste
 
 Dateiauswahl und Drag/Drop sind Alternativen. Klar sichtbare Formate/Größenlimits, lokaler Verarbeitungsstatus, Alt-Text, Erinnerungstext und reversible Bildposition helfen Anfängern. Fehlgeschlagene Imports behalten vorhandene Texte. Originale und Geschenk-Kopien sind sprachlich getrennt; entfernte Bilder können wiederhergestellt werden. Online-Zustimmung benennt die Quellen und den Unterschied zu Offline.
 
-## Vorschau schrittweise anpassen
+## Preview-first: bestätigen oder ändern
 
-Stimmung, Exportprofil, externe Zustimmung und Geschenk-Erstellung bleiben direkt sichtbar. Bewegung/Farben sowie Inhalt/Reihenfolge öffnen sich bei Bedarf in nativen Details. Geöffnete Bereiche und fokussierte Felder/Bausteine bleiben bei Neurendern erhalten; Foto-Bearbeitung bleibt ebenfalls offen. Diese Zustände sind lokale UI-Zustände und werden nicht exportiert.
+Jede kleine Eingabe soll schnell sichtbaren Wert schaffen. Name mit Beziehungs-/Stimmungsdefaults → echte Eröffnung → „Gefällt mir“, „Anders machen“, „Überrasch mich“ → freiwilliger öffentlicher Satz → dessen tatsächliche späte Geschenkstation → optionales Foto → vollständiges Geschenk. Kein verpflichtender Fragenweg vor dem ersten Ergebnis. Die schnellste erste Vorschau braucht nur Namen und Absenden; Quick sind drei freiwillige Fragen, Deep bleibt kontextuell. Persönliche Fakten werden nicht erfunden oder aus privaten Antworten kopiert. Varianten erhalten Texte/Fotos und lassen sich rückgängig machen.
+
+Die Vorschau zeigt wirkliche Szenen, Bewegung, Stimmung, Tempo und Fortschritt im selben Renderer wie das Geschenk. Sie ist ein einzelner mobiler Arbeitsfluss, kein erforderlicher Desktop-Split-Screen. Detaillierte Texte, Farben, Bewegungsintensität, Bausteine und Online-Quellen bleiben nach dem ersten Ergebnis freiwillig zugänglich. Einstiegsfragen wurden tatsächlich entfernt, nicht nur eingeklappt. Native Abschnitte erhalten Fokus/offene Zustände.
+
+Touch-Ziele mindestens 44px; keine dekorative Klicksperre oder feste überlagernde Leiste, sichere Bildschirmränder, dynamische Dialoghöhen und 16px mobile Eingabeschrift. Der Export erklärt die iOS-Dateivorschau-Grenze und bietet den lokalen Safari-Dateileser. Echte iPhone-Validierung ist ein offenes Release-Gate, siehe IOS_COMPATIBILITY.
 
 ## Safe storage choices
 
 Saved status means the asynchronous transaction completed; pending/failed/conflict states are distinct. Conflicts preserve this tab's input and offer private backup before explicit canonical adoption. Deletion and permanent cleanup have separate clear confirmations; cleanup explicitly ends undo. Do not expose revisions/transaction mechanics as normal product steps.
-
-## Magic Start and first preview
-
-„Schnell zur ersten Vorschau“ is the fresh-gift primary action. A named native dialog focuses the name field, explains that the seed sentence is public, and autosaves name/relationship/public text with an in-dialog status. A reviewed submission creates the first gift; Back/escape keeps the authored input. Composition is undoable; existing composed gifts resume safely. Quick/Deep are also available through the traditional path and directly within questions. The preview has clear routes to text/photos and further questions. Mobile actions stack; focus returns to the launcher/new heading and remains on the question mode during changes. No photo or AI is required for the first preview.

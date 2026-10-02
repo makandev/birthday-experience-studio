@@ -23,3 +23,7 @@ Historical storage tradeoffs are in ADRs 0001/0002/0004; ADR 0005 defines curren
 ## Optional public Studio hosting
 
 GitHub Pages serves only static Studio code, not creator projects, imported media or gift exports. Hosting requests expose ordinary request/IP metadata to GitHub; no analytics are added. Browser storage is origin-scoped rather than path-scoped: all repositories served under makandev.github.io share that origin's trust boundary. Other untrusted applications on that origin can access its storage. Private projects remain unencrypted local data; avoid placing untrusted content on the same origin and keep separate backups. Localhost and Pages origins do not automatically transfer data.
+
+## Recipient-only Safari delivery
+
+A .bes-gift.json file contains public ExportExperience data only; it is distinct from a private draft. The optional #gift reader loads its page normally, then reads the selected file locally, without upload, URL payload, logs or creator storage initialization. Source validation initially allows only embedded Offline data. The maintained gift runtime has no storage/network/provider capability. Delayed station/native reveal controls pacing; all public words are already in the file, not encrypted or protected from inspection. Sharing is deliberate through a prepared public File, with native cancellation/fallback. Physical iPhone delivery is an open release gate.

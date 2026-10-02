@@ -1,18 +1,11 @@
-# Coordinated Motion / Effect system
+# Coordinated staged motion
 
-| Direction | Theme       | Typography | Entrance           | Image direction | Pacing                   | Finale           |
-| --------- | ----------- | ---------- | ------------------ | --------------- | ------------------------ | ---------------- |
-| Emotional | Warm        | Serif      | Soft settle        | Soft            | 1000 ms / 160 ms stagger | Quiet            |
-| Funny     | Celebration | Clean      | Small playful lift | Polaroid        | 600 ms / 80 ms stagger   | Bounded sparkles |
-| Elegant   | Minimal     | Serif      | Soft settle        | Soft            | 800 ms / 100 ms stagger  | Quiet            |
-| Cinematic | Warm        | Serif      | Lift               | Wide            | 1200 ms / 180 ms stagger | Bounded sparkles |
+Emotional/Fröhlich/Elegant/Filmisch direction data coordinates known theme, typography, photo style and 600–1200ms scene entrance timing. Creator intensity 0–3, recipient pause and prefers-reduced-motion take priority. No imported CSS/JS. ADR 0006 updates the previous finite-only scroll effects; `experience/motion.ts` remains the older bounded helper, while the active staged renderer uses `experience/render.ts` and `runtime.ts`.
 
-`registries/motion.ts` validates declarative direction data. `engines/motion.ts` creates a deterministic plan and optional context-based recommendation. `experience/motion.ts` generates trusted finite CSS and decorative markup from allowed numeric tokens. No custom CSS/JS in imported data.
+Seven deliberate stations plus closing use finite text entrances, gentle 18-second light drift and 20-second gold particle loops, finite 1600ms canvas confetti on transitions/start and stronger finale. Gold particles max12 desktop/max6 visible mobile; canvas max64 desktop/max24 mobile, scaled by intensity. Deterministic particle placement, no external effect library/network. The finale has three phases at 0/4.5/9 seconds and completion at13.5 seconds. A visible skip avoids forced waiting; pause/reduced motion/intensity0 reveal all finale messages without delay. Completed messages do not overlap.
 
-Intensity 0 disables motion; 1–3 changes movement and sparkle quantity. Mobile caps visible particles at six and translation at 6 px; desktop caps are 12 particles/12 px. Entrance duration is at most 1500 ms, stagger delay at most 1200 ms. No infinite loops, flashing or autoplaying sound. The gift offers “Bewegung ausschalten”; `prefers-reduced-motion` always wins. Animation never hides required content, and decorative particles have `aria-hidden`.
+Text retains full opacity/contrast during entrances. Decorations are aria-hidden and pointer-events:none. Recipient pause stops CSS/RAF, visibility changes stop background work, and pagehide clears intervals/timeouts/RAF. The local clock ticks only on the visible opening. No sound playback or autoplay claim. Native navigation is normal flow, no effect overlay captures taps.
 
-The first implementation animates entrances on load and native reveal remains user-controlled. Viewport-triggered choreography, advanced timelines and soundtrack timing are future work; do not claim complete cinematic sequencing.
+Online images cannot be guaranteed still: reduced motion/pause hide external image/view controls but retain descriptions. Local normalized JPEGs remain visible. This does not guarantee zero Online requests; export capability/consent remains separate.
 
-Text opacity stays at 1 throughout every entrance to preserve contrast during motion, not only after it ends.
-
-External Online images cannot be normalized or guaranteed still. Reduced-motion and recipient motion-off hide their image elements while keeping captions/descriptions visible. This is a motion fallback, not a guarantee that no network request occurred; Online consent and export capability rules still apply. Local normalized JPEGs remain visible. Sparkles share the same translation budget as block entrances.
+Tests cover hash-pinned runtime, progression, timing/skip/pause/reduced motion, mobile budgets/touch and accessibility. Real-device accessibility/performance and qualitative pacing still require acceptance; future music/alternative story arcs must remain bounded and coherent.

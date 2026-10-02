@@ -11,9 +11,9 @@ Birthday Experience Studio helps normal, nontechnical people create a highly per
 
 ## Beginner creation and personalization
 
-Magic Start aims for a convincing first birthday result from very few inputs, followed by optional Quick/Deep refinement. A bounded first implementation now assembles existing safe letter/wish/direction blocks from name, relationship and an explicitly recipient-visible sentence. It does not automatically read private questionnaire answers or invent facts; review/edit/photos and refinement remain available. This is the first implementation, not the full long-term quality promise. Quick asks roughly 6–10 important questions; Deep adapts without an artificial engine question limit. Help, examples, skip and “I don't know” are essential.
+Magic Start aims for a convincing first birthday result from very few inputs, followed by optional Quick/Deep refinement. A bounded first implementation now assembles existing safe letter/wish/direction blocks from name with safe relationship/vibe defaults; a public sentence and photo follow as optional refinement. It does not automatically read private questionnaire answers or invent facts; review/edit/photos and refinement remain available. This is the first implementation, not the full long-term quality promise. Quick now targets 3–5 lightweight interactions; the earlier 6–10-question requirement is superseded. Deep adapts without an artificial engine question limit. Help, examples, skip and “I don't know” are essential.
 
-Surprise Me is a future way to suggest alternative coherent dramaturgies/compositions from the same validated BES primitives and inputs, not a random collection of effects. The creator remains in control and can compare/revise proposals.
+Surprise Me targets alternative coherent dramaturgies/compositions from the same validated BES primitives and inputs, not a random collection of effects. The creator remains in control and can compare/revise proposals.
 
 ## Integrations and Director
 
@@ -40,3 +40,15 @@ Quality before feature count. BES should be professional and thoughtful without 
 The intended mature shape is strong onboarding/Magic Start, understandable Quick/Deep personalization, good photos/media, coherent dramaturgy, beautiful preview/recipient experience, safe storage/export, mobile/accessibility basics, reliable Offline/Online profiles and a few useful wow moments. “Endstufe” means a small, very good product, not maximal technical complexity or a claim of permanent completion. Hide internal complexity from beginners.
 
 After substantial milestones, briefly evaluate ideas by user value, wow effect, ease of use, effort and maintenance. Classify NOW/NEXT/LATER/EXPERIMENT/REJECTED; experiments do not automatically become core architecture. Reject or defer proposals that enlarge the app without proportionate birthday value.
+
+## Recipient benchmark and result-first correction (current contract)
+
+The user-provided Original Experience Benchmark benchmark defines a level of experience, not a design to copy: seven staged stations, time-aware greeting/live clock, personal decisions/cards, delayed personal message, pacing/surprise, champagne/ivory premium surfaces and gold light, persistent restrained particles, start/transition confetti, a hidden last reveal and roughly 13.5-second cinematic recipient-focused finale, fully offline. BES must generalize that emotional staging across relationships. A plain scrolling letter with styled cards fails this target. The current first-preview implementation does not meet the qualitative benchmark yet; implementation/testing and user-perceived acceptance must be distinguished.
+
+Show value before asking for effort. The fastest creation path should take only name, relationship, a compact vibe choice, optional short public input/prompt selection and optional photo before immediately showing a strong staged preview. Defaults must be safe, useful and free of invented personal facts. Quick means 3–5 lightweight interactions, not a compulsory 6–10-question intake. Deep and detailed manual editing follow first value, as optional contextual refinement. Do not merely hide the same long mandatory form. No pressure for sensitive details. Aim for a respectable first gift in 1–2 minutes with a few reusable excellent scenes, coordinated motion and a real payoff.
+
+## Preview-first / confirm-or-change
+
+Every small input should quickly create visible value. Show the actual staged opening after name/relationship/vibe, then “Gefällt mir”, “Anders machen”, “Überrasch mich”. Ask one optional high-value detail, immediately show its result, optionally add a photo, then show the whole gift and targeted refinements. Aim for roughly 5–7 major creator moments, not a questionnaire wall or mandatory desktop split pane. Keep strong safe defaults, fast alternatives with undo, mobile-first review and optional Deep after value. Do not hide an unchanged mandatory long form behind accordions. The current bounded alternative cycles coherent directions while preserving public content; broader alternative story arcs remain a goal.
+
+Real iPhone Safari creation, recipient taps and an understandable supported delivery path are release requirements. Desktop Chromium/WebKit do not establish physical-device or Files-app support. See IOS_COMPATIBILITY and STATUS for evidence and the open release gate.

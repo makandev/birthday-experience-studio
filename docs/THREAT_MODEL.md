@@ -35,3 +35,10 @@ Director-Vorschläge haben einen strikten Datenvertrag und eine vollständige Pe
 ## Optional GitHub Pages boundary
 
 Static Studio hosting sends ordinary request metadata to GitHub but never uploads creator content automatically. Only dist from checked main is deployed. A malicious application on another path of makandev.github.io shares browser-origin privileges and could read/modify local creator storage; repository paths do not isolate it. Mitigation is trusted co-hosted content or separate origins, plus private backups. No account/backend or telemetry is introduced into core creation.
+
+## Staged runtime / recipient data reader
+
+- Creator/AI/import text never enters maintained JavaScript; escaped HTML is separate. CSP permits only the exact runtime hash, rejects injected scripts, and default/base/form policies remain closed. Hash is pinned to runtime bytes in module tests. Maintained code defects/browser CSP differences remain residual risk.
+- Runtime effects/progression are bounded, no fetch/storage/tool/provider capability, opaque preview sandbox only allow-scripts. No-JS fallback and reduced/skip controls protect availability/accessibility, not confidentiality of already included public words.
+- Recipient data files use pre-parse byte and post-parse depth/node/key budgets, strict v1 envelope/allowlist and JPEG metadata/signature limits. Unknown/private/HTML/network input is refused and never executed. JSON.parse still allocates bounded input and decoders remain a platform boundary.
+- Safari reader boot avoids all creator persistence and uses a fresh opaque frame. Page loading needs its optional host; file content is neither uploaded nor encoded in links. Shared-origin trust rules still apply. iOS Files/Quick Look behavior, OS share/download and actual-device touch require explicit release acceptance.

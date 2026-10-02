@@ -37,3 +37,9 @@ The current user permits main integration after quality/documentation/security/p
 ## Public Studio hosting
 
 The authorized GitHub Pages workflow uploads only production dist after checks; it never uploads creator storage, media, test fixtures, logs or application credentials. Workflow token/OIDC are runtime deployment credentials, not client-bundle data. Pages paths share one browser origin: other applications on makandev.github.io can access the same origin storage. Avoid hosting untrusted applications there; use separate trusted origins for isolation and keep private backups. This is a known hosting boundary, not path-level data isolation.
+
+## Maintained recipient runtime and Safari reader
+
+ADR 0006 permits exactly one static trusted runtime by tested SHA-256 CSP hash, never arbitrary inline/community/AI/creator code. Its text has no data interpolation, eval, network, storage or provider execution. Gift text is escaped separately. Preview/reader grant allow-scripts only, without allow-same-origin. Native no-script reveals remain readable; pacing is not encryption.
+
+The Safari recipient-file reader validates a strict recipient-only schema after byte/depth/node/prototype-key checks and permits only maintained text/style/block tokens and normalized JPEG sources. It rejects private drafts, raw HTML, secrets/unknown fields and external sources, never initializes creator storage or uploads file content. Ordinary page hosting still exposes request metadata. Actual iPhone delivery/controls remain release-blocking acceptance, not a security guarantee inferred from desktop Chromium.

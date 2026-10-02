@@ -25,3 +25,7 @@ Private text drafts contain CreatorProject only. Portable `bes-draft` version 1 
 Only schemaVersion, locale, resolved themeId, allowed directionId/intensity/profile/externalDomains and active allowed block fields cross the recipient boundary. Selected local sources resolve to validated JPEG data URLs; selected online sources resolve to validated URLs after consent. No project IDs/revisions/timestamps, private answers, relationship data, writing method, original filenames/EXIF, original binaries, recovery or library data. See [EXPORT_ARCHITECTURE](EXPORT_ARCHITECTURE.md).
 
 Historical contracts and tradeoffs are recorded in ADRs; historical descriptions are not current feature claims.
+
+## Recipient data delivery v1
+
+The strict bes-recipient-gift v1 envelope contains ExportExperience v1 only. It uses embedded Offline sources; no externalDomains, arbitrary fields/scripts, private project/draft/revision/answer/media identity, original bytes or credentials. Input is bounded before schema validation and source rendering. This adds an output contract, not a CreatorProject/workspace migration. Existing project v1→v2 and private portable v1 imports remain compatible. Preview station/confirm loop state stays local UI and does not enter gift downloads.
