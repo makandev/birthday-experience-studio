@@ -54,3 +54,7 @@ Every small input should quickly create visible value. Show the actual staged op
 Real iPhone Safari creation, recipient taps and an understandable supported delivery path are release requirements. Desktop Chromium/WebKit do not establish physical-device or Files-app support. See IOS_COMPATIBILITY and STATUS for evidence and the open release gate.
 
 Standalone HTML is the primary gift artifact on every device, including iPhone/iPad. Offline gifts contain all required content/assets/runtime in one file and require no BES page, account, upload or second-file import to play. An optional experimental reader must never replace this contract or count as resolution of broken local iPhone HTML delivery.
+
+## Binding experience direction
+
+Read the complete [Experience North Star](../BES_EXPERIENCE_NORTH_STAR.md) before experience decisions. [Rebuild masterplan](../BES_EXPERIENCE_REBUILD_MASTER_PLAN.md) tracks the bounded current cycle. Technical acceptance and qualitative experience acceptance are separate; private reference contents never enter public artifacts.

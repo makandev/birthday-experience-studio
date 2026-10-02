@@ -66,3 +66,7 @@ Standalone HTML is the primary gift artifact on every device, including iPhone/i
 ## One-time historical privacy cleanup (2026-10-02)
 
 The user explicitly requested removing the original benchmark recipient identity from older files as well as current documents. This narrowly authorizes the completed four-commit history sanitation on main/codex/bes-foundations using atomic exact force-with-lease; unrelated ancestors and the release tag were preserved. This is not standing authorization for future history rewrites. Server-retained old commit copies require GitHub Support; do not claim that branch sanitation erases caches or independent clones.
+
+## Binding experience direction
+
+Read the complete [Experience North Star](BES_EXPERIENCE_NORTH_STAR.md) before experience decisions. [Rebuild masterplan](BES_EXPERIENCE_REBUILD_MASTER_PLAN.md) tracks the bounded current cycle. Technical acceptance and qualitative experience acceptance are separate; private reference contents never enter public artifacts.
