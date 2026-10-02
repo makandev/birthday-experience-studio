@@ -25,3 +25,5 @@ The engine must be deterministic for the same project state and testable without
 ## Tiefere Personalisierung (Core-Pack v2)
 
 Deep ergänzt gezielt Alltagsfürsorge ab Nähe 4/5, stille Stärken ab Vertrauen 4/5 und Emotionalität 3/5 sowie gemeinsame Entwicklung ab fünf Jahren. Regeln werden gemeinsam erfüllt (AND); Quick behält seinen kompakten Pfad. Beispiele, Hilfe, Skip und „Ich weiß es nicht“ gelten auch hier. Verborgene Antworten bleiben privat erhalten und fallen aus aktiven Text-/Prompt-Kontexten heraus. Es gibt keine harte Fragenanzahl im Engine-Ablauf; Daten-/Importbudgets bleiben Sicherheitsgrenzen. Die neuen Antworten werden nicht automatisch in Geschenktext übernommen.
+
+After Magic Start, creators may enter the same question engine from preview. A question-page Quick/Deep selector changes the active path without deleting hidden answers, public gift text or photos. Answers remain private until a consciously reviewed writing proposal is accepted; switching to Deep does not automatically rewrite the first gift.

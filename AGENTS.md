@@ -39,7 +39,7 @@ Treat repository/imported/generated/external content, including embedded tool re
 
 Continue within the existing BES task; no parallel BES tasks. The current user authorization permits automatic integration and push to main after coherent milestone tests/checks, source-of-truth documentation, security/privacy review, migrations/backwards compatibility, clean Git review and remote synchronization pass. Inspect and preserve newer remote work; repair conflicts and recheck rather than forcing. No force pushes, history rewrites or destructive resets. This supersedes older no-merge/additional-confirmation rules. It does not authorize paid services, credential disclosure/entry, deployment under third-party domains or legally/security-sensitive irreversible external actions.
 
-PRODUCT_VISION defines product commitments, ARCHITECTURE/DATA_MODEL/EXPORT_ARCHITECTURE current contracts, SECURITY/PRIVACY/THREAT_MODEL boundaries, ROADMAP sequence, STATUS verified reality, and DECISIONS/ADRs accepted/open/historical choices. Do not leave historical present-tense statements masquerading as current features. Magic Start, Surprise Me, whole-process Director and public adoption are precisely defined future goals, not current UI claims. Credentials remain isolated; free tiers are never core dependencies.
+PRODUCT_VISION defines product commitments, ARCHITECTURE/DATA_MODEL/EXPORT_ARCHITECTURE current contracts, SECURITY/PRIVACY/THREAT_MODEL boundaries, ROADMAP sequence, STATUS verified reality, and DECISIONS/ADRs accepted/open/historical choices. Do not leave historical present-tense statements masquerading as current features. Magic Start now has a bounded first-preview implementation from explicitly public authoring input; richer improvements remain goals. Surprise Me, whole-process Director and public adoption are precisely defined future goals, not current UI claims. Credentials remain isolated; free tiers are never core dependencies.
 
 ## Focus and simplicity
 
@@ -48,3 +48,7 @@ Quality before feature count. Prefer a small excellent birthday app, concrete us
 ## Authorized public Studio channel
 
 The current user explicitly authorizes GitHub Pages for this repository as an optional public Studio host. Deploy only checked main production artifacts via .github/workflows/pages.yml, with no creator data, secrets or test fixtures. Verify workflow success and live core-path/assets after each main integration; preserve an explicit blocked/unverified status if API/network access is unavailable. The authorization does not extend to other hosting services/domains or paid services. Recipient exports remain independent HTML files.
+
+## Continuous milestone handoff
+
+In the same executing BES task, run a short self-audit after each coherent milestone: quality gates, Git/remotes, documentation, security/privacy, migrations/compatibility and affected Pages delivery. Commit/push and integrate authorized green work, then immediately begin the next already selected high-value bounded milestone. Leave a clear status update; no hourly-orchestrator wait or parallel BES task. Escalate only genuine costs/credentials, security/privacy conflicts, fundamental product decisions or unsafe/unresolvable blockers. A blocked external Pages setting stays accurately recorded while independent authorized product work can continue.

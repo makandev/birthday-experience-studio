@@ -9,7 +9,7 @@ BES is an evolving 0.x product; version labels do not imply every aspiration is 
 - Local photo pipeline: original preservation, bounded metadata-free JPEG derivatives, portable copies, Offline embedding and deliberate Online consent/fallback.
 - Progressive disclosure, keyboard focus, help/examples/skip/unknown and dimension-gated Deep questions.
 
-## Current milestone: Storage Integrity & Safe Concurrency
+## Verified milestone: Storage Integrity & Safe Concurrency
 
 Transactional project/asset persistence, central confirmed deletion, reference/recovery-aware GC, revision fencing, migration/retirement journal and failure/multi-tab tests. Completion is determined by the full quality gates in STATUS, not by roadmap placement. Include audit repairs: documentation consolidation, foreign-photo metadata regression and reproducible standalone testing.
 
@@ -17,8 +17,8 @@ Transactional project/asset persistence, central confirmed deletion, reference/r
 
 | Class      | Selected direction                                                                           | Rationale                                                                     |
 | ---------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| NOW        | Finish storage/concurrency, import regression and documentation gates                        | Prevent loss before more visible features                                     |
-| NEXT       | Improve beginner onboarding/Magic Start and the direct path to a convincing first preview    | Few inputs, visible value, less creator complexity                            |
+| NOW        | Finish external Pages activation/live verification while independent work continues          | Prevent loss before more visible features                                     |
+| NOW        | Validate bounded Magic Start and first-preview flow                                          | Few inputs, visible value, less creator complexity                            |
 | NEXT       | Select one coherent storytelling/media improvement after a short UX review                   | Quality/wow benefit outweighs breadth; do not implement every candidate block |
 | LATER      | Local soundtrack, safe public packs, optional sharing and public-adoption assets             | Only when their concrete benefit justifies a bounded milestone                |
 | EXPERIMENT | Surprise Me alternatives using the existing safe composition primitives                      | Test usefulness without a generic orchestration framework                     |
@@ -28,4 +28,6 @@ After the few highest-value experience improvements, stabilize browser/mobile/ac
 
 Longer-term goals remain in PRODUCT_VISION, not an unlimited implementation backlog. Concrete providers require official documentation/security/licensing review; hosted sharing stays optional. Before a 1.0 claim, meet data compatibility, privacy/export, offline reliability, accessibility/device and novice usability gates. No roadmap item makes BES permanently finished.
 
-The user-authorized early public Studio channel is GitHub Pages from checked main, with a production-subpath browser gate. Complete activation/live verification when network/API access is available; this bounded delivery work precedes the next UX milestone and introduces no hosting dependency into the core.
+The user-authorized early public Studio channel is GitHub Pages from checked main, with a production-subpath browser gate. Complete activation/live verification when network/API access is available; this bounded delivery work is checked alongside independent UX work and introduces no hosting dependency into the core.
+
+The first Magic Start now reuses existing letter/wish/direction primitives, keeps inputs/public review/undo and offers Quick/Deep/photo refinement. Discovery selected recipient photo exploration as the next small experience improvement: let recipients see the uncropped gift copy using native HTML, without duplicate image bytes, scripts, a gallery framework or new data schema. Fullscreen galleries/video and broader choreography stay LATER.

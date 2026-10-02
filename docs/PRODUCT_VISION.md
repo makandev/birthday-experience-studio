@@ -11,7 +11,7 @@ Birthday Experience Studio helps normal, nontechnical people create a highly per
 
 ## Beginner creation and personalization
 
-Magic Start is a future product goal: a convincing first birthday result from very few inputs, followed by optional Quick/Deep refinement. It is not implemented merely because the current workflow has a start screen. Quick asks roughly 6–10 important questions; Deep adapts without an artificial engine question limit. Help, examples, skip and “I don't know” are essential.
+Magic Start aims for a convincing first birthday result from very few inputs, followed by optional Quick/Deep refinement. A bounded first implementation now assembles existing safe letter/wish/direction blocks from name, relationship and an explicitly recipient-visible sentence. It does not automatically read private questionnaire answers or invent facts; review/edit/photos and refinement remain available. This is the first implementation, not the full long-term quality promise. Quick asks roughly 6–10 important questions; Deep adapts without an artificial engine question limit. Help, examples, skip and “I don't know” are essential.
 
 Surprise Me is a future way to suggest alternative coherent dramaturgies/compositions from the same validated BES primitives and inputs, not a random collection of effects. The creator remains in control and can compare/revise proposals.
 

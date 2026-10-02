@@ -6,7 +6,7 @@ Tell BES about the person, add memories/photos, and assemble a personal interact
 
 ## Live Studio / GitHub Pages
 
-Intended public URL: <https://makandev.github.io/birthday-experience-studio/>. The workflow is implemented and its GitHub build/test job passed; **live deployment is blocked until Pages is activated**. The available integration rejects the Pages API activation with HTTP 403. In repository **Settings → Pages → Build and deployment**, enable Pages with **Source: GitHub Actions**. The user has made the repository public. This removes the private-repository eligibility concern but does not grant the integration Pages-management permissions. The activation retry still returns HTTP 403; the Pages site is absent (GET 404). No additional hosting service is needed.
+Public Studio URL: <https://makandev.github.io/birthday-experience-studio/>. Pages is now enabled with GitHub Actions as its source. Deployment/live verification of the current checked main is in progress; STATUS records the actual observed result. The repository is public following the user's visibility change. No paid service or new account is required.
 
 `.github/workflows/pages.yml` deploys checked `main` pushes (or a manual run on `main`): locked npm install, TypeScript, lint, formatting, module tests, production build, and a Chromium production-subpath gift-creation smoke test must pass before only `dist/` is uploaded. Deployment uses GitHub's short-lived workflow token/OIDC, never application credentials. `npm run build:pages` selects `/birthday-experience-studio/`; normal development/builds retain `/`. The Studio has no path-based client router.
 
@@ -27,7 +27,9 @@ For a production bundle: `npm run build`, then `npm run preview`. Vite prints th
 
 ## Current creation flow
 
-Person/relationship → adaptive Quick/Deep questions with help/examples/skip/unknown → own or consciously approved guided text → photos and memory captions → isolated recipient preview → offline HTML gift.
+Magic Start (German UI: „Schnell zur ersten Vorschau“) takes a name, relationship and one explicitly public sentence to create an editable first gift with a letter, wish and coordinated style. It uses local templates, no AI and no invented memories. Inputs autosave, and the first composition is undoable. Review it, add photos/text or continue with Quick/Deep questions. Existing composed gifts are resumed rather than overwritten.
+
+Alternatively: Person/relationship → adaptive Quick/Deep questions with help/examples/skip/unknown → own or consciously approved guided text → photos and memory captions → isolated recipient preview → offline HTML gift.
 
 Choose Emotional, Funny, Elegant or Cinematic direction to coordinate colors, typography, order, pacing, photo style and finite effects. Open optional settings to adjust intensity 0–3, colors and block order; expanded sections and keyboard focus survive edits. Deep questions adapt to closeness, trust, emotionality and shared years. Reduced motion wins automatically; recipients can switch motion off.
 

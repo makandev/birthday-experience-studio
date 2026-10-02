@@ -28,3 +28,7 @@ ADR 0001's single localStorage draft was appropriate for the text-only 0.1 proof
 ## Autonomous integration policy
 
 The user's current instruction permits autonomous reversible engineering and integration into main after a coherent milestone passes relevant tests/checks, documentation/security/privacy review, migration/compatibility checks, clean Git review and remote synchronization. Inspect new remote changes and resolve conflicts safely; never force push, rewrite history or reset user work. Repo integration does not authorize paid services, credentials, deployment under third-party domains or legally/security-sensitive irreversible external actions. Continue in the same BES task; do not create parallel BES tasks. This replaces historical additional-confirmation/no-merge instructions.
+
+## Bounded first-preview decision (2026-10-02)
+
+Magic Start uses explicit recipient-visible authoring (name, relationship, one sentence), current CreatorProject fields and existing deterministic blocks/directions. The native dialog autosaves public inputs, submits for a reviewable preview and supports undo. No schema migration/new persisted workflow type, provider or abstraction is introduced. Private questionnaire answers are never automatic seed input; an existing composed gift is not replaced. Quick/Deep and photos refine the same project. This is a small product improvement under ADR 0001's separation/privacy contract, not a new architecture program.

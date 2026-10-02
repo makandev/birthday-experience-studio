@@ -36,3 +36,7 @@ Stimmung, Exportprofil, externe Zustimmung und Geschenk-Erstellung bleiben direk
 ## Safe storage choices
 
 Saved status means the asynchronous transaction completed; pending/failed/conflict states are distinct. Conflicts preserve this tab's input and offer private backup before explicit canonical adoption. Deletion and permanent cleanup have separate clear confirmations; cleanup explicitly ends undo. Do not expose revisions/transaction mechanics as normal product steps.
+
+## Magic Start and first preview
+
+„Schnell zur ersten Vorschau“ is the fresh-gift primary action. A named native dialog focuses the name field, explains that the seed sentence is public, and autosaves name/relationship/public text with an in-dialog status. A reviewed submission creates the first gift; Back/escape keeps the authored input. Composition is undoable; existing composed gifts resume safely. Quick/Deep are also available through the traditional path and directly within questions. The preview has clear routes to text/photos and further questions. Mobile actions stack; focus returns to the launcher/new heading and remains on the question mode during changes. No photo or AI is required for the first preview.
