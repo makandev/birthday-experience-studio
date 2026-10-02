@@ -27,3 +27,5 @@ Transactional project/asset persistence, central confirmed deletion, reference/r
 After the few highest-value experience improvements, stabilize browser/mobile/accessibility and release quality. Known storage quarantine/export-lease limits should get focused fixes when evidence requires them, not a month-long foundation program. Broader device checks are part of stabilization and should accompany meaningful UI work.
 
 Longer-term goals remain in PRODUCT_VISION, not an unlimited implementation backlog. Concrete providers require official documentation/security/licensing review; hosted sharing stays optional. Before a 1.0 claim, meet data compatibility, privacy/export, offline reliability, accessibility/device and novice usability gates. No roadmap item makes BES permanently finished.
+
+The user-authorized early public Studio channel is GitHub Pages from checked main, with a production-subpath browser gate. Complete activation/live verification when network/API access is available; this bounded delivery work precedes the next UX milestone and introduces no hosting dependency into the core.

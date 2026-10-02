@@ -44,3 +44,7 @@ PRODUCT_VISION defines product commitments, ARCHITECTURE/DATA_MODEL/EXPORT_ARCHI
 ## Focus and simplicity
 
 Quality before feature count. Prefer a small excellent birthday app, concrete user value and bounded milestones over speculative frameworks or a large multi-year platform. No enterprise layers/microservices or abstractions without a selected product need. After larger milestones, briefly classify ideas NOW/NEXT/LATER/EXPERIMENT/REJECTED by value, wow effect, usability, effort and maintenance. Experiments do not automatically enter core architecture. After storage integrity, prioritize beginner flow/visible quality, a few strong experience functions, then stabilization and release readiness.
+
+## Authorized public Studio channel
+
+The current user explicitly authorizes GitHub Pages for this repository as an optional public Studio host. Deploy only checked main production artifacts via .github/workflows/pages.yml, with no creator data, secrets or test fixtures. Verify workflow success and live core-path/assets after each main integration; preserve an explicit blocked/unverified status if API/network access is unavailable. The authorization does not extend to other hosting services/domains or paid services. Recipient exports remain independent HTML files.

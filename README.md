@@ -4,6 +4,16 @@
 
 Tell BES about the person, add memories/photos, and assemble a personal interactive birthday experience. Core creation needs no accounts, paid APIs, subscriptions, cloud service or AI provider.
 
+## Live Studio / GitHub Pages
+
+Intended public URL: <https://makandev.github.io/birthday-experience-studio/>. The workflow is implemented; activation and the first live deployment are **not yet verified** because this cloud environment blocks the GitHub API and Pages host. If Pages is not enabled, repository **Settings → Pages → Build and deployment → Source: GitHub Actions** must be set. No additional hosting service is needed.
+
+`.github/workflows/pages.yml` deploys checked `main` pushes (or a manual run on `main`): locked npm install, TypeScript, lint, formatting, module tests, production build, and a Chromium production-subpath gift-creation smoke test must pass before only `dist/` is uploaded. Deployment uses GitHub's short-lived workflow token/OIDC, never application credentials. `npm run build:pages` selects `/birthday-experience-studio/`; normal development/builds retain `/`. The Studio has no path-based client router.
+
+Hosting publishes static Studio code only: no project storage, imported photos, private answers, credentials or test fixtures. Creator data stays in browser storage; gift HTML remains independently portable. GitHub receives ordinary hosting requests/IP information. Storage belongs to the browser origin, not a repository path: other content hosted on the same `makandev.github.io` origin can share that origin's storage privileges. Use fictional data for public demos and keep private draft backups. Moving from localhost to Pages does not transfer saved gifts automatically.
+
+To reproduce the Pages gate: `npm run build:pages`, then `npm run test:pages` (use `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium` here). After every main integration, verify the Actions run and live core flow/assets before declaring delivery complete. Publishing the Studio is optional distribution, never a core cloud requirement.
+
 ## Run locally
 
 Node.js >=22.12 and npm (validated with Node 24.19.0):

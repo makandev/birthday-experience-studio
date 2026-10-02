@@ -35,7 +35,7 @@ Browser checks use system Chromium (`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bi
 
 ## Persistence and integration policy
 
-Work continues in the same BES task on codex/bes-foundations, with coherent commits and no force/history rewrite. The user's updated policy permits main integration/push only after quality, documentation, security/privacy, migration/compatibility and remote synchronization gates pass. Main integration is repository work, not a public deployment or release. Generated assets/reports/node_modules remain ignored.
+Work continues in the same BES task on codex/bes-foundations, with coherent commits and no force/history rewrite. The user's updated policy permits main integration/push only after quality, documentation, security/privacy, migration/compatibility and remote synchronization gates pass. Main integration is repository work; the newer explicit user authorization additionally permits the optional GitHub Pages Studio channel below. It does not authorize other deployments or a finished-product release. Generated assets/reports/node_modules remain ignored.
 
 ## Known limits
 
@@ -50,3 +50,9 @@ Work continues in the same BES task on codex/bes-foundations, with coherent comm
 ## Next recommended bounded milestone
 
 Improve the beginner path to a convincing first preview: a small Magic Start using existing safe text/photo/composition primitives, with optional Quick/Deep refinement. Start with a short UX review, choose few changes with concrete value and avoid generic orchestration/framework work. Then select one strong experience improvement, followed by browser/mobile/accessibility stabilization. Known storage recovery limits get focused fixes when evidence requires them, not an expanded foundation program.
+
+## GitHub Pages delivery
+
+A minimal main-only workflow checks installation, TypeScript, lint, formatting, module tests and the production subpath browser smoke before publishing only dist. Local dev retains its root base; the Pages build uses /birthday-experience-studio/. No path router, backend, external runtime libraries, secrets, creator storage or test fixtures are deployed. This optional public host changes neither local-first creation nor standalone gift exports.
+
+Target URL: https://makandev.github.io/birthday-experience-studio/. The production Pages build and Chromium subpath smoke passed locally on 2026-10-02: assets load under the repository path and the core flow previews/downloads an offline gift without browser/asset errors. The first smoke exposed a local preview base mismatch; the preview configuration was corrected and the unchanged assertions passed. TypeScript, 99 module tests, lint and format also passed for the Pages addition. Actual Pages activation, Actions status and the live page are unverified: GitHub API and makandev.github.io requests receive proxy HTTP 403 under this environment's package-manager-only network policy. Required host additions and updated startup instructions are saved in the environment configuration draft, not applied to the runtime. If not already enabled, Settings → Pages → Source: GitHub Actions is the concrete repository setting required. No credential values are requested or added.

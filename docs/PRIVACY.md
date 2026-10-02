@@ -19,3 +19,7 @@ Manual external-AI writing shows exactly the active answers/name/boundaries that
 Online photos require deliberate source consent, origin-bounded CSP and no-referrer; hosts can still see recipient IP/cookies, availability is not guaranteed, and descriptions remain as fallback. Offline/Restricted gifts have no required external requests. Optional future hosting must preserve these privacy boundaries and never be mandatory.
 
 Historical storage tradeoffs are in ADRs 0001/0002/0004; ADR 0005 defines current transactional behavior. No perfect privacy inference, durability or prompt-injection immunity is claimed.
+
+## Optional public Studio hosting
+
+GitHub Pages serves only static Studio code, not creator projects, imported media or gift exports. Hosting requests expose ordinary request/IP metadata to GitHub; no analytics are added. Browser storage is origin-scoped rather than path-scoped: all repositories served under makandev.github.io share that origin's trust boundary. Other untrusted applications on that origin can access its storage. Private projects remain unencrypted local data; avoid placing untrusted content on the same origin and keep separate backups. Localhost and Pages origins do not automatically transfer data.
