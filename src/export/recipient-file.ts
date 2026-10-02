@@ -19,6 +19,15 @@ const envelope = z.strictObject({
     intensity: z.number().int().min(0).max(3),
     profile: z.literal('offline'),
     externalDomains: z.array(z.never()).length(0),
+    composition: z
+      .strictObject({
+        version: z.literal(1),
+        variant: z.enum(['champion', 'challenger']),
+        arc: z.enum(['portrait', 'encore']),
+        register: z.enum(['personal', 'respectful']),
+        pace: z.enum(['gentle', 'bright']),
+      })
+      .optional(),
     blocks: z
       .array(
         z.strictObject({

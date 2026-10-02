@@ -122,6 +122,14 @@ export const projectSchema = legacyProjectSchema
       .extend({
         directionId: z.enum(['emotional', 'funny', 'elegant', 'cinematic']),
         intensity: z.number().int().min(0).max(3),
+        composition: z
+          .object({
+            version: z.literal(1),
+            variant: z.enum(['champion', 'challenger']),
+            arc: z.enum(['portrait', 'encore']),
+          })
+          .strict()
+          .optional(),
       })
       .strict(),
     exportConfig: legacyProjectSchema.shape.exportConfig

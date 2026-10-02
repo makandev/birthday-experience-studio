@@ -12,6 +12,13 @@ export interface ExportExperience {
   intensity: number;
   profile: 'offline' | 'online';
   externalDomains: string[];
+  composition?: {
+    version: 1;
+    variant: 'champion' | 'challenger';
+    arc: 'portrait' | 'encore';
+    register: 'personal' | 'respectful';
+    pace: 'gentle' | 'bright';
+  };
   blocks: { type: string; version: number; data: Record<string, string> }[];
 }
 export function projectExperience(
@@ -69,5 +76,22 @@ export function projectExperience(
     externalDomains: capabilities.externalDomains,
     themeId: themes.get(project.experience.themeId)?.id ?? 'warm',
     blocks: exported,
+    ...(project.experience.composition
+      ? {
+          composition: {
+            ...project.experience.composition,
+            register:
+              project.relationship.dimensions.formality >= 3 ||
+              project.relationship.dimensions.context === 'professional'
+                ? ('respectful' as const)
+                : ('personal' as const),
+            pace:
+              project.experience.directionId === 'funny' &&
+              project.relationship.dimensions.humor >= 2
+                ? ('bright' as const)
+                : ('gentle' as const),
+          },
+        }
+      : {}),
   };
 }

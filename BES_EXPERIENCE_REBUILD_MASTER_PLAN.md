@@ -36,3 +36,7 @@ Use existing six content block types and a few scene roles. No provider, audio e
 - Baseline instructions, STATUS, ADR 0006, persistence/recipient contracts, composition/render/runtime and existing recipient/mobile tests inspected before edits.
 - Original reference unavailable; no direct comparison or physical-device claim.
 - Implementation, exact check counts, visual observations, commits and live deployment will be recorded here as phases complete.
+
+### Private reference supplied after baseline inspection
+
+The user subsequently supplied the private original HTML. It is kept outside the checkout with restricted file permissions and was opened in an isolated offline Chromium context at 390×844; external requests were blocked and no source text, identity, images or screenshots entered repository/test output. Ten deliberate interaction attempts showed changing control counts, three canvas layers and no horizontal overflow. These abstract browser observations support staged progression and layered effects as quality criteria. They are not physical iPhone evidence or a human emotional superiority judgment. Direct qualitative benchmark acceptance remains open; the earlier unavailable finding describes the initial baseline only.

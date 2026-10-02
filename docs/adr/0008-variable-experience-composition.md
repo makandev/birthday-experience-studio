@@ -1,0 +1,11 @@
+# ADR 0008 — Bounded variable experience composition
+
+Status: implementation in progress; acceptance in rebuild masterplan.
+
+The North Star requires different actual dramaturgies, not the same eight cards with different colors. Keep ADR 0006's known safe runtime, export projection, touch handling and readable no-JS fallback. Preserve its original fixed flow as an explicitly selectable Champion. Add a maintained Challenger with three archetypes and two coherent arcs, existing six content blocks and one encore scene role.
+
+Person/relationship dimensions may select a derived respectful register and gentle/bright pacing. Raw relationship type/dimensions, private questionnaire answers, filenames and original metadata never enter ExportExperience. Available enabled public blocks determine optional beats. No photos means a non-factual curiosity interaction, not an invented memory. Public letter/wish supplies the final core message. Deterministic alternate arcs retain all enabled content once; choice prioritizes an upcoming real scene and contributes a maintained echo to the finale.
+
+CreatorProject v2 gains an optional strict versioned composition setting. Old v1 migration and old v2 projects have no setting and remain Champion; adoption is an explicit editor action with existing project undo. This additive compatibility path neither changes storage schemas nor rewrites old drafts. New Magic Start adoption is decided only after the documented first comparison. Recipient envelope v1 accepts an optional strict projected setting; old recipient files remain readable. Older Studio builds cannot understand new settings and fail closed on import; never promise forward compatibility or reopen older clients alongside the current writer.
+
+Motion/finale use maintained finite durations and deterministic particle budgets, quiet emotional versus celebratory/cinematic payoff. No audio, autoplay, imported JavaScript, network, credentials, telemetry or new dependencies. Reduced motion/zero intensity/pause/skip/replay and silent reading remain available. A comparison chooser is not A/B tracking or an automatic winner system. Qualitative and technical evidence remain separate, and physical iPhone/benchmark gates stay open until observed.
