@@ -16,3 +16,7 @@ Primary audience includes complete internet/computer beginners.
 ## Erste Umsetzung
 
 Fünf Schritte mit Rücknavigation, große primäre Aktionen, sichtbarer Speicherstatus und Fortschritt, Hilfe/Beispiele, Skip/Unknown, optional aufgeklappte Beziehungsdimensionen, bewusste Vorschlagsübernahme und bestätigter Neustart mit Rückgängig. Semantische Formulare, Labels, sichtbare Fokuszustände, Fokus auf die neue Schrittüberschrift, reduzierte Bewegung und responsive Breiten sind Teil der Shell. Automatisierte axe-Prüfungen begleiten den Browserpfad; manuelle Screenreader-/Anfängertests bleiben erforderlich.
+
+## Sicherung und Wiederaufnahme
+
+„Meine Geschenke & Sicherung“ bündelt Creator-Backup, geprüften Import und die lokale Sammlung mit einfachen Aktionen. Import zeigt zuerst eine Zusammenfassung; Änderungen folgen erst nach Bestätigung. Dialoge haben benannte Überschriften, Schrittzahlen sind für Screenreader dekorativ.

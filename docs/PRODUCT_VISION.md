@@ -23,3 +23,9 @@ Birthday is the first domain. Do not prematurely generalize the UI into a generi
 ## Success
 
 A novice can create something that feels genuinely made for one particular person rather than filling out a generic greeting-card template.
+
+## Clarified product direction
+
+“Tell BES about the person, add memories/photos, and BES assembles a personal interactive birthday experience.” The entire core must work without accounts, paid APIs, subscriptions, mandatory servers or external AI. A provider's temporary free tier is never a core dependency.
+
+BES is local-first and online-capable, with explicit Offline/Restricted and Standard/Online export profiles. Later sharing/hosting is optional. Emotional, Funny, Elegant and Cinematic directions coordinate storytelling, typography, media, transitions, pacing, surprise and finale; they are not disconnected decorative effects. Community content is declarative birthday content, not arbitrary JavaScript. Optional AI Director output is structured untrusted data, validated and reviewed before application.

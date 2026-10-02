@@ -17,3 +17,7 @@ Alle Rohantworten bleiben im CreatorProject. Geführtes Schreiben zeigt einen Vo
 Die KI-Anweisung ist erst nach Wahl des externen Schreibmodus sichtbar und zeigt exakt die Daten, die beim manuellen Kopieren weitergegeben würden. Grenzen können darin enthalten sein, um den Dienst zum Weglassen dieser Inhalte aufzufordern; der Nutzer wird darauf hingewiesen. Keine API-Anfrage wird ausgeführt.
 
 Ein Entwurf und eine Backup-Kopie liegen unverschlüsselt im Browserprofil. Keine dauerhafte Verfügbarkeit versprechen: Speicher kann blockiert/voll oder vom Browser gelöscht sein. Speicherfehler sind sichtbar; unbekannte/beschädigte Entwürfe bleiben bis zur bewussten Entscheidung unberührt. Exportierte Geschenke sind nicht verschlüsselt, und aufklappbare Inhalte sind für jeden mit Zugriff auf die Datei lesbar.
+
+## Entwurfsdateien und Sammlung
+
+Creator-Sicherungen enthalten private Antworten. Sie sind keine Empfängergeschenke. Import wird geprüft und bestätigt; das aktuelle Geschenk bleibt lokal erhalten. Bis zu acht inaktive Geschenke sind möglich. Keine Zugangsdaten in Projekten; unbekannte Root-Felder werden zurückgewiesen. Ein Speicherversagen lässt die bestehende Sammlung unberührt beziehungsweise versucht ihren Rollback.

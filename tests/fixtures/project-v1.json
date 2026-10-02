@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy-project",
+  "createdAt": "2026-10-02T00:00:00.000Z",
+  "updatedAt": "2026-10-02T00:01:00.000Z",
+  "mode": "quick",
+  "recipient": {
+    "name": "Anna"
+  },
+  "relationship": {
+    "typeId": "friend",
+    "uncertain": false,
+    "dimensions": {
+      "closeness": 3,
+      "formality": 1,
+      "trust": 3,
+      "humor": 3,
+      "emotionality": 3,
+      "yearsKnown": 5,
+      "context": "private",
+      "tone": "warm"
+    }
+  },
+  "answers": {
+    "memory": {
+      "status": "answered",
+      "value": "PRIVATE HISTORICAL MEMORY"
+    }
+  },
+  "memories": [],
+  "writing": {
+    "method": "self",
+    "letter": "A historical birthday letter.",
+    "wish": "Happy birthday!",
+    "surprise": ""
+  },
+  "media": [],
+  "experience": {
+    "themeId": "warm",
+    "blocks": [
+      {
+        "id": "letter-1",
+        "type": "letter",
+        "version": 1,
+        "enabled": true,
+        "data": {
+          "text": "A historical birthday letter."
+        }
+      }
+    ]
+  },
+  "exportConfig": {
+    "exporterId": "single-html",
+    "locale": "de"
+  },
+  "workflow": {
+    "step": "writing",
+    "questionId": "memory"
+  }
+}

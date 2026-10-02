@@ -35,3 +35,7 @@ Use TypeScript, tests, linting/formatting and accessible semantic HTML. Framewor
 Die oben beschriebenen Grenzen sind in `src/` umgesetzt: `domain/`, `registries/`, `engines/`, `studio/`, `experience/`, `persistence/`, `export/`. Der Stack ist TypeScript + Vite, vorerst ohne UI-Framework; siehe [ADR 0001](adr/0001-typescript-local-first-vertical-slice.md).
 
 Die Fach-Engines sind unabhängig vom Browser. Zod validiert das v1-Projekt an Restore-/Exportgrenzen. Die kleine Studio-UI verwaltet Schritte und Eingaben; Eingaben speichern sofort lokal, Schrittwechsel rendern die Oberfläche neu. Vorschau und Export teilen den Empfänger-Renderer, die Vorschau wird mit leerer iframe-Sandbox isoliert. Empfänger-Interaktion nutzt natives `details`, kein Studio-Bundle.
+
+## Sichere Entwurfsverwaltung
+
+Schema v2 und reale v1-Migration ergänzen die bestehenden Grenzen. `security/json.ts` prüft JSON-Budgets und reservierte Keys; `persistence/drafts.ts` trennt Creator-Sicherung vom Empfängerexport. `persistence/library.ts` behält bis zu acht inaktive Projekte und versucht bei fehlgeschlagenen Speicherwechseln einen Rollback. Keine automatische Löschung, keine Garantie für Mehrtab-Transaktionen.

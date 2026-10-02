@@ -19,3 +19,5 @@ Do not settle these merely because a prototype makes one option convenient. Reco
 ## Angenommene Entscheidungen für 0.1
 
 [ADR 0001 – Modularer lokaler TypeScript-Vertical-Slice](adr/0001-typescript-local-first-vertical-slice.md) entscheidet den ersten Stack, typisierte Registries, localStorage für einen Textentwurf, explizite Export-Allowlist, sandboxed Preview, HTML-Escaping/CSP und scriptfreie native Interaktion. Die obige Pending-Liste bleibt für die weitergehenden Ausbaustufen relevant; Medien, umfangreiche Migrationen und Übersetzungskataloge sind noch offen.
+
+[ADR 0002 – Safe drafts and v2 contract](adr/0002-safe-drafts-and-v2-contract.md) dokumentiert Migration, Import-/Sammlungsgrenzen und sichere deklarative Erweiterungen.

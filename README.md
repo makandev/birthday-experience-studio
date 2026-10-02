@@ -1,6 +1,6 @@
 # Birthday Experience Studio
 
-**Früher Entwicklungsstand 0.1 – Architekturbeweis, kein fertiges Produkt.**
+**Früher Entwicklungsstand 0.2 – Architekturbeweis, kein fertiges Produkt.**
 
 BES hilft auch Menschen ohne Programmierkenntnisse, persönliche Geburtstagsgeschenke zu gestalten: Person → adaptive Fragen → eigene Worte → Empfänger-Vorschau → portable Offline-HTML-Datei.
 
@@ -39,7 +39,7 @@ Die Studio-Anwendung besteht im Build aus `dist/` mit lokalen Assets. Der **Gesc
 
 Antworten bleiben privat, solange sie nicht bewusst in Geschenktexte übernommen werden. Lies Vorschläge und fertige Texte vor dem Export: Das Studio kann nicht erkennen, ob du eine private Information selbst in den Brief schreibst.
 
-Daten bleiben im Browser unter `bes.creator-project.v1`. Bei Neustart wird der bisherige Stand unter `bes.creator-project.v1.backup` gesichert; eine weitere Sicherung ersetzt diese einzelne Backup-Kopie. Browserdaten sind nicht verschlüsselt: Andere Personen mit Zugriff auf dein Browserprofil können sie lesen. Löschen von Browserdaten kann Entwürfe entfernen. Im Fehlerfall kann ein unlesbarer Entwurf als JSON gesichert werden; ein JSON-Import ist noch nicht implementiert.
+Daten bleiben im Browser unter `bes.creator-project.v1`. Bei Neustart wird der bisherige Stand unter `bes.creator-project.v1.backup` gesichert; eine weitere Sicherung ersetzt diese einzelne Backup-Kopie. Browserdaten sind nicht verschlüsselt: Andere Personen mit Zugriff auf dein Browserprofil können sie lesen. Löschen von Browserdaten kann Entwürfe entfernen. Im Fehlerfall kann ein unlesbarer Entwurf als JSON gesichert werden; über „Meine Geschenke & Sicherung“ lassen sich geprüfte JSON-Entwürfe importieren und bis zu acht weitere Geschenke behalten. Entwurfsdateien enthalten private Antworten, sind keine Empfängergeschenke und werden vor dem Öffnen bestätigt. Das aktuelle Geschenk bleibt in der Sammlung.
 
 Die KI-Hilfe zeigt vor dem Kopieren die vollständige Anweisung inklusive persönlicher Antworten und Grenzen. Erst dein manuelles Einfügen bei einem externen Dienst gibt diese Daten weiter.
 
@@ -74,7 +74,7 @@ Playwright startet den Entwicklungsserver automatisch auf Port 4173. Tests prüf
 
 ```text
 src/
-  domain/       Versioniertes Modell, Validierung, Migrationsgrenze
+  domain/       Versioniertes Modell, Validierung, v1→v2-Migration
   registries/   Beziehungstypen, Frage-Packs, Bausteine, Themes
   engines/      Fragen, Textvorschläge, Komposition
   persistence/  Lokaler Speicher und Restore
@@ -87,3 +87,5 @@ src/
 ```
 
 Siehe [Architektur](docs/ARCHITECTURE.md), [Entscheidungen](docs/DECISIONS.md) und [aktuellen Entwicklungsstand](docs/STATUS.md). Vor Änderungen `AGENTS.md` und relevante Dokumente lesen.
+
+Der Creator-Vertrag ist nun Schema v2. Historische v1-Dateien werden validiert und migriert; unbekannte Versionen bleiben geschützt. Ein Import ist auf 2 MB und begrenzte Tiefe/Sammlungen beschränkt. Siehe [SECURITY.md](SECURITY.md) und [Bedrohungsmodell](docs/THREAT_MODEL.md).

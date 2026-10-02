@@ -37,6 +37,7 @@ describe('recipient-safe single HTML export', () => {
         mimeType: 'image/png',
         name: 'PRIVATE_MEDIA_NAME',
         size: 100,
+        source: { type: 'unavailable' },
       },
     ];
     project.experience.blocks[0].data.internal = 'PRIVATE_BLOCK_FIELD';

@@ -11,9 +11,9 @@ describe('versioned domain and registries', () => {
   it('round-trips a project and does not mutate input', () => {
     const project = createProject();
     expect(parseProject(JSON.parse(JSON.stringify(project)))).toEqual(project);
-    expect(project.schemaVersion).toBe(1);
+    expect(project.schemaVersion).toBe(2);
   });
-  it.each([0, 2, 'broken'])('refuses unsupported schema %s', (version) =>
+  it.each([0, 3, 'broken'])('refuses unsupported schema %s', (version) =>
     expect(() =>
       parseProject({ ...createProject(), schemaVersion: version }),
     ).toThrow(),

@@ -27,3 +27,11 @@ No roadmap item is an endpoint; BES is intended to remain extensible.
 ## Fortschritt
 
 Der 0.1-Architekturpfad ist erstmals implementiert: Shell, v1-Modell, Registries, adaptive Fragen, Texte/Prompt-Hilfe, lokale Speicherung, Vorschau und recipient-safe Export mit Prüfungen. Dieser Stand ist ein früher Vertical Slice. Weitere Anforderungen, Risiken und nächste Schritte stehen in [STATUS.md](STATUS.md).
+
+## 0.2 Foundation milestones
+
+1. Abgeschlossen: 0.1 in GitHub sichern; sichere Entwurfsdateien, Sammlung, reale Migration, SECURITY und Bedrohungsmodell.
+2. Als Nächstes: koordinierte Motion-Richtungen, Exportprofile und validierte provider-neutrale Director-Vorschläge.
+3. Danach: lokale, metadatenbereinigte Fotoderivate mit Originalerhalt, IndexedDB und eingebettetem Export.
+
+Zero-cost Core, Creator-/Empfängergrenze und sichere deklarative Community-Inhalte sind dauerhafte Anforderungen, keine optionale Release-Politur.

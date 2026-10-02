@@ -1,3 +1,4 @@
+import { parseBoundedJson } from '../security/json';
 import { parseProject, type CreatorProject } from '../domain/project';
 export const STORAGE_KEY = 'bes.creator-project.v1';
 export interface StorageLike {
@@ -14,7 +15,10 @@ export function restoreProject(storage: StorageLike): RestoreResult {
     const raw = storage.getItem(STORAGE_KEY);
     if (raw === null) return { status: 'empty' };
     try {
-      return { status: 'restored', project: parseProject(JSON.parse(raw)) };
+      return {
+        status: 'restored',
+        project: parseProject(parseBoundedJson(raw)),
+      };
     } catch {
       return { status: 'invalid' };
     }
@@ -27,7 +31,9 @@ export function saveProject(
   project: CreatorProject,
 ): boolean {
   try {
-    storage.setItem(STORAGE_KEY, JSON.stringify(parseProject(project)));
+    const raw = JSON.stringify(parseProject(project));
+    parseBoundedJson(raw);
+    storage.setItem(STORAGE_KEY, raw);
     return true;
   } catch {
     return false;

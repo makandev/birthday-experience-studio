@@ -46,3 +46,7 @@ Autoritative Laufzeitvalidierung und TypeScript-Typen: `src/domain/project.ts`.
 Migrationen werden nach Quellversion registriert und sequenziell angewendet, anschließend wird das Ergebnis validiert. Für v1 gibt es keine ältere Datenversion. Fehlende, zukünftige oder fehlerhafte Versionen werden nicht überschrieben. Ein Schemawechsel muss Migration, Fixture-Tests und Dokumentation mitbringen.
 
 `ExportExperience` enthält ausschließlich Version, Sprache, aufgelöste Theme-ID und aktive Bausteine mit erlaubten Feldern; keine Creator-ID, Zeitstempel, Antworten, Beziehung, Schreibmethode oder Medienmetadaten.
+
+## Schema v2
+
+V2 ergänzt explizite Exportprofile und Zustimmung für externe Medien, Richtung/Intensität sowie diskriminierte Medienquellen `local | external | unavailable`. V1 wird vor Migration gegen seinen historischen Vertrag geprüft; Antworten, Texte und Reihenfolge bleiben erhalten. Historische Projekte erhalten Intensität 0 und Offline-Profil. Die neuen Felder werden in folgenden Milestones aktiviert.
