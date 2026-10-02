@@ -1,60 +1,27 @@
-# Data Model
+# Current data contracts
 
-All persisted projects require `schemaVersion`. Stable IDs must not depend on display labels.
+## CreatorProject schema v2
 
-Conceptual root:
+The authoritative schema/migration code is `src/domain/project.ts`. Projects have stable IDs, creation/update timestamps and schemaVersion. They contain recipient name, relationship type/uncertainty/dimensions, mode, private answers/memories, writing method and explicitly public letter/wish/surprise, media metadata/sources, ordered block instances, theme/direction/intensity, export profile/consent and workflow position.
 
-```ts
-interface CreatorProject {
-  schemaVersion: number;
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  mode: 'quick' | 'deep';
-  recipient: Recipient;
-  relationship: RelationshipProfile;
-  answers: AnswerStore;
-  memories: MemoryItem[];
-  writing: WritingWorkspace;
-  media: MediaLibrary;
-  experience: ExperienceDraft;
-  exportConfig: ExportConfig;
-}
-```
+Question answers use `answered | skipped | unknown`. Hidden answers remain private; only active questions enter optional writing context. Blocks have id/type/version/enabled and bounded data; unknown enabled types/versions block export. Projects are bounded by import/text/collection budgets. CreatorProject never contains credentials, binary originals, executable packs or transaction authorization.
 
-Separate concepts: Recipient, RelationshipProfile, AnswerStore, MemoryItem, WritingWorkspace, MediaLibrary, ExperienceDraft, ExperienceBlockInstance, ThemeSelection and ExportConfig.
+Local media sources are `local(assetId) | external(public HTTPS URL) | unavailable`. All local media entries retain their assets even if no enabled block uses them. Binary records contain immutable original/processed blobs and dimensions in IndexedDB. Shared IDs can be referenced by several projects; ownership is reference-based, not a single-project owner flag.
 
-## Recipient-safe projection
+## Workspace storage schema (separate from project schema)
 
-Define a separate `ExportExperience`. Never implement export as `JSON.stringify(project)` or equivalent. Only explicitly recipient-visible fields may cross the export boundary.
+IndexedDB `bes-media` version 2 has `assets` and `workspace` stores. `workspace/current` has storageVersion 1, monotone revision, writerId, commit updatedAt, activeId, cleanupBlocked and up to nine entries. Each entry has validated CreatorProject v2, its last modified revision and an optional same-project recovery snapshot. Workspace revision is the transaction fence; timestamps do not decide which write wins. Imports never supply authoritative revision/writer fields.
 
-## Evolution
+Project, collection preference, recovery and binary additions/removals commit in one readwrite transaction. Normal saves compare reference sets; explicit cleanup and initialization use key-only full asset scans. Recovery references count until replaced/released; project deletion removes its recovery too. See [ADR 0005](adr/0005-transactional-workspace-and-asset-lifecycle.md) for migration journal, failure behavior and limits.
 
-Persisted schema versions require migrations. Unknown extension IDs should degrade gracefully where possible rather than corrupting a project.
+## Migration and private transfer
 
-## Implementierter v1-Vertrag
+Historical v1 projects are validated against their historical contract before adding v2 defaults: preserve answers/text/order, Offline profile, intensity 0 and unavailable old media metadata. No bytes are fabricated. Legacy active/library/valid backups migrate into the canonical workspace without clearing source values before commit. Exact source values retire with a retryable journal; unreadable data is protected. Future/malformed canonical data blocks writes and destructive cleanup.
 
-Autoritative Laufzeitvalidierung und TypeScript-Typen: `src/domain/project.ts`.
+Private text drafts contain CreatorProject only. Portable `bes-draft` version 1 envelopes add exactly the needed normalized JPEG copies, never originals. Import validates, reprocesses and remaps only matching local sources and metadata; unrelated/local/external media must remain unchanged. Reviewed confirmation installs project and asset bytes atomically with fresh project identity.
 
-- `recipient`: Name; `relationship`: stabile Typ-ID, Unsicherheit und Nähe/Formalität/Vertrauen/Humor/Emotionalität/Dauer/Kontext/Ton.
-- `answers`: Frage-ID → Status `answered | skipped | unknown` und Text. Inaktive Antworten bleiben privat gespeichert und werden bei KI-Prompts herausgefiltert.
-- `writing`: Methode, expliziter Brief, Wunsch und Überraschung.
-- `experience`: Theme-ID und geordnete Instanzen mit stabiler ID, Typ-ID, Version, Aktivierung und Textfeldern.
-- `memories` und `media`: getrennte, vorbereitete Datenverträge; aktuell keine eigene Erinnerungsverwaltung und nur Medienmetadaten.
-- `exportConfig`: Exporter-ID und Sprache; `workflow`: Studio-Schritt und aktuelle Frage für Restore.
+## ExportExperience v1
 
-Migrationen werden nach Quellversion registriert und sequenziell angewendet, anschließend wird das Ergebnis validiert. Für v1 gibt es keine ältere Datenversion. Fehlende, zukünftige oder fehlerhafte Versionen werden nicht überschrieben. Ein Schemawechsel muss Migration, Fixture-Tests und Dokumentation mitbringen.
+Only schemaVersion, locale, resolved themeId, allowed directionId/intensity/profile/externalDomains and active allowed block fields cross the recipient boundary. Selected local sources resolve to validated JPEG data URLs; selected online sources resolve to validated URLs after consent. No project IDs/revisions/timestamps, private answers, relationship data, writing method, original filenames/EXIF, original binaries, recovery or library data. See [EXPORT_ARCHITECTURE](EXPORT_ARCHITECTURE.md).
 
-`ExportExperience` enthält ausschließlich Version, Sprache, aufgelöste Theme-ID und aktive Bausteine mit erlaubten Feldern; keine Creator-ID, Zeitstempel, Antworten, Beziehung, Schreibmethode oder Medienmetadaten.
-
-## Schema v2
-
-V2 ergänzt explizite Exportprofile und Zustimmung für externe Medien, Richtung/Intensität sowie diskriminierte Medienquellen `local | external | unavailable`. V1 wird vor Migration gegen seinen historischen Vertrag geprüft; Antworten, Texte und Reihenfolge bleiben erhalten. Historische Projekte erhalten Intensität 0 und Offline-Profil. Die neuen Felder werden in folgenden Milestones aktiviert.
-
-## Aktivierte v2-Regie/Profile
-
-Richtung und Intensität werden in der UI gewählt, zum Export projiziert und in Motion-Pläne übersetzt. ExportExperience erhält erlaubte Richtung, Intensität, Profil und aufgelöste externe Origins. Private Director-Vorschläge und Frageideen werden nicht in den Export projiziert. Director v1 ist ein separater, streng validierter Datenvertrag.
-
-## Aktive Fotoquellen und portable Sicherungen
-
-Lokale Medien referenzieren zufällige Asset-IDs in IndexedDB, das Original und JPEG-Derivat getrennt speichert. Foto-Bausteine verwenden mediaId, explizite Beschreibung/Bildunterschrift und erlaubte Fit-/Positionswerte. Der Export ersetzt die Quellenreferenz durch ein geprüftes Bild-SRC; Originalname, IDs und EXIF werden nicht projiziert. Ein portabler Creator-Entwurf darf Geschenkderivate im strikten bes-draft-v1-Envelope tragen; Import prüft die Zuordnung und remappt Asset-IDs. Originale werden nicht in diese Sicherung aufgenommen.
+Historical contracts and tradeoffs are recorded in ADRs; historical descriptions are not current feature claims.

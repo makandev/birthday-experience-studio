@@ -1,39 +1,29 @@
-# Roadmap
+# Evidence-based BES roadmap
 
-This roadmap is directional and must evolve with evidence.
+BES is an evolving 0.x product; version labels do not imply every aspiration is complete. [STATUS](STATUS.md) lists executed validation and limits; [PRODUCT_VISION](PRODUCT_VISION.md) defines the lasting contract.
 
-## 0.1 — Architecture proof / vertical slice
+## Completed foundations
 
-Studio shell; versioned project model; registry foundations; minimal adaptive question engine; writing workspace; simple Experience Preview; recipient-safe single-HTML exporter; local draft persistence; core tests.
+- 0.1 architecture proof: TypeScript/Vite, separated Studio/recipient projection, Quick/Deep questions, guided writing, isolated preview and offline text HTML. Verified and first persisted in commit 1fc0cec.
+- 0.2 foundations: safe private draft transfer, gift collection, historical v1 migration, coordinated motion/profile controls and manual validated Director proposals.
+- Local photo pipeline: original preservation, bounded metadata-free JPEG derivatives, portable copies, Offline embedding and deliberate Online consent/fallback.
+- Progressive disclosure, keyboard focus, help/examples/skip/unknown and dimension-gated Deep questions.
 
-## 0.2 — Experience foundation
+## Current milestone: Storage Integrity & Safe Concurrency
 
-Richer block contracts/renderers, composition recommendations, theme system, media pipeline, export hardening.
+Transactional project/asset persistence, central confirmed deletion, reference/recovery-aware GC, revision fencing, migration/retirement journal and failure/multi-tab tests. Completion is determined by the full quality gates in STATUS, not by roadmap placement. Include audit repairs: documentation consolidation, foreign-photo metadata regression and reproducible standalone testing.
 
-## 0.3 — Personalization depth
+## Bounded next sequence and product discovery
 
-Relationship/question packs, Quick vs Deep paths, “I don't know/help me” guidance, stronger guided writing and external-AI prompt builder.
+| Class | Selected direction | Rationale |
+| --- | --- | --- |
+| NOW | Finish storage/concurrency, import regression and documentation gates | Prevent loss before more visible features |
+| NEXT | Improve beginner onboarding/Magic Start and the direct path to a convincing first preview | Few inputs, visible value, less creator complexity |
+| NEXT | Select one coherent storytelling/media improvement after a short UX review | Quality/wow benefit outweighs breadth; do not implement every candidate block |
+| LATER | Local soundtrack, safe public packs, optional sharing and public-adoption assets | Only when their concrete benefit justifies a bounded milestone |
+| EXPERIMENT | Surprise Me alternatives using the existing safe composition primitives | Test usefulness without a generic orchestration framework |
+| REJECTED | Generic site/AI/plugin platform, enterprise layers or mandatory cloud/free-tier dependencies | Outside the focused product and zero-cost contract |
 
-## 0.4+ — Product maturity
+After the few highest-value experience improvements, stabilize browser/mobile/accessibility and release quality. Known storage quarantine/export-lease limits should get focused fixes when evidence requires them, not a month-long foundation program. Broader device checks are part of stabilization and should accompany meaningful UI work.
 
-Project management, migrations, localization groundwork, accessibility hardening, richer media, template/experience library, import/export of editable projects.
-
-## Before 1.0
-
-Define release-quality gates for data compatibility, privacy leakage tests, offline export reliability, accessibility, browser/device coverage and novice usability.
-
-No roadmap item is an endpoint; BES is intended to remain extensible.
-
-## Fortschritt
-
-Der 0.1-Architekturpfad ist erstmals implementiert: Shell, v1-Modell, Registries, adaptive Fragen, Texte/Prompt-Hilfe, lokale Speicherung, Vorschau und recipient-safe Export mit Prüfungen. Dieser Stand ist ein früher Vertical Slice. Weitere Anforderungen, Risiken und nächste Schritte stehen in [STATUS.md](STATUS.md).
-
-## 0.2 Foundation milestones
-
-1. Abgeschlossen: 0.1 in GitHub sichern; sichere Entwurfsdateien, Sammlung, reale Migration, SECURITY und Bedrohungsmodell.
-2. Abgeschlossen: koordinierte Motion-Richtungen, Exportprofile und validierte provider-neutrale manuelle Director-Vorschläge.
-3. Abgeschlossen: lokale, metadatenbereinigte Fotoderivate mit Originalerhalt, IndexedDB, portablen Kopien und eingebettetem Export.
-4. Abgeschlossen: progressive Vorschau-Einstellungen, Keyboard-Fokus/offene Bereiche und adaptive Deep-Dimensionsregeln.
-5. Nächster zusammenhängender Schritt: explizite Projektlöschung, sichere Asset-Aufbewahrung/Bereinigung und Schutz gegen gleichzeitige Tab-Änderungen.
-
-Zero-cost Core, Creator-/Empfängergrenze und sichere deklarative Community-Inhalte sind dauerhafte Anforderungen, keine optionale Release-Politur.
+Longer-term goals remain in PRODUCT_VISION, not an unlimited implementation backlog. Concrete providers require official documentation/security/licensing review; hosted sharing stays optional. Before a 1.0 claim, meet data compatibility, privacy/export, offline reliability, accessibility/device and novice usability gates. No roadmap item makes BES permanently finished.
