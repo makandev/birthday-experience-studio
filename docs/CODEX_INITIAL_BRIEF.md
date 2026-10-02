@@ -3,9 +3,11 @@
 Read `README.md`, `AGENTS.md` and all documents under `docs/` before implementation.
 
 ## Goal
+
 Build the first architecture-proving vertical slice of Birthday Experience Studio. This is an early 0.x development state, not a final version.
 
 ## First pass
+
 1. Inspect the repository and challenge/document weak assumptions.
 2. Select a suitable technical stack and record the decision as an ADR.
 3. Refine the versioned domain model and extension contracts.
@@ -20,9 +22,11 @@ Build the first architecture-proving vertical slice of Birthday Experience Studi
 12. Update documentation to match reality.
 
 ## Vertical acceptance path
+
 Start → choose/create recipient + relationship → answer several adaptive questions → create/edit text → preview a small personalized experience → export a standalone HTML → open it offline.
 
 ## Do not
+
 - hard-code the product around one specific recipient or existing gift
 - build a monolithic source HTML
 - integrate cloud AI
@@ -31,4 +35,5 @@ Start → choose/create recipient + relationship → answer several adaptive que
 - declare the project finished
 
 ## Completion report
+
 Report architecture decisions, files changed, tests/results, risks, technical debt, open questions, and the recommended next five development steps.

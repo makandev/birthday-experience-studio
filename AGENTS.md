@@ -1,9 +1,11 @@
 # AGENTS.md — Birthday Experience Studio
 
 ## Mission
+
 Build BES as a continuously evolving, modular product. Never optimize only for the current demo at the expense of future extensibility.
 
 ## Non-negotiable rules
+
 1. Treat all 0.x releases as evolving development states, never as the final product.
 2. Keep Studio/Creator code and generated recipient Experience conceptually and technically separated.
 3. Never export private creator answers unless explicitly mapped to recipient-visible content.
@@ -18,9 +20,11 @@ Build BES as a continuously evolving, modular product. Never optimize only for t
 12. Record significant architectural decisions and keep docs synchronized with implementation.
 
 ## Before a substantial change
+
 Check whether it harms: relationship extensibility, adaptive questions, block extensibility, themes, future optional AI providers, offline export, privacy boundaries, backwards compatibility, accessibility, or agent comprehensibility.
 
 ## Agent workflow
+
 Before coding, read README and relevant docs. For meaningful changes: state assumptions, implement the smallest coherent vertical improvement, add/update tests, update affected docs, record important decisions, and report risks/debt/open questions.
 
 Do not claim the product is finished. Leave the repository easier for the next agent to understand.
