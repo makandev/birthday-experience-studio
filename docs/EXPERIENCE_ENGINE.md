@@ -25,16 +25,24 @@ Themes Warm/Klar/Festlich sind separate Registrierungen mit Farb-/Typografietoke
 
 ## Richtungen und Abschluss
 
-Emotional, Fröhlich, Elegant und Filmisch koordinieren Darstellung und Reihenfolge. Ein eigener Finale-Baustein ergänzt die kleine Grundkomposition. Manuelle Theme-/Blockänderungen bleiben möglich; Textsynchronisierung erhält Reihenfolge und Aktivierung. Bewegungsintensität 0–3, mobile Budgets und reduzierte Bewegung gelten auch für den Empfängerexport. Sieben Stationen plus Abschluss ersetzen die Scroll-Komposition als primäres Empfängererlebnis; die Eröffnung startet beim Laden, weitere Stationen nur auf bewusste Navigation.
+Emotional, Fröhlich, Elegant und Filmisch koordinieren Darstellung und Reihenfolge. Ein eigener Finale-Baustein ergänzt die kleine Grundkomposition. Manuelle Theme-/Blockänderungen bleiben möglich; Textsynchronisierung erhält Reihenfolge und Aktivierung. Bewegungsintensität 0–3, mobile Budgets und reduzierte Bewegung gelten auch für den Empfängerexport. Gestufte Stationen ersetzen die Scroll-Komposition als primäres Empfängererlebnis; die feste Folge bleibt im Champion, variable Challenger-Arcs sind unten dokumentiert; die Eröffnung startet beim Laden, weitere Stationen nur auf bewusste Navigation.
 
 ## Fotomoment
 
 Ein expliziter Foto-Baustein verbindet Bild mit eigenem Alt-Text und Erinnerungstext. Contain/Cover und Mitte/Oben/Unten sind nichtdestruktive Anzeigeoptionen. Direction wählt weiche, Polaroid- oder breite Präsentation. Neue Fotos werden neben bestehenden Fotomomenten beziehungsweise nach der Begrüßung eingeordnet, ohne vorhandene Bausteine umzubauen. Weitergehende Galerie-/Timeline-/Fullscreen-Varianten bleiben Folgearbeit.
 
-## Staged composition (ADR 0006)
+## Historical fixed Champion (ADR 0006)
 
 `engines/scenes.ts` groups selected known content exactly once: opening/intro, curiosity, choice, photo/moment, delayed letter, wish/surprise, cinematic finale, closing/finale block. Creator ordering remains within its semantic station; disabling content is respected. Safe non-factual birthday copy fills empty beats without inventing memories or intimate relationship facts. Existing blocks/schemas remain unchanged. No generic scene editor or new large block taxonomy.
 
 The maintained runtime owns local greeting/clock, three recipient choices, focus/progress/back, native late letter reveal, a deliberately delayed final reveal, three-phase 13.5-second gold finale, skip and replay. Gentle particles/light support the premium story; finite confetti marks transitions/finale. Reduced motion/intensity 0/pause remove waiting/effects; no-JS output is readable. The optional Safari reader regenerates this same experience from public data.
 
 Magic Start now shows this opening from name/defaults, then optional public detail/photo and whole gift. Confirm/change/undo are first-class; “Überrasch mich” currently cycles coordinated direction variants without replacing public text/photos. It does not yet create substantially different story arcs. The Original Experience Benchmark description is a qualitative acceptance benchmark, not a claim that automated tests prove equal emotional quality; original artifact comparison/novice review remains open.
+
+## Variable scene composition (ADR 0008)
+
+The complete North Star and rebuild masterplan are authoritative. The old fixed flow remains Champion when no composition setting exists. Challenger uses Emotional Memory, Playful Celebration and Cinematic/Luxury with two maintained coherent arcs. Enabled public letter/wish/reveal/photos decide which content beats exist; the moment is a photo exhibit if photos exist, otherwise a non-factual curiosity reveal. Sparse custom compositions omit empty content and pointless choice. A respectful derived register suppresses fake ending/fireworks; pace changes the playful phase duration. Public core-message quoting and already-projected photo reuse support an emotional peak without duplicating originals or reading private answers.
+
+Choice buttons offer only available upcoming roles; choosing moves that actual scene next and leaves all other selected content intact. Back and replay use the resulting route; replay restores the original route/reveals/photo/choice. Photo decks show one selected copy with deliberate controls, fitting soft/polaroid/widescreen presentation. Native details retain the readable no-JS path. Multi-phase finales differ: emotional keepsake/photo, celebratory fireworks, cinematic light/contrast. Fireworks are finite 3.2-second deterministic radial bursts, bounded to 72 mobile/144 desktop particles scaled by intensity; no audio, strobing or network. Duration/skip/pause/reduced motion take precedence over effects.
+
+The internal portrait/encore arc IDs select recipes; they do not promise an encore scene in every variant. Surprise Me alternates these recipes without changing theme or replacing public ingredients. The explicit comparison chooser is not tracking or a winning algorithm. See EXPERIENCE_ACCEPTANCE for the first actual synthetic comparison and unresolved qualitative/device limits.

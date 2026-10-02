@@ -1,6 +1,6 @@
 # ADR 0008 — Bounded variable experience composition
 
-Status: implementation in progress; acceptance in rebuild masterplan.
+Status: implemented; first bounded internal comparison accepted for new Magic Start. Physical iPhone delivery and direct qualitative benchmark acceptance remain open; evidence in rebuild masterplan.
 
 The North Star requires different actual dramaturgies, not the same eight cards with different colors. Keep ADR 0006's known safe runtime, export projection, touch handling and readable no-JS fallback. Preserve its original fixed flow as an explicitly selectable Champion. Add a maintained Challenger with three archetypes and two coherent arcs, existing six content blocks and one encore scene role.
 

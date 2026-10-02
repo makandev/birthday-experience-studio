@@ -1,6 +1,6 @@
 # ADR 0006 — Staged local recipient experience and result-first creation
 
-Status: implemented; validation and physical-device/qualitative acceptance tracked in STATUS.
+Status: implemented; the uniform station/finale policy is superseded by ADR 0008 for opt-in Challenger output. The original flow remains the compatible Champion. Runtime/projection security remains active; acceptance is tracked in STATUS.
 
 The user correction supersedes the script-free scroll renderer as the primary recipient target. The same safe projected content should form seven sequential stations plus a closing epilogue, with a time-aware welcome, personal choice, memory/photo beat, delayed letter, surprise and a roughly 13.5-second cinematic finale. This is a focused birthday flow, not a general page or executable extension platform.
 

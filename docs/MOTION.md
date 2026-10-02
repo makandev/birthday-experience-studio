@@ -9,3 +9,7 @@ Text retains full opacity/contrast during entrances. Decorations are aria-hidden
 Online images cannot be guaranteed still: reduced motion/pause hide external image/view controls but retain descriptions. Local normalized JPEGs remain visible. This does not guarantee zero Online requests; export capability/consent remains separate.
 
 Tests cover hash-pinned runtime, progression, timing/skip/pause/reduced motion, mobile budgets/touch and accessibility. Real-device accessibility/performance and qualitative pacing still require acceptance; future music/alternative story arcs must remain bounded and coherent.
+
+## Rebuild choreography
+
+ADR 0008 coordinates scene selection with a quiet 3.2-second phase, bright playful 2.4-second phase (gentle 3.2) or cinematic 4-second phase. The legacy Champion retains 4.5-second phases. Emotional finale revisits an existing normalized photo and public core-message quote; celebratory/cinematic finales offer bounded finite fireworks, never perpetual firing. Respectful register omits fireworks/false ending. All effects stop on pause, reduced motion, zero intensity or hidden document. No-JS Challenger disables animation and retains native disclosure reading. Public authored words never enter executable runtime bytes.

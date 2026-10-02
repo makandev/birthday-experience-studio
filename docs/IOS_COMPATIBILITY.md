@@ -43,3 +43,9 @@ Record device, iOS/Safari version, ordinary/private mode, portrait/landscape and
 Any non-tappable standalone gift or broken creator/delivery on an actual iPhone keeps the release blocked. A checked development preview may be deployed to make this device acceptance possible; that is not release approval.
 
 Reference: [Apple Files guide](https://support.apple.com/guide/iphone/find-and-view-files-and-folders-iphe4bff8827/ios) describes ordinary file viewing. It does not establish arbitrary local HTML JavaScript support. The reported failing HTML opening is treated as device evidence, not overridden by desktop automation.
+
+## Rebuild-specific evidence
+
+The new three archetypes are exercised as exact offline HTML in desktop WebKit/Chromium touch contexts, including photo switching, an actual route choice, letter/encore reveals, climax, back/skip/replay and reduced motion. Creator preview now precedes refinement controls; no required new question. A native pointer-less compatibility click from the parent shortly after frame mounting can close a preview disclosure unexpectedly. The maintained runtime rejects that narrow initial stray click while preserving deliberate pointer and keyboard activation. A separate regression covers it. Initial loading srcdoc was removed after browser inspection exposed a blank paint race. Mobile header/navigation was compacted so the ordinary opening control fits the iframe viewport; longer content retains natural scrolling.
+
+These are engine/viewport/visual checks, not proof of physical iPhone delivery. WhatsApp/Files HTML preview remains a reported failure. Standalone HTML is still primary, with no required upload/reader/import or replacement format. Full-page Chromium screenshot resizing can mispaint an opaque frame; viewport/individual-frame snapshots plus actual visible headings and control geometry were checked instead. No claim of reference superiority or physical-device success.

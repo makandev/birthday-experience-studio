@@ -42,3 +42,7 @@ The user clarification keeps standalone HTML primary on all devices; the tempora
 ## Targeted historical privacy exception (2026-10-02)
 
 The later user instruction to remove the benchmark recipient identity including older files superseded the default no-history-rewrite rule solely for this cleanup. Four descendant commits on the two existing branches were sanitized with exact leases and an atomic push; earlier history, release tag and current application tree were preserved. Default history protection remains in force. GitHub cached commit views and old deployment records are a separate, unresolved server-side boundary.
+
+## First bounded experience rebuild decision
+
+[ADR 0008](adr/0008-variable-experience-composition.md) retains the legacy Champion and adds three declarative variable strategies/two arcs with purposeful route/photo interaction and fitting finales. The first same-input browser comparison in [EXPERIENCE_ACCEPTANCE](EXPERIENCE_ACCEPTANCE.md) supports Challenger portrait as the default for new Studio Magic Start gifts. Existing projects do not change implicitly; creator can compare/adopt/undo. This is an explicit engineering/product judgment, not an automated winner, user study or declaration that the private benchmark is beaten. Physical iPhone and qualitative private-reference acceptance remain open.
