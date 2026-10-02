@@ -62,3 +62,7 @@ Recipient output uses seven scenes + closing and a single maintained hash-allowe
 Real iPhone Safari creator/live/export delivery and taps are release-blocking until actually verified. Run mobile WebKit and native touch checks but never label desktop automation as physical-device evidence. HTML in Files/Mail previews is not reliably executable; document and test the optional local Safari gift-file opener, with no upload or mandatory cloud. Green development-preview integration may support actual-device testing; it is not release approval.
 
 Standalone HTML is the primary gift artifact on every device, including iPhone/iPad. Offline gifts contain all required content/assets/runtime in one file and require no BES page, account, upload or second-file import to play. An optional experimental reader must never replace this contract or count as resolution of broken local iPhone HTML delivery.
+
+## One-time historical privacy cleanup (2026-10-02)
+
+The user explicitly requested removing the original benchmark recipient identity from older files as well as current documents. This narrowly authorizes the completed four-commit history sanitation on main/codex/bes-foundations using atomic exact force-with-lease; unrelated ancestors and the release tag were preserved. This is not standing authorization for future history rewrites. Server-retained old commit copies require GitHub Support; do not claim that branch sanitation erases caches or independent clones.

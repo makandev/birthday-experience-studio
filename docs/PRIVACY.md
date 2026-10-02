@@ -31,3 +31,5 @@ A .bes-gift.json file contains public ExportExperience data only; it is distinct
 ## Benchmark documentation
 
 Use **Original Experience Benchmark** for the abstract quality reference. Describe experience mechanics and quality goals without the original recipient identity, personal messages, locations, dates or original media. Documentation review is distinct from an original-artifact comparison and from Git-history erasure; state the actual scope and evidence.
+
+Historical privacy cleanup now includes the two published branch histories, not only current documentation. Rewriting branch references does not erase GitHub cached commit views, deployment records, existing clones or third-party copies. GitHub Support controls server-side garbage collection/cache removal and decides whether a request qualifies; no successful purge is claimed. Four affected workflow runs/artifacts were removed. Deactivation of the four old deployment records was denied by the integration permission boundary, so those references remain.

@@ -38,3 +38,7 @@ The user's current instruction permits autonomous reversible engineering and int
 [ADR 0007](adr/0007-recipient-file-and-ios-release-gate.md) defines the recipient-only Offline data reader as an optional Safari delivery adapter, never uploaded/hosted gift or private-draft import. HTML file previews on iOS are not promised to execute. Real iPhone creation/delivery/taps remain release gates even after desktop WebKit passes.
 
 The user clarification keeps standalone HTML primary on all devices; the temporary iPhone-primary JSON action is superseded. ADR 0007 records the optional reader as an experiment, not fulfillment of the iPhone HTML delivery gate.
+
+## Targeted historical privacy exception (2026-10-02)
+
+The later user instruction to remove the benchmark recipient identity including older files superseded the default no-history-rewrite rule solely for this cleanup. Four descendant commits on the two existing branches were sanitized with exact leases and an atomic push; earlier history, release tag and current application tree were preserved. Default history protection remains in force. GitHub cached commit views and old deployment records are a separate, unresolved server-side boundary.
