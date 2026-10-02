@@ -195,6 +195,41 @@ export class WorkspaceRepository {
         reject(new Error('Der lokale Speicher konnte nicht gelesen werden.'));
     });
   }
+  async recoveryBackup(): Promise<string> {
+    const db = await this.database.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('workspace', 'readonly');
+      const roots = tx.objectStore('workspace');
+      const current = roots.get('current');
+      const journal = roots.get('legacy-retirement');
+      tx.oncomplete = () => {
+        try {
+          resolve(
+            JSON.stringify(
+              {
+                format: 'bes-storage-recovery',
+                version: 1,
+                workspace: current.result,
+                retirement: journal.result,
+              },
+              null,
+              2,
+            ),
+          );
+        } catch {
+          reject(
+            new Error(
+              'Die gespeicherten Daten konnten nicht als Datei gesichert werden.',
+            ),
+          );
+        }
+      };
+      tx.onabort = () =>
+        reject(
+          new Error('Die gespeicherten Daten konnten nicht gelesen werden.'),
+        );
+    });
+  }
   async initialize(
     storage: StorageLike,
     ignoreLegacy = false,
@@ -252,7 +287,7 @@ export class WorkspaceRepository {
               cursor.onsuccess = () => {
                 const item = cursor.result;
                 if (!item) return;
-                if (typeof item.key === 'string' && !retained.has(item.key))
+                if (typeof item.key !== 'string' || !retained.has(item.key))
                   binaries.delete(item.key);
                 item.continue();
               };
@@ -408,6 +443,15 @@ export class WorkspaceRepository {
               !retained.has(asset.id) ||
               !(asset.processed instanceof Blob) ||
               asset.processed.type !== 'image/jpeg' ||
+              !asset.processed.size ||
+              (asset.original !== null && !(asset.original instanceof Blob)) ||
+              !Number.isInteger(asset.width) ||
+              !Number.isInteger(asset.height) ||
+              asset.width < 1 ||
+              asset.height < 1 ||
+              Math.max(asset.width, asset.height) >
+                mediaBudget.maxRenderedEdge ||
+              asset.width * asset.height > mediaBudget.maxRenderedPixels ||
               asset.processed.size > mediaBudget.maxRenderedBytes ||
               (asset.original &&
                 asset.original.size > mediaBudget.maxOriginalBytes)
@@ -425,7 +469,7 @@ export class WorkspaceRepository {
             cursor.onsuccess = () => {
               const item = cursor.result;
               if (!item) return;
-              if (typeof item.key === 'string' && !retained.has(item.key)) {
+              if (typeof item.key !== 'string' || !retained.has(item.key)) {
                 binaries.delete(item.key);
                 removedAssets++;
               }

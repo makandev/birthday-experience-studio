@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
-import { STORAGE_KEY } from '../../src/persistence/storage';
+import { readStoredProject } from '../browser-storage';
 async function writing(page: import('@playwright/test').Page) {
   await page.goto('/');
   await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
@@ -77,10 +77,9 @@ test('photos normalize orientation, preserve original, remove metadata and trans
   });
   await expect(page.locator('.photo-editor')).toHaveCount(1);
   await expect(page.locator('[data-thumbnail]')).toBeVisible();
-  const photo = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!).media[0],
-    STORAGE_KEY,
-  );
+  const photo = (await readStoredProject(page)).media[0];
+  if (photo.source.type !== 'local')
+    throw new Error('Expected local photo source');
   expect(photo.width).toBe(12);
   expect(photo.height).toBe(24);
   const originalEvent = page.waitForEvent('download');
@@ -168,10 +167,7 @@ test('large photos resize, risky formats and pixel bombs fail without losing aut
     buffer: large,
   });
   await expect(page.locator('.photo-editor')).toHaveCount(1);
-  const metadata = await page.evaluate(
-    (key) => JSON.parse(localStorage.getItem(key)!).media[0],
-    STORAGE_KEY,
-  );
+  const metadata = (await readStoredProject(page)).media[0];
   expect(metadata.width).toBeLessThanOrEqual(1600);
   expect(metadata.size).toBeLessThanOrEqual(512 * 1024);
   await page.getByLabel('Fotos auswählen oder hierher ziehen').setInputFiles({

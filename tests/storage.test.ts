@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import { createProject } from '../src/domain/project';
 import {
   restoreProject,
-  saveProject,
   STORAGE_KEY,
   type StorageLike,
 } from '../src/persistence/storage';
@@ -18,7 +17,7 @@ const memoryStorage = (): StorageLike => {
     },
   };
 };
-describe('local draft storage', () => {
+describe('read-only legacy draft storage', () => {
   it('saves and restores answers, workflow and authored content', () => {
     const storage = memoryStorage();
     expect(restoreProject(storage).status).toBe('empty');
@@ -26,7 +25,7 @@ describe('local draft storage', () => {
     project.writing.letter = 'Restored text';
     project.workflow.step = 'writing';
     project.answers.memory = { status: 'answered', value: 'A memory' };
-    expect(saveProject(storage, project)).toBe(true);
+    storage.setItem(STORAGE_KEY, JSON.stringify(project));
     expect(restoreProject(storage)).toEqual({ status: 'restored', project });
   });
   it.each([
@@ -50,6 +49,5 @@ describe('local draft storage', () => {
       removeItem: () => {},
     };
     expect(restoreProject(storage).status).toBe('unavailable');
-    expect(saveProject(storage, createProject())).toBe(false);
   });
 });

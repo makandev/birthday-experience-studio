@@ -26,16 +26,3 @@ export function restoreProject(storage: StorageLike): RestoreResult {
     return { status: 'unavailable' };
   }
 }
-export function saveProject(
-  storage: StorageLike,
-  project: CreatorProject,
-): boolean {
-  try {
-    const raw = JSON.stringify(parseProject(project));
-    parseBoundedJson(raw);
-    storage.setItem(STORAGE_KEY, raw);
-    return true;
-  } catch {
-    return false;
-  }
-}

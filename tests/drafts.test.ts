@@ -2,12 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { createProject, parseProject } from '../src/domain/project';
 import { readDraft, writeDraft } from '../src/persistence/drafts';
 import { parseBoundedJson } from '../src/security/json';
-import {
-  readLibrary,
-  replaceActiveProject,
-  LIBRARY_KEY,
-} from '../src/persistence/library';
-import { STORAGE_KEY, type StorageLike } from '../src/persistence/storage';
+import { readLibrary, LIBRARY_KEY } from '../src/persistence/library';
+import { type StorageLike } from '../src/persistence/storage';
 import legacy from './fixtures/project-v1.json' with { type: 'json' };
 const memory = (): StorageLike => {
   const map = new Map<string, string>();
@@ -85,47 +81,24 @@ describe('draft migration and hostile import boundaries', () => {
     expect(() => parseProject(p)).toThrow();
   });
 });
-describe('multiple local gifts without silent eviction', () => {
-  it('archives, switches back and preserves content', () => {
+describe('read-only historical local library', () => {
+  it('reads bounded legacy projects for migration without modifying data', () => {
     const s = memory();
     const first = createProject();
-    first.writing.letter = 'Keep me';
-    const next = createProject();
-    expect(replaceActiveProject(s, first, next)).toBe(true);
+    s.setItem(LIBRARY_KEY, JSON.stringify([first]));
     expect(readLibrary(s)).toEqual([first]);
-    expect(replaceActiveProject(s, next, first)).toBe(true);
-    expect(readLibrary(s)).toEqual([next]);
-    expect(JSON.parse(s.getItem(STORAGE_KEY)!).writing.letter).toBe('Keep me');
-  });
-  it('preserves unreadable libraries and rejects over-capacity without writes', () => {
-    const s = memory();
-    s.setItem(LIBRARY_KEY, 'broken');
-    expect(replaceActiveProject(s, createProject(), createProject())).toBe(
-      false,
-    );
-    expect(s.getItem(LIBRARY_KEY)).toBe('broken');
-    const projects = Array.from({ length: 8 }, () => createProject());
-    s.setItem(LIBRARY_KEY, JSON.stringify(projects));
     const raw = s.getItem(LIBRARY_KEY);
-    expect(replaceActiveProject(s, createProject(), createProject())).toBe(
-      false,
-    );
     expect(s.getItem(LIBRARY_KEY)).toBe(raw);
   });
-  it('rolls the library back if saving the active draft fails', () => {
-    const backing = memory();
-    backing.setItem(STORAGE_KEY, 'old-active');
-    const storage: StorageLike = {
-      ...backing,
-      setItem(k, v) {
-        if (k === STORAGE_KEY && v !== 'old-active') throw new Error('quota');
-        backing.setItem(k, v);
-      },
-    };
-    expect(
-      replaceActiveProject(storage, createProject(), createProject()),
-    ).toBe(false);
-    expect(backing.getItem(LIBRARY_KEY)).toBeNull();
-    expect(backing.getItem(STORAGE_KEY)).toBe('old-active');
+  it('protects unreadable or oversized libraries', () => {
+    const s = memory();
+    s.setItem(LIBRARY_KEY, 'broken');
+    expect(() => readLibrary(s)).toThrow();
+    expect(s.getItem(LIBRARY_KEY)).toBe('broken');
+    s.setItem(
+      LIBRARY_KEY,
+      JSON.stringify(Array.from({ length: 9 }, () => createProject())),
+    );
+    expect(() => readLibrary(s)).toThrow();
   });
 });

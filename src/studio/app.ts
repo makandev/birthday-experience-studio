@@ -13,12 +13,7 @@ import {
   orderForDirection,
 } from '../engines/composition';
 import { writingHelpers } from '../engines/writing';
-import {
-  restoreProject,
-  saveProject,
-  STORAGE_KEY,
-  type StorageLike,
-} from '../persistence/storage';
+import { STORAGE_KEY, type StorageLike } from '../persistence/storage';
 import {
   readPortableDraft,
   writePortableDraft,
@@ -28,7 +23,16 @@ import { BrowserAssetStore } from '../media/store';
 import { resolvePhotoSources } from '../media/resolve';
 import { mediaBudget } from '../media/budgets';
 import { MediaController } from './media';
-import { readLibrary, replaceActiveProject } from '../persistence/library';
+import {
+  WorkspaceRepository,
+  StorageConflict,
+  ProtectedStorage,
+  type Workspace,
+  type WorkspaceChange,
+} from '../persistence/workspace';
+import { WorkspaceNotifications } from '../persistence/notifications';
+import { writeDraft } from '../persistence/drafts';
+import type { MediaAsset } from '../media/store';
 import { directions } from '../registries/motion';
 import { recommendDirection } from '../engines/motion';
 import {
@@ -60,13 +64,33 @@ function storageAccess(): StorageLike {
     removeItem: (key) => localStorage.removeItem(key),
   };
 }
-export function mountStudio(root: HTMLDivElement): void {
+export async function mountStudio(root: HTMLDivElement): Promise<void> {
   const storage = storageAccess();
-  const restored = restoreProject(storage);
+  root.innerHTML =
+    '<p role="status">Deine lokal gespeicherten Geschenke werden geprüft …</p>';
+  const repository = new WorkspaceRepository();
+  let workspace: Workspace | undefined;
+  let initialError: unknown;
+  try {
+    workspace = await repository.initialize(storage);
+  } catch (cause) {
+    initialError = cause;
+  }
   let project =
-    restored.status === 'restored' ? restored.project : createProject();
-  let protectedDraft = restored.status === 'invalid';
-  let saved = restored.status === 'restored';
+    workspace?.entries.find((entry) => entry.project.id === workspace?.activeId)
+      ?.project ?? createProject();
+  let protectedDraft = initialError instanceof ProtectedStorage;
+  let saved = Boolean(workspace);
+  let conflict = false;
+  let pendingDelete: string | null = null;
+  let writeQueue: Promise<void> = Promise.resolve();
+  let queuedWrites = 0;
+  const notifications = new WorkspaceNotifications(() => {
+    void checkRemote();
+  });
+  window.addEventListener('pagehide', () => notifications.close(), {
+    once: true,
+  });
   let undo: CreatorProject | null = null;
   let pendingImport: DraftBundle | null = null;
   let previewGeneration = 0;
@@ -74,8 +98,8 @@ export function mountStudio(root: HTMLDivElement): void {
   const assetStore = new BrowserAssetStore();
   const mediaController = new MediaController(assetStore, {
     getProject: () => project,
-    changed: () => {
-      persist();
+    changed: async (assets = []) => {
+      await persist(assets);
       render();
     },
     edited: () => persist(),
@@ -85,22 +109,116 @@ export function mountStudio(root: HTMLDivElement): void {
     },
   });
   let pendingDirector: DirectorProposal | null = null;
-  let notice =
-    restored.status === 'invalid'
-      ? 'Dein gespeicherter Entwurf konnte nicht gelesen werden. Er bleibt unverändert. Sichere ihn oder beginne bewusst neu.'
-      : restored.status === 'unavailable'
-        ? 'Dein Browser erlaubt gerade kein lokales Speichern. Lass diese Seite offen, damit deine Eingaben erhalten bleiben.'
-        : '';
-
-  function persist(): void {
-    if (protectedDraft) return;
-    project.updatedAt = new Date().toISOString();
-    saved = saveProject(storage, project);
+  let notice = protectedDraft
+    ? 'Dein gespeicherter Entwurf konnte nicht gelesen werden. Er bleibt unverändert. Sichere ihn oder beginne bewusst neu.'
+    : initialError
+      ? 'Dein Browser erlaubt gerade kein lokales Speichern. Lass diese Seite offen, damit deine Eingaben erhalten bleiben.'
+      : '';
+  function saveStatus(): void {
     const status = root.querySelector('#save-status');
     if (status)
-      status.textContent = saved
-        ? 'Auf diesem Gerät gespeichert'
-        : 'Speichern nicht möglich – Seite bitte offen lassen';
+      status.textContent = conflict
+        ? 'Konflikt – Änderungen bleiben nur in diesem Tab'
+        : queuedWrites
+          ? 'Wird auf diesem Gerät gespeichert …'
+          : saved
+            ? 'Auf diesem Gerät gespeichert'
+            : 'Speichern nicht möglich – Seite bitte offen lassen';
+  }
+  function failed(cause: unknown): void {
+    saved = false;
+    if (cause instanceof StorageConflict) {
+      conflict = true;
+      root
+        .querySelectorAll<HTMLDialogElement>('dialog[open]')
+        .forEach((dialog) => dialog.close());
+      message(
+        'Ein anderer Tab hat neuere Daten gespeichert oder ein Geschenk gelöscht. Deine Eingaben bleiben hier; sichere sie vor der Übernahme.',
+      );
+      root.querySelector<HTMLElement>('#conflict-panel')!.hidden = false;
+    } else
+      message(
+        cause instanceof Error
+          ? cause.message
+          : 'Speichern nicht möglich – Seite bitte offen lassen',
+      );
+    saveStatus();
+  }
+  function commit(
+    change: WorkspaceChange,
+    assets: MediaAsset[] = [],
+  ): Promise<void> {
+    const operation = writeQueue.then(async () => {
+      if (conflict) throw new Error('Bitte löse zuerst den Speicherkonflikt.');
+      if (!workspace)
+        throw new Error(
+          'Fotos können in diesem Browser gerade nicht gespeichert werden. Sichere deinen Text als Datei.',
+        );
+      const result = await repository.commit(
+        workspace.revision,
+        change,
+        assets,
+      );
+      workspace = result.workspace;
+      notifications.publish();
+    });
+    writeQueue = operation.catch((cause) => {
+      failed(cause);
+    });
+    return operation;
+  }
+  function persist(assets: MediaAsset[] = []): Promise<void> {
+    if (protectedDraft || conflict || !workspace) {
+      saved = false;
+      saveStatus();
+      return assets.length
+        ? Promise.reject(
+            new Error('Fotos können gerade nicht gespeichert werden.'),
+          )
+        : Promise.resolve();
+    }
+    project.updatedAt = new Date().toISOString();
+    const snapshot = structuredClone(project);
+    const recovery =
+      undo?.id === project.id ? structuredClone(undo) : undefined;
+    queuedWrites++;
+    saved = false;
+    saveStatus();
+    const operation = commit(
+      { kind: 'save', project: snapshot, recovery },
+      assets,
+    );
+    // Ordinary autosave reports failures without unhandled rejections. Asset import needs rollback.
+    const finished = operation
+      .then(() => {
+        saved = true;
+      })
+      .finally(() => {
+        queuedWrites--;
+        saveStatus();
+      });
+    return assets.length ? finished : finished.catch(() => {});
+  }
+  async function checkRemote(): Promise<void> {
+    await writeQueue;
+    if (!workspace || conflict) return;
+    try {
+      const latest = await repository.read();
+      if (!latest || latest.revision > workspace.revision) {
+        if (latest) failed(new StorageConflict(latest));
+        else {
+          conflict = true;
+          failed(
+            new Error(
+              'Die lokale Sammlung fehlt. Sichere diesen Tab vor dem Neuladen.',
+            ),
+          );
+          root.querySelector<HTMLElement>('#conflict-panel')!.hidden = false;
+        }
+      }
+    } catch (cause) {
+      failed(cause);
+    }
   }
   function message(text: string): void {
     notice = text;
@@ -192,19 +310,15 @@ export function mountStudio(root: HTMLDivElement): void {
     return `<dialog id="integration-dialog" aria-labelledby="integration-title"><h2 id="integration-title">Optionale Hilfe für dein Geschenk</h2><p>BES funktioniert vollständig ohne KI. Wenn du möchtest, kannst du eine KI deiner Wahl um Regie-Ideen bitten: Stimmung, Reihenfolge und ergänzende Fragen. BES verbindet sich mit keinem Dienst.</p><p>Es gibt noch keine eingebauten API-Anbieter oder Eingabefelder für Zugangsdaten. Kosten und Anmeldung hängen vom selbst gewählten Dienst ab und können sich ändern.</p><label for="director-prompt">Das würdest du manuell weitergeben</label><textarea id="director-prompt" rows="7" readonly>${e(directorPrompt(project))}</textarea><p class="field-help">Diese Anweisung enthält deine freigegebenen Geschenktexte. Prüfe sie vor dem Kopieren. Zugangsdaten gehören niemals hierher.</p><label for="director-json">Regie-Vorschlag als JSON einfügen</label><textarea id="director-json" rows="6" maxlength="65536" placeholder="Nur die JSON-Antwort, ohne Code oder Markdown"></textarea><button class="button secondary" id="review-director">Vorschlag prüfen</button><pre id="director-review" class="director-review" role="status"></pre><button class="button primary" id="apply-director" hidden>Geprüfte Stimmung &amp; Reihenfolge übernehmen</button><div class="actions"><button class="button quiet" id="close-integrations">Zurück zum Geschenk</button></div></dialog>`;
   }
   function draftDialog(): string {
-    let collection: CreatorProject[] = [];
-    let libraryError = '';
-    try {
-      collection = readLibrary(storage);
-    } catch {
-      libraryError =
-        'Die gespeicherte Sammlung ist gerade nicht zugänglich. Sie bleibt unverändert.';
-    }
-    return `<dialog id="draft-dialog" aria-labelledby="draft-title"><h2 id="draft-title">Deine Geschenke behalten</h2><p>Eine Entwurfsdatei enthält auch deine privaten Antworten und Geschenk-Fotokopien. Ursprüngliche Originalfotos bleiben nur auf diesem Gerät und können dort separat gesichert werden. Bewahre sie sicher auf und verschicke zum Verschenken nur die fertige HTML-Datei.</p><button class="button secondary" id="export-draft">Entwurf als Datei sichern</button><label for="import-draft">Gesicherten BES-Entwurf öffnen</label><input id="import-draft" type="file" accept=".json,application/json"><p class="field-help">Maximal 8 MB mit Fotokopien (Textanteil bis 2 MB). Dein aktuelles Geschenk bleibt bis zur Bestätigung unverändert.</p><p id="import-summary" role="status"></p><button class="button primary" id="confirm-import" hidden>Geprüften Entwurf öffnen</button><h3>Auf diesem Gerät behaltene Geschenke</h3><p>${e(libraryError)}</p><ul class="saved-projects">${collection
+    const collection = workspace?.entries.map((entry) => entry.project) ?? [];
+    const libraryError = workspace
+      ? ''
+      : 'Die gespeicherte Sammlung ist gerade nicht zugänglich. Sie bleibt unverändert.';
+    return `<dialog id="draft-dialog" aria-labelledby="draft-title"><h2 id="draft-title">Deine Geschenke behalten</h2><p>Eine Entwurfsdatei enthält auch deine privaten Antworten und Geschenk-Fotokopien. Ursprüngliche Originalfotos bleiben nur auf diesem Gerät und können dort separat gesichert werden. Bewahre sie sicher auf und verschicke zum Verschenken nur die fertige HTML-Datei.</p><button class="button secondary" id="export-draft">Entwurf als Datei sichern</button><label for="import-draft">Gesicherten BES-Entwurf öffnen</label><input id="import-draft" type="file" accept=".json,application/json"><p class="field-help">Maximal 8 MB mit Fotokopien (Textanteil bis 2 MB). Dein aktuelles Geschenk bleibt bis zur Bestätigung unverändert.</p><p id="import-summary" role="status"></p><button class="button primary" id="confirm-import" hidden>Geprüften Entwurf öffnen</button><button class="text-button" data-delete-project="${e(project.id)}">Aktuelles Geschenk löschen</button><button class="text-button" id="cleanup-storage">Unbenutzte Fotodaten bereinigen</button><h3>Auf diesem Gerät behaltene Geschenke</h3><p>${e(libraryError)}</p><ul class="saved-projects">${collection
       .filter((p) => p.id !== project.id)
       .map(
         (p) =>
-          `<li><span>${e(p.recipient.name || 'Noch ohne Namen')}</span><button class="button quiet" data-project="${e(p.id)}">Geschenk öffnen</button></li>`,
+          `<li><span>${e(p.recipient.name || 'Noch ohne Namen')}</span><button class="button quiet" data-project="${e(p.id)}">Geschenk öffnen</button><button class="text-button" data-delete-project="${e(p.id)}">Geschenk löschen</button></li>`,
       )
       .join(
         '',
@@ -229,7 +343,7 @@ export function mountStudio(root: HTMLDivElement): void {
     const stepIndex = steps.findIndex(
       (step) => step.id === project.workflow.step,
     );
-    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.2</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Letzte Änderung rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer>${draftDialog()}${integrationDialog()}<dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
+    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.2</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Letzte Änderung rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer><section id="conflict-panel" class="panel" role="alert" ${conflict ? '' : 'hidden'}><h2>Deine Geschenke wurden in einem anderen Tab geändert</h2><p>Dieser Tab überschreibt keine neueren Daten. Sichere zuerst deine Eingaben; danach kannst du den aktuellen gespeicherten Stand übernehmen. Bei gelöschten Fotos kann nur der Text gesichert werden.</p><button class="button secondary" id="conflict-backup">Eingaben dieses Tabs sichern</button><button class="button primary" id="conflict-reload">Gespeicherten Stand übernehmen</button></section>${draftDialog()}${integrationDialog()}<dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Dieses Geschenk endgültig löschen?</h2><p>Private Antworten, Geschenktext und die Wiederherstellung dieses Geschenks werden gelöscht. Originalfotos und Fotokopien werden nur gelöscht, wenn kein anderes Geschenk sie benötigt. Sichere wichtige Daten vorher als Datei. Diese Löschung kann nicht rückgängig gemacht werden.</p><button class="button quiet" id="cancel-delete">Geschenk behalten</button><button class="button primary" id="confirm-delete">Endgültig löschen</button></dialog><dialog id="cleanup-dialog" aria-labelledby="cleanup-title"><h2 id="cleanup-title">Unbenutzte Fotodaten endgültig entfernen?</h2><p>Dadurch endet die lokale Rückgängig-Möglichkeit für alle Geschenke. Nur Fotos ohne verbleibende Projektreferenz werden gelöscht. Sichere wichtige Originale vorher.</p><button class="button quiet" id="cancel-cleanup">Fotodaten behalten</button><button class="button primary" id="confirm-cleanup">Fotodaten bereinigen</button></dialog><dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
     for (const details of root.querySelectorAll<HTMLDetailsElement>(
       'details[id]',
     )) {
@@ -237,6 +351,7 @@ export function mountStudio(root: HTMLDivElement): void {
       if (wasOpen !== undefined) details.open = wasOpen;
     }
     bind();
+    saveStatus();
     mediaController.bind(root);
     if (project.workflow.step === 'preview' && !protectedDraft) updatePreview();
     if (focus) {
@@ -303,9 +418,11 @@ export function mountStudio(root: HTMLDivElement): void {
       .forEach((button) =>
         button.addEventListener('click', () => go(button.dataset.go as Step)),
       );
-    listen('drafts', 'click', () =>
-      root.querySelector<HTMLDialogElement>('#draft-dialog')!.showModal(),
-    );
+    listen('drafts', 'click', async () => {
+      await writeQueue;
+      render();
+      root.querySelector<HTMLDialogElement>('#draft-dialog')!.showModal();
+    });
     listen('close-drafts', 'click', () => {
       importEpoch++;
       pendingImport = null;
@@ -365,50 +482,145 @@ export function mountStudio(root: HTMLDivElement): void {
         },
       );
     });
-    const activate = (next: CreatorProject): void => {
-      if (!replaceActiveProject(storage, project, next)) {
-        root.querySelector<HTMLDialogElement>('#draft-dialog')!.close();
-        message(
-          'Der Wechsel konnte nicht sicher gespeichert werden. Die Sammlung kann voll oder nicht lesbar sein. Sichere dein Geschenk zuerst als Datei.',
+    const activate = async (
+      next: CreatorProject,
+      assets: MediaAsset[] = [],
+    ): Promise<void> => {
+      const current = structuredClone(project);
+      try {
+        await commit(
+          { kind: 'activate', current, project: structuredClone(next) },
+          assets,
         );
-        return;
+        project = workspace!.entries.find(
+          (entry) => entry.project.id === next.id,
+        )!.project;
+        saved = true;
+        pendingImport = null;
+        undo = null;
+        notice =
+          'Dein bisheriges Geschenk bleibt in „Meine Geschenke“ erhalten.';
+        render(true);
+      } catch {
+        message(
+          'Der Wechsel konnte nicht sicher gespeichert werden. Sichere dein Geschenk zuerst als Datei; prüfe die Sammlung oder den Speicherkonflikt.',
+        );
       }
-      project = next;
-      saved = true;
-      pendingImport = null;
-      undo = null;
-      notice = 'Dein bisheriges Geschenk bleibt in „Meine Geschenke“ erhalten.';
-      render(true);
     };
     listen('confirm-import', 'click', async () => {
-      if (!pendingImport) return;
+      if (!pendingImport || conflict) return;
       const bundle = pendingImport;
+      pendingImport = null;
       const next = structuredClone(bundle.project);
       next.id = crypto.randomUUID();
-      try {
-        if (bundle.assets.length) await assetStore.putMany(bundle.assets);
-        if (pendingImport !== bundle) return;
-        activate(next);
-      } catch {
-        root.querySelector<HTMLElement>('#import-summary')!.textContent =
-          'Die Fotos konnten nicht sicher gespeichert werden. Dein aktuelles Geschenk bleibt erhalten.';
-      }
+      await activate(next, bundle.assets);
     });
-    listen('new-project', 'click', () => activate(createProject()));
+    listen('new-project', 'click', () => {
+      void activate(createProject());
+    });
     root
       .querySelectorAll<HTMLButtonElement>('[data-project]')
       .forEach((button) =>
         button.addEventListener('click', () => {
-          try {
-            const next = readLibrary(storage).find(
-              (p) => p.id === button.dataset.project,
-            );
-            if (next) activate(next);
-          } catch {
-            message('Dieses Geschenk ist gerade nicht zugänglich.');
-          }
+          const next = workspace?.entries.find(
+            (entry) => entry.project.id === button.dataset.project,
+          )?.project;
+          if (next) void activate(next);
         }),
       );
+    root
+      .querySelectorAll<HTMLButtonElement>('[data-delete-project]')
+      .forEach((button) =>
+        button.addEventListener('click', () => {
+          pendingDelete = button.dataset.deleteProject!;
+          root.querySelector<HTMLDialogElement>('#draft-dialog')!.close();
+          root.querySelector<HTMLDialogElement>('#delete-dialog')!.showModal();
+        }),
+      );
+    listen('cancel-delete', 'click', () => {
+      pendingDelete = null;
+      root.querySelector<HTMLDialogElement>('#delete-dialog')!.close();
+    });
+    listen('confirm-delete', 'click', async () => {
+      if (!pendingDelete || conflict) return;
+      const id = pendingDelete;
+      pendingDelete = null;
+      try {
+        await commit({ kind: 'delete', projectId: id });
+        if (project.id === id)
+          project = workspace!.entries.find(
+            (entry) => entry.project.id === workspace!.activeId,
+          )!.project;
+        undo = null;
+        saved = true;
+        render(true);
+        message(
+          'Das Geschenk wurde gelöscht. Gemeinsam verwendete Fotos bleiben erhalten.',
+        );
+      } catch {
+        root.querySelector<HTMLDialogElement>('#delete-dialog')?.close();
+      }
+    });
+    listen('cleanup-storage', 'click', () => {
+      root.querySelector<HTMLDialogElement>('#draft-dialog')!.close();
+      root.querySelector<HTMLDialogElement>('#cleanup-dialog')!.showModal();
+    });
+    listen('cancel-cleanup', 'click', () =>
+      root.querySelector<HTMLDialogElement>('#cleanup-dialog')!.close(),
+    );
+    listen('confirm-cleanup', 'click', async () => {
+      try {
+        await commit({ kind: 'cleanup', releaseRecovery: true });
+        undo = null;
+        render();
+        message(
+          'Unbenutzte Fotodaten wurden bereinigt. Benötigte Originale und Fotokopien bleiben erhalten.',
+        );
+      } catch {
+        root.querySelector<HTMLDialogElement>('#cleanup-dialog')?.close();
+      }
+    });
+    listen('conflict-backup', 'click', () => {
+      try {
+        downloadText(
+          writeDraft(project),
+          'BES-Tab-Text-Sicherung.json',
+          'application/json',
+        );
+      } catch {
+        message(
+          'Diese Sicherung ist zu groß. Bitte sichere wichtige Texte einzeln, bevor du den gespeicherten Stand übernimmst.',
+        );
+      }
+    });
+    listen('conflict-reload', 'click', async () => {
+      await writeQueue;
+      try {
+        const latest = await repository.read();
+        if (!latest)
+          throw new Error(
+            'Die lokale Sammlung fehlt. Bitte sichere deinen Text.',
+          );
+        workspace = latest;
+        project = structuredClone(
+          latest.entries.find((entry) => entry.project.id === project.id)
+            ?.project ??
+            latest.entries.find(
+              (entry) => entry.project.id === latest.activeId,
+            )!.project,
+        );
+        conflict = false;
+        undo = null;
+        pendingImport = null;
+        pendingDirector = null;
+        importEpoch++;
+        saved = true;
+        render(true);
+        message('Der aktuelle gespeicherte Stand wurde übernommen.');
+      } catch (cause) {
+        failed(cause);
+      }
+    });
     listen('home', 'click', (event) => {
       event.preventDefault();
       go('start');
@@ -739,27 +951,43 @@ ${pendingDirector.followUpQuestions.join('\n') || 'Keine weiteren Fragen.'}`;
     listen('cancel-reset', 'click', () =>
       root.querySelector<HTMLDialogElement>('#reset-dialog')!.close(),
     );
-    listen('confirm-reset', 'click', () => {
-      try {
-        const raw = storage.getItem(STORAGE_KEY);
-        if (raw) storage.setItem(`${STORAGE_KEY}.backup`, raw);
-      } catch {
-        message(
-          'Die Sicherung ist gerade nicht möglich. Dein bisheriger Entwurf bleibt erhalten.',
-        );
-        root.querySelector<HTMLDialogElement>('#reset-dialog')!.close();
+    listen('confirm-reset', 'click', async () => {
+      if (protectedDraft) {
+        try {
+          const raw = storage.getItem(STORAGE_KEY);
+          if (raw) {
+            const priorBackup = storage.getItem(`${STORAGE_KEY}.backup`);
+            if (priorBackup && priorBackup !== raw)
+              throw new ProtectedStorage(
+                'Eine frühere Sicherung bleibt geschützt. Sichere zuerst beide alten Datensätze.',
+              );
+            storage.setItem(`${STORAGE_KEY}.backup`, raw);
+          }
+          workspace = await repository.initialize(storage, true);
+          project = workspace.entries.find(
+            (entry) => entry.project.id === workspace!.activeId,
+          )!.project;
+          protectedDraft = false;
+          undo = null;
+          render(true);
+        } catch (cause) {
+          failed(cause);
+        }
         return;
       }
-      undo = protectedDraft ? null : structuredClone(project);
-      protectedDraft = false;
-      project = createProject();
-      persist();
-      notice =
-        'Ein neues Geschenk ist bereit. Die bisherigen Daten wurden lokal gesichert.';
-      render(true);
+      const previous = structuredClone(project);
+      await activate(createProject());
+      if (project.id !== previous.id) {
+        undo = previous;
+        render(true);
+      }
     });
-    listen('undo-reset', 'click', () => {
+    listen('undo-reset', 'click', async () => {
       if (undo) {
+        if (undo.id !== project.id) {
+          await activate(undo);
+          return;
+        }
         project = undo;
         undo = null;
         persist();
@@ -767,12 +995,22 @@ ${pendingDirector.followUpQuestions.join('\n') || 'Keine weiteren Fragen.'}`;
         render(true);
       }
     });
-    listen('backup', 'click', () => {
+    listen('backup', 'click', async () => {
       try {
+        const canonical = await repository.recoveryBackup();
+        const recovery = JSON.parse(canonical);
+        const legacy = {
+          active: storage.getItem(STORAGE_KEY),
+          library: storage.getItem('bes.project-library.v1'),
+          backup: storage.getItem(`${STORAGE_KEY}.backup`),
+        };
         downloadText(
-          storage.getItem(STORAGE_KEY) ?? '',
-          'BES-Entwurf-Sicherung.json',
+          JSON.stringify({ ...recovery, legacy }, null, 2),
+          'BES-Speicher-Wiederherstellung.json',
           'application/json',
+        );
+        message(
+          'Private Speicher-Sicherung erstellt. Sie enthält keine Foto-Binärdaten und ist keine normale Importdatei. Bewahre sie für eine spätere Wiederherstellung auf.',
         );
       } catch {
         message('Die gespeicherten Daten sind gerade nicht zugänglich.');

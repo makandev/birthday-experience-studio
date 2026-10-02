@@ -8,11 +8,11 @@ import {
   validateProcessedDataUrl,
   imageHeader,
 } from '../media/formats';
-import type { AssetStore } from '../media/store';
+import type { AssetStore, MediaAsset } from '../media/store';
 import { safeExternalUrl } from '../security/urls';
 export interface MediaHooks {
   getProject(): CreatorProject;
-  changed(): void;
+  changed(assets?: MediaAsset[]): Promise<void>;
   edited(): void;
   message(text: string): void;
   beforeRemoval(): void;
@@ -49,7 +49,10 @@ export class MediaController {
         '',
       )}</div><details class="advanced"><summary>Optional: öffentliches Online-Foto</summary><p>Nur verwenden, wenn du die Quelle kennst. Diese Fotoquelle wird erst nach bewusster Online-Bestätigung geladen; ohne Internet bleibt deine Beschreibung sichtbar.</p><label for="public-photo-url">Öffentliche HTTPS-Fotoadresse</label><input id="public-photo-url" type="url" maxlength="2048" placeholder="https://fotos.example.org/foto.jpg"><button type="button" class="button secondary" id="add-external-photo">Externe Fotoquelle vormerken</button><p class="field-help">Keine Zugangsdaten, Abfrageparameter oder privaten/lokalen Adressen.</p></details></details>`;
   }
-  private attach(media: CreatorProject['media'][number]): void {
+  private async attach(
+    media: CreatorProject['media'][number],
+    assets: MediaAsset[] = [],
+  ): Promise<void> {
     const project = this.hooks.getProject();
     if (
       project.media.length >= mediaBudget.maxPhotos ||
@@ -85,7 +88,15 @@ export class MediaController {
       },
     });
     project.exportConfig.externalMediaConsent = false;
-    this.hooks.changed();
+    try {
+      await this.hooks.changed(assets);
+    } catch (cause) {
+      project.media = project.media.filter((item) => item.id !== media.id);
+      project.experience.blocks = project.experience.blocks.filter(
+        (block) => block.data.mediaId !== media.id,
+      );
+      throw cause;
+    }
   }
   private async importFiles(files: File[]): Promise<void> {
     if (this.busy) {
@@ -109,26 +120,27 @@ export class MediaController {
         this.hooks.message('Dein Foto wird auf diesem Gerät vorbereitet …');
         const asset = await processPhoto(file);
         if (this.hooks.getProject() !== owner) break;
-        await this.store.putMany([asset]);
-        if (this.hooks.getProject() !== owner) break;
-        this.attach({
-          id: crypto.randomUUID(),
-          kind: 'image',
-          name:
-            file.name
-              .split('')
-              .filter(
-                (char) =>
-                  char.charCodeAt(0) >= 32 && char.charCodeAt(0) !== 127,
-              )
-              .join('')
-              .slice(0, 240) || 'Foto',
-          mimeType: 'image/jpeg',
-          size: asset.processed.size,
-          width: asset.width,
-          height: asset.height,
-          source: { type: 'local', assetId: asset.id },
-        });
+        await this.attach(
+          {
+            id: crypto.randomUUID(),
+            kind: 'image',
+            name:
+              file.name
+                .split('')
+                .filter(
+                  (char) =>
+                    char.charCodeAt(0) >= 32 && char.charCodeAt(0) !== 127,
+                )
+                .join('')
+                .slice(0, 240) || 'Foto',
+            mimeType: 'image/jpeg',
+            size: asset.processed.size,
+            width: asset.width,
+            height: asset.height,
+            source: { type: 'local', assetId: asset.id },
+          },
+          [asset],
+        );
       }
       this.hooks.message(
         'Deine Fotos sind bereit. Beschreibe kurz, was sie zeigen und warum dieser Moment wichtig ist.',
@@ -141,7 +153,7 @@ export class MediaController {
       );
     } finally {
       this.busy = false;
-      this.hooks.changed();
+      await this.hooks.changed();
     }
   }
   bind(root: HTMLElement): void {
@@ -180,32 +192,34 @@ export class MediaController {
           }
         }),
       );
-    root.querySelector('#add-external-photo')?.addEventListener('click', () => {
-      try {
-        const url = safeExternalUrl(
-          root
-            .querySelector<HTMLInputElement>('#public-photo-url')!
-            .value.trim(),
-        );
-        this.attach({
-          id: crypto.randomUUID(),
-          kind: 'image',
-          name: 'Externes Foto',
-          mimeType: 'image/jpeg',
-          size: 0,
-          source: { type: 'external', url: url.href },
-        });
-        this.hooks.message(
-          'Fotoquelle vorgemerkt. Wähle für die Verwendung das Online-Profil und bestätige die Quelle in der Vorschau.',
-        );
-      } catch (error) {
-        this.hooks.message(
-          error instanceof Error
-            ? error.message
-            : 'Bitte prüfe die Fotoquelle.',
-        );
-      }
-    });
+    root
+      .querySelector('#add-external-photo')
+      ?.addEventListener('click', async () => {
+        try {
+          const url = safeExternalUrl(
+            root
+              .querySelector<HTMLInputElement>('#public-photo-url')!
+              .value.trim(),
+          );
+          await this.attach({
+            id: crypto.randomUUID(),
+            kind: 'image',
+            name: 'Externes Foto',
+            mimeType: 'image/jpeg',
+            size: 0,
+            source: { type: 'external', url: url.href },
+          });
+          this.hooks.message(
+            'Fotoquelle vorgemerkt. Wähle für die Verwendung das Online-Profil und bestätige die Quelle in der Vorschau.',
+          );
+        } catch (error) {
+          this.hooks.message(
+            error instanceof Error
+              ? error.message
+              : 'Bitte prüfe die Fotoquelle.',
+          );
+        }
+      });
     root
       .querySelectorAll<HTMLButtonElement>('[data-remove-photo]')
       .forEach((button) =>
@@ -217,7 +231,7 @@ export class MediaController {
           project.experience.blocks = project.experience.blocks.filter(
             (b) => b.data.mediaId !== id,
           );
-          this.hooks.changed();
+          void this.hooks.changed();
           this.hooks.message(
             'Foto aus diesem Geschenk entfernt. Die lokalen Bilddateien bleiben für Wiederherstellung erhalten.',
           );

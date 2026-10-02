@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { STORAGE_KEY } from '../../src/persistence/storage';
+import { readStoredProject } from '../browser-storage';
 async function preview(page: import('@playwright/test').Page) {
   await page.goto('/');
   await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
@@ -73,12 +73,8 @@ test('director proposal is reviewed, hostile code fields rejected, valid changes
   await expect(
     page.getByRole('dialog', { name: 'Optionale Hilfe für dein Geschenk' }),
   ).toBeVisible();
-  const ids = await page.evaluate(
-    (key) =>
-      JSON.parse(localStorage.getItem(key)!).experience.blocks.map(
-        (b: { id: string }) => b.id,
-      ),
-    STORAGE_KEY,
+  const ids = (await readStoredProject(page)).experience.blocks.map(
+    (block) => block.id,
   );
   const proposal = {
     schemaVersion: 1,

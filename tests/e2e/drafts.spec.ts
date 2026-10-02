@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import legacy from '../fixtures/project-v1.json' with { type: 'json' };
-import { STORAGE_KEY } from '../../src/persistence/storage';
+import { readStoredProject } from '../browser-storage';
 
 test('draft backup, reviewed legacy import and switching between retained gifts', async ({
   page,
@@ -27,12 +27,7 @@ test('draft backup, reviewed legacy import and switching between retained gifts'
   await expect(page.locator('#import-summary')).toContainText(
     'Geprüfter Entwurf für Anna',
   );
-  expect(
-    await page.evaluate(
-      (key) => JSON.parse(localStorage.getItem(key)!).recipient.name,
-      STORAGE_KEY,
-    ),
-  ).toBe('Current gift');
+  expect((await readStoredProject(page)).recipient.name).toBe('Current gift');
   await page.getByRole('button', { name: 'Geprüften Entwurf öffnen' }).click();
   await expect(page.getByLabel('Dein persönlicher Brief')).toHaveValue(
     legacy.writing.letter,

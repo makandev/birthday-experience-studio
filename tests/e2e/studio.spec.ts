@@ -18,6 +18,9 @@ test('vertical slice, restore, isolated preview and offline gift with no network
   await page
     .getByLabel('Was schätzt du besonders an dieser Person?')
     .fill('Du hörst immer zu.');
+  await expect(page.locator('#save-status')).toHaveText(
+    'Auf diesem Gerät gespeichert',
+  );
   await page.reload();
   await expect(
     page.getByLabel('Was schätzt du besonders an dieser Person?'),
@@ -147,12 +150,11 @@ test('guided writing requires approval, reset can be cancelled and undone', asyn
 test('unreadable drafts remain protected and hostile text is inert', async ({
   page,
 }) => {
+  await page.addInitScript((key) => {
+    if (!localStorage.getItem(`${key}.backup`))
+      localStorage.setItem(key, '{broken');
+  }, STORAGE_KEY);
   await page.goto('/');
-  await page.evaluate(
-    (key) => localStorage.setItem(key, '{broken'),
-    STORAGE_KEY,
-  );
-  await page.reload();
   await expect(
     page.getByRole('heading', {
       name: 'Dein vorhandener Entwurf bleibt geschützt.',

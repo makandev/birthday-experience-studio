@@ -150,6 +150,32 @@ describe('atomic workspace and asset lifecycle', () => {
     await expect(
       repo.commit(2, { kind: 'cleanup', releaseRecovery: true }),
     ).rejects.toBeInstanceOf(ProtectedStorage);
+    expect(JSON.parse(await repo.recoveryBackup()).workspace).toEqual({
+      storageVersion: 99,
+    });
+  });
+  it('missing/corrupt referenced blobs stay protected while non-referenceable orphan keys are reclaimed', async () => {
+    const { repo, project, db, store } = await setup();
+    photo(project, 'corrupt-but-referenced');
+    await repo.commit(0, { kind: 'save', project });
+    const connection = await db.open();
+    await new Promise<void>((resolve) => {
+      const tx = connection.transaction('assets', 'readwrite');
+      tx.objectStore('assets').put({
+        id: 'corrupt-but-referenced',
+        processed: null,
+      });
+      tx.objectStore('assets').put({ id: 17, processed: null });
+      tx.oncomplete = () => resolve();
+    });
+    const cleaned = await repo.commit(1, {
+      kind: 'cleanup',
+      releaseRecovery: false,
+    });
+    expect(cleaned.removedAssets).toBe(1);
+    expect(await store.get('corrupt-but-referenced')).toBeDefined();
+    await repo.commit(2, { kind: 'delete', projectId: project.id });
+    expect(await store.get('corrupt-but-referenced')).toBeUndefined();
   });
   it('asset collisions and aborted imports roll back both projects and assets', async () => {
     const { repo, project, store } = await setup();
