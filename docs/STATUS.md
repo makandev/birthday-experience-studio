@@ -1,6 +1,6 @@
 # BES 0.2 — storage integrity and focused product foundations
 
-Early evolving development, not a finished product. Core creation remains zero-cost and useful without accounts, paid APIs, mandatory servers/cloud or AI. PRODUCT_VISION defines commitments; this file reports implementation and evidence.
+Early evolving development, not a finished product. The latest user correction makes new creation AI-first: local inference or an optional free-only API, with no paid fallback. Existing gifts remain usable; recipient exports require no model/account/network. PRODUCT_VISION defines commitments; this file reports implementation and evidence.
 
 ## Implemented
 
@@ -10,7 +10,7 @@ Early evolving development, not a finished product. Core creation remains zero-c
 - Direction-based motion/typography/colors/media styling/order recommendations, staged Champion/variable Challenger progression and fitting three-phase finales, intensity 0–3, recipient motion-off, reduced-motion/mobile budgets and full contrast.
 - Offline/Restricted and Standard/Online capability profiles; selected missing/unsupported dependencies fail closed. Online photos require deliberate source consent and persistent descriptive fallback.
 - Six raster photos with bounded picker/drop, orientation normalization, metadata-free compressed JPEG gift copies and separate original retention. Portable drafts carry derivatives, not originals.
-- Manual provider-neutral Director review accepts only known settings/existing ordering/private question ideas; no provider calls, key fields, automatic question installation or arbitrary community execution.
+- Manual provider-neutral Director review accepts only known settings/existing ordering/private question ideas; no automatic question installation or arbitrary community execution. Separate AI-native generation now uses researched local/free-only transports (see current checkpoint below).
 
 ## Storage Integrity & Safe Concurrency milestone
 
@@ -111,3 +111,13 @@ Commits through the tested implementation: 15298f8 (complete North Star/masterpl
 ### Rebuild live delivery evidence
 
 Implementation/documentation checkpoint 8ce0daf was pushed and fast-forward integrated on both branches. [Pages run 37070907358](https://github.com/makandev/birthday-experience-studio/actions/runs/37070907358) passed all CI checks and deployed successfully on 2026-10-02. Both real-live Chromium smokes and all 16 real-live Chromium/WebKit mobile checks passed afterward, including current Studio subpath assets, actual short creator/refinement, isolated recipient reading, primary single HTML download and exact offline archetype progression. Live URL: https://makandev.github.io/birthday-experience-studio/. The additional private check of visible original text segments of at least 80 characters found zero exact matches in tracked files; it excludes script-held/short/non-text content and is not exhaustive. The final evidence-only documentation push is checked through the same workflow; unchanged source artifacts do not imply physical iPhone or emotional acceptance. No additional feature milestone is needed to avoid the open human/device gates.
+
+## AI-native correction — current checkpoint (2026-10-03 Europe/Berlin)
+
+The user rejected a newly created gift; prior internal experience acceptance is superseded, not proof of benchmark quality. New creation now asks a connected local Ollama/free-only OpenRouter to write public copy and new JavaScript drawing choreography, then presents an actual playable review. Regeneration preserves authored copy unless explicitly requested; adoption is revision-checked and undoable. Credentials are tab-memory only; private questionnaire answers/photos/reference source are excluded from prompts and recipient projection. Optional animation fields keep current schemas backward compatible. ADR 0009/INTEGRATIONS document exact boundaries and researched official contracts.
+
+Technical acceptance passed: 137 unit/module tests (12 files), 37 Chromium E2E, 24 production-subpath mobile Chromium/WebKit checks and two Pages smokes; TypeScript, lint, format, standard/standalone and Pages builds passed. Security checks include obfuscated network/storage attempts, infinite computation, invalid/oversized drawing geometry, forged messages, pause/reduced-motion and offline changing frames. A visible mobile 38px target was corrected to 44px and rechecked. Existing storage/concurrency/import/migration suites remain green. Synthetic provider fixtures exercise actual generated-code execution, not real inference. No provider account or installed model is available here; actual sign-in/inference, physical iPhone file delivery and reference-quality acceptance remain open. Maintained scene grammar stays bounded; generated code draws custom choreography rather than taking over page structure. No paid fallback or silent preset fallback is introduced.
+
+Current-file privacy scan: zero private-reference identity matches across 129 source/document/test files. Private reference source/media/copy/screenshots stay outside the checkout. Implementation commits: 817c48a (contract/research/security docs), ec6ee4d (provider/session/review/program/export/runtime/tests). This checkpoint's main/Pages delivery is pending the checked integration, not inferred from local builds.
+
+Remaining risks: actual free-router authentication/inference and installed local-model quality are unverified; generated code is a bounded drawing capability, not arbitrary scene/DOM redesign. Quotas/availability change, local-server no-cloud configuration is user-controlled, worker memory/GPU/browser-engine risks remain. Physical iPhone WhatsApp/Files opening and human reference acceptance remain release blockers. NEXT: actual model-generated choreography/novice acceptance with approved public data, then physical-device delivery. No additional generic framework/paid services/marketing scope.
