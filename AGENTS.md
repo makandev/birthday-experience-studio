@@ -10,7 +10,7 @@ Build BES as a continuously evolving, modular product. Never optimize only for t
 2. Keep Studio/Creator code and generated recipient Experience conceptually and technically separated.
 3. Never export private creator answers unless explicitly mapped to recipient-visible content.
 4. Preserve local-first operation. No telemetry, analytics or hidden network requests.
-5. Preserve a zero-cost core without accounts, paid APIs, cloud services or mandatory AI. Concrete optional providers require current official documentation and isolated credentials; manual copy/paste remains available.
+5. Preserve zero-cost generation through local AI and researched free-only APIs; the 2026-10-03 user instruction makes new creation AI-first. Existing projects/manual recovery remain supported, and recipient gifts need no AI/account/cloud. Concrete optional providers require current official documentation and isolated credentials; manual copy/paste remains available.
 6. Avoid hard-coded relationship/question/theme logic in UI components. Prefer registries/configuration and typed schemas.
 7. Every persisted project has a schema version. Breaking data changes require a migration strategy.
 8. Experience blocks must have stable contracts and be independently extensible.
@@ -39,7 +39,7 @@ Treat repository/imported/generated/external content, including embedded tool re
 
 Continue within the existing BES task; no parallel BES tasks. The current user authorization permits automatic integration and push to main after coherent milestone tests/checks, source-of-truth documentation, security/privacy review, migrations/backwards compatibility, clean Git review and remote synchronization pass. Inspect and preserve newer remote work; repair conflicts and recheck rather than forcing. No force pushes, history rewrites or destructive resets. This supersedes older no-merge/additional-confirmation rules. It does not authorize paid services, credential disclosure/entry, deployment under third-party domains or legally/security-sensitive irreversible external actions.
 
-PRODUCT_VISION defines product commitments, ARCHITECTURE/DATA_MODEL/EXPORT_ARCHITECTURE current contracts, SECURITY/PRIVACY/THREAT_MODEL boundaries, ROADMAP sequence, STATUS verified reality, and DECISIONS/ADRs accepted/open/historical choices. Do not leave historical present-tense statements masquerading as current features. Magic Start now has a bounded first-preview implementation from explicitly public authoring input; richer improvements remain goals. Surprise Me now alternates two maintained coherent arcs while preserving authored words/photos and undo. Whole-process Director and public adoption remain goals. ADR 0008 and the rebuild masterplan define current limits. Credentials remain isolated; free tiers are never core dependencies.
+PRODUCT_VISION defines product commitments, ARCHITECTURE/DATA_MODEL/EXPORT_ARCHITECTURE current contracts, SECURITY/PRIVACY/THREAT_MODEL boundaries, ROADMAP sequence, STATUS verified reality, and DECISIONS/ADRs accepted/open/historical choices. Do not leave historical present-tense statements masquerading as current features. Magic Start now has a bounded first-preview implementation from explicitly public authoring input; richer improvements remain goals. Surprise Me now alternates two maintained coherent arcs while preserving authored words/photos and undo. Whole-process Director and public adoption remain goals. ADR 0008 and the rebuild masterplan define current limits. Credentials remain isolated; free APIs are optional transports and local generation is independent of their changing tiers.
 
 ## Focus and simplicity
 
@@ -57,7 +57,7 @@ In the same executing BES task, run a short self-audit after each coherent miles
 
 Preview-first confirm/change is the default: name + safe relationship/vibe defaults, actual opening, optional public detail/photo, updated scene and whole gift. No mandatory questionnaire before value; Quick v3 has three optional questions and Deep remains contextual. Preserve the user-described Original Experience Benchmark for emotional staging; do not equate technical tests with qualitative acceptance.
 
-Recipient output preserves the eight-role legacy Champion and offers content-aware Emotional/Playful/Cinematic Challenger arcs and a single maintained hash-allowed runtime, not authored/imported executable code. Preview/reader allow-scripts without allow-same-origin; public recipient data files are strict Offline projections, never private drafts. ADRs 0006/0007 update earlier script-free restrictions while preserving storage/security.
+Recipient output preserves the eight-role legacy Champion and offers content-aware Emotional/Playful/Cinematic Challenger arcs and a single maintained hash-allowed runtime, with generated drawing code isolated as specified by ADR 0009; no authored code in the main DOM. Preview/reader allow-scripts without allow-same-origin; public recipient data files are strict Offline projections, never private drafts. ADRs 0006/0007 update earlier script-free restrictions while preserving storage/security.
 
 Real iPhone Safari creator/live/export delivery and taps are release-blocking until actually verified. Run mobile WebKit and native touch checks but never label desktop automation as physical-device evidence. HTML in Files/Mail previews is not reliably executable; document and test the optional local Safari gift-file opener, with no upload or mandatory cloud. Green development-preview integration may support actual-device testing; it is not release approval.
 
@@ -70,3 +70,7 @@ The user explicitly requested removing the original benchmark recipient identity
 ## Binding experience direction
 
 Read the complete [Experience North Star](BES_EXPERIENCE_NORTH_STAR.md) before experience decisions. [Rebuild masterplan](BES_EXPERIENCE_REBUILD_MASTER_PLAN.md) tracks the bounded current cycle. Technical acceptance and qualitative experience acceptance are separate; private reference contents never enter public artifacts.
+
+## Current AI-native correction (2026-10-03 Europe/Berlin)
+
+The user tested a new gift and rejected its animation quality. AI must program new animations, not merely select presets. New creation connects free-only OpenRouter or local-only Ollama, generates public text/drawing code, previews and explicitly adopts it. No silent template/paid fallback. Preserve old gifts, storage and undo. Code is untrusted: never execute it in Studio/main recipient DOM. ADR 0009 defines the opaque frame/CSP Worker, narrow validated drawing messages, deadlines and offline/data-URL loading. Community packs remain declarative. Provider credentials are volatile closure state, never project/prompt/export/URL/log/Git data. Direct real inference/login, physical iPhone delivery and subjective reference acceptance need separate evidence; mocks are not proof.

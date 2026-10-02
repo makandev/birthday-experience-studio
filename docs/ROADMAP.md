@@ -28,3 +28,7 @@ Current implementation preserves the original fixed Champion and adds three cont
 GitHub Pages is activated and serves checked main; every integration checks workflow, subpath assets and real live smoke. Optional Safari recipient file reading is local after the page loads; no cloud upload/mandatory hosting for the core. Development preview deployment allows iPhone acceptance but is not a release claim. Before release, satisfy iPhone delivery/taps, accessibility/novice quality, privacy/export, storage/migration and Offline gates. Do not expand the roadmap or call BES permanently finished.
 
 Standalone HTML remains primary on iPhone/iPad too. The optional reader is an experiment; it cannot substitute for the unresolved ordinary iPhone HTML opening/tap gate.
+
+## Current AI-native checkpoint — 2026-10-03
+
+Current NOW supersedes preset-only polish: validate AI-first generation against actual free/local models and the neutralized reference mechanism, then real iPhone/novice acceptance. This is one bounded authoring capability, not generic plugins/tools/backends. No more variants, marketing or paid provider scope before visible quality works.

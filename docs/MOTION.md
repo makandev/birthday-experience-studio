@@ -13,3 +13,7 @@ Tests cover hash-pinned runtime, progression, timing/skip/pause/reduced motion, 
 ## Rebuild choreography
 
 ADR 0008 coordinates scene selection with a quiet 3.2-second phase, bright playful 2.4-second phase (gentle 3.2) or cinematic 4-second phase. The legacy Champion retains 4.5-second phases. Emotional finale revisits an existing normalized photo and public core-message quote; celebratory/cinematic finales offer bounded finite fireworks, never perpetual firing. Respectful register omits fireworks/false ending. All effects stop on pause, reduced motion, zero intensity or hidden document. No-JS Challenger disables animation and retains native disclosure reading. Public authored words never enter executable runtime bytes.
+
+## Current AI-native checkpoint — 2026-10-03
+
+Generated programs compute new particle/drawing choreography from time/scene/finale phase, instead of selecting a fixed effect list. Only circle/line/rectangle drawing commands cross the sandbox boundary; no generated DOM/CSS. Max160 commands/96 mobile, 30fps target, bounded dimensions/glow, 1500ms startup and400ms frame watchdog. Pause/reduced/visibility/pagehide terminate work and late replies cannot reactivate it. Embedded data-URL Worker replaces Blob after WebKit offline failures. Controlled reference-style light/material/letter staging is maintained; actual model output and qualitative acceptance are separate.

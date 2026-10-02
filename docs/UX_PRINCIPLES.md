@@ -46,3 +46,7 @@ Standalone HTML is the primary gift artifact on every device, including iPhone/i
 ## Binding experience direction
 
 Read the complete [Experience North Star](../BES_EXPERIENCE_NORTH_STAR.md) before experience decisions. [Rebuild masterplan](../BES_EXPERIENCE_REBUILD_MASTER_PLAN.md) tracks the bounded current cycle. Technical acceptance and qualitative experience acceptance are separate; private reference contents never enter public artifacts.
+
+## Current AI-native checkpoint — 2026-10-03
+
+Current AI-first creation adds provider connection and generated-result review to the short public-input flow. Do not repeat the historical two-action/1–2-minute claim for first-time provider setup without novice timing evidence. No long questionnaire or mandatory private data; generation is cancellable and cannot discard the draft. Regenerating animation preserves authored copy by default, adoption/undo remain explicit.

@@ -1,6 +1,6 @@
 # Current privacy boundaries
 
-BES is local-first and online-capable, with no telemetry, analytics, mandatory account, cloud synchronization or AI calls. Creator answers/context/memories are sensitive private data. Only explicitly public gift text/captions and selected media derivatives cross the allowlisted recipient projection. Review guided/AI content: copied private facts are public once placed in gift text. Native reveal/hidden messages are not encryption.
+BES is local-first and online-capable, with no telemetry, analytics, mandatory cloud account/synchronization or hidden AI calls. New creation uses explicitly requested local/free-only generation as documented below. Creator answers/context/memories are sensitive private data. Only explicitly public gift text/captions and selected media derivatives cross the allowlisted recipient projection. Review guided/AI content: copied private facts are public once placed in gift text. Native reveal/hidden messages are not encryption.
 
 ## Drafts, original photos and storage
 
@@ -33,3 +33,7 @@ A .bes-gift.json file contains public ExportExperience data only; it is distinct
 Use **Original Experience Benchmark** for the abstract quality reference. Describe experience mechanics and quality goals without the original recipient identity, personal messages, locations, dates or original media. Documentation review is distinct from an original-artifact comparison and from Git-history erasure; state the actual scope and evidence.
 
 Historical privacy cleanup now includes the two published branch histories, not only current documentation. Rewriting branch references does not erase GitHub cached commit views, deployment records, existing clones or third-party copies. GitHub Support controls server-side garbage collection/cache removal and decides whether a request qualifies; no successful purge is claimed. Four affected workflow runs/artifacts were removed. Deactivation of the four old deployment records was denied by the integration permission boundary, so those references remain.
+
+## Current AI-native checkpoint — 2026-10-03
+
+Current AI-first requests share only the explicitly public brief on user action. Private answers/photos/originals/metadata/reference HTML and credentials are not sent. Disabled existing letter is excluded. Online inference sends that public brief to OpenRouter/selected providers under their terms; local loopback inference assumes correctly configured Local-only Ollama. Credentials live only in a tab closure, not browser persistence or gift/draft/prompt/log/URL. Generated drawing source is public gift content, with no access to Studio/private storage in its opaque Worker.

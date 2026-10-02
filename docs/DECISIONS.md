@@ -18,6 +18,8 @@
 
 ADR 0001's single localStorage draft was appropriate for the text-only 0.1 proof. ADR 0002's two-key library rollback and ADR 0004's separate project/asset activation are superseded by ADR 0005. Their documents remain historical records, not current storage guarantees. ADR 0006 supersedes the script-free/scroll-only and finite-only recipient restrictions of ADRs 0001/0003; their projection/security contracts remain active. Early “media not implemented” statements describe the old slice; current media contracts are in MEDIA/DATA_MODEL/STATUS.
 
+| AI-first generation, free/local transports, reviewed isolated drawing code | [ADR 0009](adr/0009-ai-generated-isolated-drawing.md) | Active development; real inference/qualitative acceptance open |
+
 ## Open decisions
 
 - Public pack schema/versioning, capability validation, licensing and review/import UX; no executable community extension model.
@@ -46,3 +48,7 @@ The later user instruction to remove the benchmark recipient identity including 
 ## First bounded experience rebuild decision
 
 [ADR 0008](adr/0008-variable-experience-composition.md) retains the legacy Champion and adds three declarative variable strategies/two arcs with purposeful route/photo interaction and fitting finales. The first same-input browser comparison in [EXPERIENCE_ACCEPTANCE](EXPERIENCE_ACCEPTANCE.md) supports Challenger portrait as the default for new Studio Magic Start gifts. Existing projects do not change implicitly; creator can compare/adopt/undo. This is an explicit engineering/product judgment, not an automated winner, user study or declaration that the private benchmark is beaten. Physical iPhone and qualitative private-reference acceptance remain open.
+
+## Current AI-native checkpoint — 2026-10-03
+
+2026-10-03: user rejected the new gift animation quality and changed direction to AI-native animation programming with local/free API inference. ADR 0009 supersedes AI-never-executable ONLY for reviewed drawing code in an opaque CSP Worker. No Studio/agent/tool execution or community code platform. Preserve existing projects/manual recovery; new AI-first creation needs explicit connection/review. Prior internal Challenger default judgment is not user acceptance.

@@ -2,7 +2,7 @@
 
 **Early development 0.2 – evolving architecture and product foundations, not a finished product.**
 
-Tell BES about the person, add memories/photos, and assemble a personal interactive birthday experience. Core creation needs no accounts, paid APIs, subscriptions, cloud service or AI provider.
+Tell BES about the person, add memories/photos, and assemble a personal interactive birthday experience. New creation uses local AI or an optional free-only API. No paid API or subscription is required; recipient gifts remain standalone and need no account, cloud or AI.
 
 ## Live Studio / GitHub Pages
 
@@ -35,7 +35,7 @@ Six photo slots support local picker/drop, JPEG/PNG/still WebP detection, orient
 
 “My gifts & backup” (German UI: „Meine Geschenke & Sicherung“) exports private creator drafts, reviews imports and retains up to eight other gifts. Historical v1 drafts migrate to schema v2. Portable photo drafts carry gift copies; originals remain on the source device and can be downloaded separately.
 
-Optional manual AI help shows exactly what would be shared. The provider-neutral Director dialog validates structured proposals against known settings and existing blocks, requires confirmation and offers undo. No API providers, key fields or automatic AI network calls exist.
+Optional manual AI help shows exactly what would be shared. The provider-neutral Director dialog validates structured proposals against known settings and existing blocks, requires confirmation and offers undo. The separate AI generation flow connects local Ollama or free-only OpenRouter on explicit user request; see INTEGRATIONS and ADR 0009.
 
 ## iPhone / Safari: release gate still open
 
@@ -96,8 +96,14 @@ src/
   studio/       Workflow and separate photo controller
 ```
 
-A reproducible single-file Studio test artifact is available via `npm run build:standalone`: open `dist/BES-Test-0.2.html` in a browser. It bundles the current trusted Studio CSS/JavaScript, Recipient gifts contain only their own maintained hash-allowed runtime, never Studio code. File-origin persistence varies by browser; keep explicit draft backups. Browser tests rebuild this artifact automatically and exercise its exact bytes offline on the test origin; managed file navigation remains unverified.
+A reproducible single-file Studio test artifact is available via `npm run build:standalone`: open `dist/BES-Test-0.2.html` in a browser. It bundles the current trusted Studio CSS/JavaScript, Recipient gifts contain their maintained hash-allowed runtime and optional isolated drawing program, never Studio code. File-origin persistence varies by browser; keep explicit draft backups. Browser tests rebuild this artifact automatically and exercise its exact bytes offline on the test origin; managed file navigation remains unverified.
 
 Read `AGENTS.md` and relevant docs before architectural work. See [current status](docs/STATUS.md), [architecture](docs/ARCHITECTURE.md), [media](docs/MEDIA.md), [motion](docs/MOTION.md), [integrations](docs/INTEGRATIONS.md), [decisions](docs/DECISIONS.md), [security](SECURITY.md) and [threat model](docs/THREAT_MODEL.md).
 
-Community extensibility is safe declarative birthday content, not arbitrary executable code. Audio/video playback, further story arcs beyond the bounded first comparison, quarantine repair and concrete API providers remain later work. After full quality/security/privacy/migration gates, the current user policy permits autonomous main integration; no paid services or third-party-domain deployment follows from that permission.
+Community extensibility is safe declarative birthday content, not arbitrary executable code. Audio/video playback, further story arcs beyond the bounded first comparison, quarantine repair remain later work; concrete local/free-only generation is now implemented with real-provider acceptance still open. After full quality/security/privacy/migration gates, the current user policy permits autonomous main integration; no paid services or third-party-domain deployment follows from that permission.
+
+## AI-first creation checkpoint
+
+New creation connects local Ollama or OpenRouter's free-only router, then previews generated gift text and a newly programmed animation before adoption. A provider connection is needed; no silent template or paid-model fallback. OpenRouter requires signup; reviewed limits are 20 requests/minute and 50/day without buying credits, subject to change. OAuth uses PKCE and a temporary user-owned in-memory token, no embedded app secret. Local Ollama requires installed local weights, Local-only mode and an explicit Studio CORS origin; browser/iPhone access may be unavailable. No models are downloaded automatically. See [integration setup and official sources](docs/INTEGRATIONS.md).
+
+Generated drawing JavaScript executes only inside an opaque, network-blocked Worker with command/size/time limits. Gifts remain one offline HTML file with no provider credentials or runtime AI. Existing gifts remain editable/exportable. Actual model quality, real OAuth login and physical iPhone delivery are not proved by mocked integration tests.

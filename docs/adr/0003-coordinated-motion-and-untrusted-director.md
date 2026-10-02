@@ -11,3 +11,7 @@ Offline/Restricted and Standard/Online are explicit project/export profiles. Sel
 The provider-neutral Integration Center supports manual copy/paste only. Concrete providers and credential fields are absent until current official docs, cost/limits, and browser/trusted-backend requirements are reviewed. Core creation never relies on free tiers. A Director proposal is untrusted bounded JSON, with exact allowed direction/theme/intensity/tone settings and a complete permutation of existing block IDs. No tools/actions/scripts, URLs, new executable blocks or text mutation. Private follow-up suggestions are displayed as text and not automatically installed as questions. Approval and application revalidate against current project state; undo is available.
 
 Future AI Director capabilities can extend this data protocol with further validated proposals, not arbitrary instructions. Dynamic audio will require deliberate recipient interaction, controls and fallback, and must preserve these capability boundaries.
+
+## Superseding scope note (2026-10-03)
+
+The manual Director contract above remains declarative. ADR 0009 supersedes this ADR's historical provider-absence/non-executable-output claims for a separate, reviewed generated drawing program in an opaque CSP Worker. Concrete free-only OpenRouter/local-only Ollama transports are now implemented; no generated code executes in Studio/main DOM or community packs.

@@ -1,11 +1,41 @@
-# Provider-neutral Integration Center and AI Director
+# AI generation and provider boundaries
 
-Current implementation: optional manual prompt copy/paste, no API calls, API-key fields, accounts, paid services or built-in providers. The core flow stays useful without AI. The catalog has only a manual transport.
+## Current contract (2026-10-03, Europe/Berlin)
 
-The Director prompt contains explicitly recipient-visible gift text, not raw private answers. It is shown in full before manual sharing. The chosen external service may require an account/payment; BES makes no free-tier promise or current provider recommendation. Concrete providers must be researched from current official docs before addition, recording limits, signup/key requirements, browser safety, backend needs, licensing, and changing prices.
+New creation is AI-first following the user's correction. AI produces public gift copy and an original JavaScript drawing program, rather than selecting only animation presets. Existing projects, manual editing, undo and recovery remain available. Recipient gifts need no provider, account, network or model: accepted program source is embedded in the standalone HTML. There is no silent template or paid-model fallback.
 
-Director v1 allows: one known direction, one known theme, intensity 0–3, known tone, a complete permutation of existing block IDs and at most three bounded private follow-up ideas. Unknown fields, tool/action requests, code settings and invalid IDs fail validation. Proposal text is never executable and does not change agent authorization. Review is explicit; application validates again and can be undone. It does not rewrite creator texts or automatically install new questions.
+The provider interface has two concrete transports. No application client secret is shipped. Credentials are closure-only volatile state, lost on reload/disconnect, and excluded from projects, prompts, URLs, logs, exports and packs. Only explicit public name/relationship/vibe/gift words/request are sent; raw questionnaire answers, reference contents and photos are excluded. Public words may still identify someone: consent and review matter.
 
-Long-term Director assistance may propose adaptive questions, tone, story arc, block selection/order, photo placement, theme, transitions, motion/effects, pacing/timing, surprise moments, finale and music direction, always as typed untrusted data validated against allowed contracts and creator review. None of these proposals can directly invoke tools or become code. New API integrations must classify transport as browser-public or trusted-backend. Client secrets require a trusted isolated broker; no credential data may enter CreatorProject, recipient/draft exports, prompts, logs, URLs, Git or community packs. A trusted backend cannot become a mandatory core dependency.
+## Free-only OpenRouter
 
-The Integration Center/Capability Layer must expose supported capabilities rather than bind BES to one company. Browser-public transport does not authorize exposing a client secret. If safe browser use cannot be established, classify the integration as unsupported or trusted-backend-only through a secure optional architecture. No concrete provider has been researched/enabled in this milestone; no current free-tier limits are invented. Manual copy/paste remains the universal no-cost BES fallback, while the chosen external service's own requirements can vary.
+Official browser PKCE documentation supports a public browser app. BES uses S256 with the headless authorization flow: open the official sign-in page and copy its short-lived, single-use authorization code into BES. No callback query token or persistent verifier is required. The exchanged user credential is sent only in the Authorization header to the fixed HTTPS endpoint.
+
+Signup is required. The model is exactly `openrouter/free`, with no paid model fallback. Official limits reviewed for this implementation are 20 requests/minute and 50/day without purchasing credits. Availability, selected model, quality, pricing and quotas can change. An exhausted quota is an error, not permission to spend money. The optional documented paid quota boost is not implemented. OpenRouter and its selected inference provider receive the approved brief; local AI is preferable when that is unacceptable. No account/key was supplied to this development environment: actual sign-in and real inference are **not verified**.
+
+Reviewed official sources:
+
+- [PKCE](https://openrouter.ai/docs/guides/overview/auth/oauth), official `OpenRouterTeam/docs` source `projects/docs/guides/overview/auth/oauth.mdx`, blob `d602d2527c36dee7133896489812c44fa636458f`.
+- [Limits](https://openrouter.ai/docs/api-reference/limits), `projects/docs/api_reference/limits.mdx`, blob `6b604d9b284582c956589b11efa7a5fe6d1357ba`; exported quota constants were also read.
+- [Free router](https://openrouter.ai/docs/guides/routing/routers/free-router), `projects/docs/guides/routing/routers/free-router.mdx`, blob `84c85a7037e024970b346923e0e32e8ea2fadb2c`.
+
+Official GitHub sources were read because direct documentation requests were blocked by the current environment proxy. They are evidence of the documented contract, not of a successful live request. Service/model terms and licensing must be checked for the actual use; BES does not claim that all routed model licenses are identical.
+
+## Local-only Ollama
+
+BES addresses only `http://127.0.0.1:11434`. It lists already installed models and checks model metadata before connecting. Cloud model names and remote model metadata are rejected. No download or model installation is triggered. Start Ollama with `OLLAMA_NO_CLOUD=1`; set `OLLAMA_ORIGINS` to the exact Studio origin (for Pages: `https://makandev.github.io`), not a wildcard, and keep the service bound to loopback.
+
+Ollama software is MIT-licensed; model weights have separate licenses and hardware requirements. The loopback check is not an attestation of server behavior: the user must configure a genuinely local server. Browser CORS/private-network/mixed-content restrictions can block access. This does not make an installed desktop model available on an iPhone. No local model is running in this development environment; real inference is **not verified**.
+
+Official sources reviewed in `ollama/ollama`: [API](https://docs.ollama.com/api) (`docs/api.md`, blob `548e610e8769a8151e336c051c7a72e2dd05e7ca`), [structured outputs](https://docs.ollama.com/capabilities/structured-outputs) (blob `c570a12f9dac6693e9f3e1b8d9242604cc034b5a`) and [FAQ/local-only/origins](https://docs.ollama.com/faq) (blob `c2f3b4f579abefb8eb27a035b37496f99e5549c8`).
+
+## Review and execution
+
+The response is bounded strict JSON: public letter/wish/surprise plus a versioned drawing program. Unknown fields and tool/credential instructions fail validation. A probe checks its first frame before presenting a playable candidate. Adoption is explicit and revision-checked; stale results cannot replace foreign newer changes. Regenerating animation preserves existing words unless rewriting is explicitly selected. Undo restores the prior project.
+
+Generated code is untrusted. It runs only in a dedicated Worker inside an opaque sandboxed iframe, with network denied by CSP, no DOM or usable application storage, bounded validated circle/line/rectangle messages, frame deadlines and termination. Code cannot invoke agent tools or alter app policy. The simple source denylist is defense in depth, not the security boundary. Resource exhaustion and malicious browser-engine exploits cannot be ruled out. See ADR 0009 and SECURITY.md.
+
+Manual Director copy/paste remains a provider-neutral advanced option. Its declarative proposal contract stays non-executable; community packs also remain declarative. The narrowly isolated drawing-code exception does not authorize a general code/plugin platform.
+
+## Evidence limits
+
+Automated provider tests use clearly synthetic mocked responses, including auth, quotas, privacy, review and offline execution. They do not prove real AI quality, reliable free availability, actual authentication or physical iPhone delivery. Technical acceptance and reference/experience acceptance remain separate.

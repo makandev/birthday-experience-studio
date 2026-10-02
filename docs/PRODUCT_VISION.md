@@ -4,7 +4,7 @@ Birthday Experience Studio helps normal, nontechnical people create a highly per
 
 ## Non-negotiable promises
 
-- The complete core is useful at zero cost without subscriptions, paid APIs, servers, accounts, cloud services or external AI. A third-party free tier must never be a core dependency; its terms can change.
+- Current user direction (2026-10-03): new gifts are AI-generated, using local inference without an account/cloud or a researched free-only online API with signup. No subscriptions/paid fallback. Local AI avoids dependency on a changeable third-party free tier, but requires installed software/model and suitable hardware. Recipient gifts stay completely independent of AI or cloud.
 - Local-first is not offline-only. **Offline / Restricted** exports embed all required content with no required external requests, including on company networks. **Standard / Online** permits deliberately selected sources/integrations, capability checks and graceful fallback. Later Share/Hosted mode is optional and must never require a cloud for creation/export.
 - Private Studio data and recipient-visible content are separate. Never automatically export questionnaire answers; project through an explicit allowlist. The creator reviews all gift text/captions, including guided or AI-assisted content.
 - Coordinated Emotional, Funny, Elegant and Cinematic directions connect typography, media, transitions, motion intensity, pacing, surprise and finale. Effects must serve a coherent story, with accessibility and mobile/performance budgets.
@@ -19,7 +19,7 @@ Surprise Me targets alternative coherent dramaturgies/compositions from the same
 
 The Integration Center/Capability Layer is provider-neutral. Concrete providers require current official documentation review of costs/limits, signup/key requirements, browser/backend boundaries, security and licensing. Manual external-AI prompt copy/paste remains the universal no-cost BES fallback; the independently chosen service may itself require payment/signup. No provider pricing promise is permanent.
 
-Long-term AI Director may propose adaptive questions, tone, story arc, block selection/order, photo placement, theme, transitions, motion/effects, pacing/timing, surprises, finale and music direction. AI output is untrusted structured data validated against schemas/allowlists, never executable code or direct tool instructions. Current capabilities and omissions are in [INTEGRATIONS.md](INTEGRATIONS.md) and [STATUS.md](STATUS.md).
+Long-term AI Director may propose adaptive questions, tone, story arc, block selection/order, photo placement, theme, transitions, motion/effects, pacing/timing, surprises, finale and music direction. AI output is untrusted. Structured gift data is validated; the user now explicitly requests programmed animation. The narrow exception is reviewed drawing code in an opaque CSP-constrained Worker, never Studio/main-DOM code or direct tool instructions (ADR 0009). Current capabilities and omissions are in [INTEGRATIONS.md](INTEGRATIONS.md) and [STATUS.md](STATUS.md).
 
 Credentials are isolated from CreatorProject, project files, recipient HTML, prompts, URLs, logs, Git and community packs. Client secrets must never be exposed. A provider unsafe from a local browser is unsupported or requires a secure optional architecture; such a backend cannot become a core dependency.
 
@@ -58,3 +58,5 @@ Standalone HTML is the primary gift artifact on every device, including iPhone/i
 ## Binding experience direction
 
 Read the complete [Experience North Star](../BES_EXPERIENCE_NORTH_STAR.md) before experience decisions. [Rebuild masterplan](../BES_EXPERIENCE_REBUILD_MASTER_PLAN.md) tracks the bounded current cycle. Technical acceptance and qualitative experience acceptance are separate; private reference contents never enter public artifacts.
+
+The earlier preset/manual-only first preview is historical: the user rejected its visible quality. AI-first generation now has a connection/review step; no unverified claim that initial provider onboarding fits two interactions or 1–2 minutes. The reference system may guide animation/staging mechanics under the current user request, but private names/text/photos/source/screenshots are never provider prompts, fixtures or public artifacts. Real-model quality and direct qualitative reference acceptance remain open.

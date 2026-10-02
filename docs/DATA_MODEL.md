@@ -28,10 +28,14 @@ Historical contracts and tradeoffs are recorded in ADRs; historical descriptions
 
 ## Recipient data delivery v1
 
-The strict bes-recipient-gift v1 envelope contains ExportExperience v1 only. It uses embedded Offline sources; no externalDomains, arbitrary fields/scripts, private project/draft/revision/answer/media identity, original bytes or credentials. Input is bounded before schema validation and source rendering. This adds an output contract, not a CreatorProject/workspace migration. Existing project v1→v2 and private portable v1 imports remain compatible. Preview station/confirm loop state stays local UI and does not enter gift downloads.
+The strict bes-recipient-gift v1 envelope contains ExportExperience v1 only. It uses embedded Offline sources; no externalDomains, arbitrary fields or main-DOM scripts (ADR 0009 permits only the explicit optional isolated drawing program), private project/draft/revision/answer/media identity, original bytes or credentials. Input is bounded before schema validation and source rendering. This adds an output contract, not a CreatorProject/workspace migration. Existing project v1→v2 and private portable v1 imports remain compatible. Preview station/confirm loop state stays local UI and does not enter gift downloads.
 
 ## Additive composition compatibility (ADR 0008)
 
 CreatorProject v2 optionally includes experience.composition = {version:1, variant:champion|challenger, arc:portrait|encore}. Absent settings mean Champion: historical v1→v2 migration and saved v2 projects retain their authored blocks/order/text and presentation. Explicit switching uses normal revision-fenced save/undo; no destructive database migration. New Studio Magic Start chooses Challenger portrait after the documented first comparison. Strict malformed/future settings are rejected.
 
 ExportExperience/recipient envelope v1 optionally adds the same settings plus derived register personal|respectful and pace gentle|bright. These are presentation decisions, not raw relationship type/dimensions, uncertainty or question data. Sparse content does not fabricate a memory. The recipient’s route/photo/reveal/replay state is ephemeral in the recipient runtime and never writes creator storage. Older Studio versions cannot read new optional fields and must fail closed; forward compatibility is not promised. Close/reload older clients rather than stripping settings.
+
+## Current AI-native checkpoint — 2026-10-03
+
+CreatorProject v2 / recipient envelope v1 gain optional strict experience.animation {version:1, source:string≤16000}. Absent fields preserve older projects; no IndexedDB schema rewrite. Older clients fail closed on newer fields. This explicit projected field is public untrusted drawing code, not CreatorProject/credential serialization. Import/byte limits and isolated execution still apply; new requests are reviewed before adoption.

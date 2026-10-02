@@ -1314,3 +1314,7 @@ lautet, ist die Experience noch nicht fertig.
 Dann beginnt der nächste:
 
 # BEAT THE BENCHMARK CYCLE.
+
+# Aktueller Benutzer-Nachtrag — 2026-10-03
+
+Die vollständige North Star oben bleibt dokumentiert. Der Nutzer hat den ersten neuen Rebuild qualitativ abgelehnt und fordert nun ausdrücklich die Übernahme des neutralisierten Ablauf-/Animationssystems der privaten Referenz sowie KI-generierte Animationsprogramme. Diese aktuelle Anweisung erweitert die bisherige Preset-/Data-only-Grenze ausschließlich um isolierten Zeichen-Code nach ADR 0009. Sie erlaubt keine privaten Referenzinhalte in Repository, Provider-Anfragen, Fixtures, Screenshots oder Veröffentlichung. KI-Code erhält keine Studio-, DOM-, Netzwerk-, Storage- oder Credential-Rechte. Community-Erweiterungen bleiben deklarativ. Neue Geschenke werden mit lokalem Modell oder geprüftem Free-only-API-Modell erstellt; vorhandene Geschenke und Standalone-Export bleiben erhalten. Technische Tests, echte Modellinferenz, physisches iPhone und emotionale Referenz-Abnahme bleiben getrennte Nachweise.
