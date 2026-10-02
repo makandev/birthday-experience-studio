@@ -16,7 +16,9 @@
     "test:e2e": "playwright test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "build:standalone": "npm run build && node scripts/build-standalone.mjs",
+    "pretest:e2e": "npm run build:standalone"
   },
   "dependencies": {
     "zod": "^4.3.6"
@@ -27,6 +29,7 @@
     "@playwright/test": "^1.58.2",
     "@types/node": "^24.19.1",
     "eslint": "^9.39.0",
+    "fake-indexeddb": "^6.2.5",
     "prettier": "^3.8.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.0",
