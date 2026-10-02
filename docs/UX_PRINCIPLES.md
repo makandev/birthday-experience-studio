@@ -40,3 +40,5 @@ Touch-Ziele mindestens 44px; keine dekorative Klicksperre oder feste überlagern
 ## Safe storage choices
 
 Saved status means the asynchronous transaction completed; pending/failed/conflict states are distinct. Conflicts preserve this tab's input and offer private backup before explicit canonical adoption. Deletion and permanent cleanup have separate clear confirmations; cleanup explicitly ends undo. Do not expose revisions/transaction mechanics as normal product steps.
+
+Standalone HTML is the primary gift artifact on every device, including iPhone/iPad. Offline gifts contain all required content/assets/runtime in one file and require no BES page, account, upload or second-file import to play. An optional experimental reader must never replace this contract or count as resolution of broken local iPhone HTML delivery.

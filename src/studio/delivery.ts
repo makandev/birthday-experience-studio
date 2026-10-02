@@ -1,5 +1,5 @@
 // A local presentation hint, never authentication or a security decision.
-export function preferSafariRecipientFile(
+export function isIosDevice(
   device: Pick<Navigator, 'userAgent' | 'platform' | 'maxTouchPoints'>,
 ): boolean {
   return (

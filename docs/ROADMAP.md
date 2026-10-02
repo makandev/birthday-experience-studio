@@ -17,12 +17,14 @@ Transactional project/asset persistence, central confirmed deletion, reference/r
 
 | Class      | Selected direction                                                                             | Rationale                                                         |
 | ---------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| NOW        | Complete staged recipient / preview-first / Safari delivery gates and actual iPhone acceptance | Core wow, low effort and tappable delivery outrank breadth        |
+| NOW        | Complete staged recipient / preview-first / Safari delivery gates and actual iPhone acceptance | Standalone HTML, core wow and low effort outrank breadth          |
 | NEXT       | Targeted novice/mobile/accessibility polish of this same short flow                            | Resolve observed friction and quality gaps, not add more settings |
 | LATER      | Local soundtrack, safe packs, optional hosted sharing and public-adoption assets               | Concrete birthday value and bounded scope required                |
-| EXPERIMENT | Alternative coherent story arcs beyond current coordinated direction variants                  | Compare emotional value before adding an engine framework         |
+| EXPERIMENT | Optional Safari file reader; alternative coherent story arcs                                   | Compare emotional value before adding an engine framework         |
 | REJECTED   | Generic site/AI/plugin platform, enterprise layers, mandatory cloud/free-tier core             | Outside product contract                                          |
 
 Current implementation adds seven stages + closing, deliberate choice/message reveal, cinematic payoff and a name/defaults-first confirmation loop. Quick now has three optional questions; Deep is after first value. Native uncropped photo inspection uses one derivative payload. These replace the old next-gallery/scroll-only priorities. See STATUS for gates actually run, pending physical-device acceptance and live HEAD. No automated test proves the qualitative Original Experience Benchmark acceptance bar.
 
 GitHub Pages is activated and serves checked main; every integration checks workflow, subpath assets and real live smoke. Optional Safari recipient file reading is local after the page loads; no cloud upload/mandatory hosting for the core. Development preview deployment allows iPhone acceptance but is not a release claim. Before release, satisfy iPhone delivery/taps, accessibility/novice quality, privacy/export, storage/migration and Offline gates. Do not expand the roadmap or call BES permanently finished.
+
+Standalone HTML remains primary on iPhone/iPad too. The optional reader is an experiment; it cannot substitute for the unresolved ordinary iPhone HTML opening/tap gate.

@@ -78,7 +78,7 @@ test('vertical slice, restore, isolated preview and offline gift with no network
   await page.getByLabel('Welche Farben passen?').selectOption('minimal');
   const downloadEvent = page.waitForEvent('download');
   await page
-    .getByRole('button', { name: 'Geschenk erstellen', exact: false })
+    .getByRole('button', { name: 'Geschenk als HTML sichern', exact: false })
     .click();
   const download = await downloadEvent;
   expect(download.suggestedFilename()).toBe('Happy-Birthday-Anna.html');

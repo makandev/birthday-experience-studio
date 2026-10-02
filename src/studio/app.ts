@@ -1,4 +1,4 @@
-import { preferSafariRecipientFile } from './delivery';
+import { isIosDevice } from './delivery';
 import { exportRecipientFile } from '../export/recipient-file';
 import {
   createProject,
@@ -357,7 +357,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       )
       .join(
         '',
-      )}</div>${creatorMoment === 'photo' ? mediaController.panel(project) : ''}<p class="field-help">Alles bleibt veränderbar. Varianten behalten deinen Text und deine Fotos; Rückgängig ist verfügbar.</p></section><div class="preview-frame-wrap"><p class="preview-label">${previewScene === 'letter' ? 'Deine persönlichen Worte · im Geschenk erst später enthüllt' : 'Empfängeransicht · ohne private Studio-Daten'}</p><p id="preview-error" role="alert"></p><iframe id="gift-preview" title="Vorschau des Geburtstagsgeschenks" sandbox="allow-scripts"></iframe></div><section class="panel finish-controls"><button class="button primary full" id="download" ${creatorMoment === 'full' ? '' : 'hidden'}>${preferSafariRecipientFile(navigator) ? 'Für Safari sichern ↓' : 'Geschenk erstellen ↓'}</button><details id="iphone-delivery" ${preferSafariRecipientFile(navigator) ? 'open' : ''}><summary>Geschenk auf dem iPhone öffnen</summary><p>HTML-Dateien in „Dateien“ oder Messenger-Vorschauen sind auf iPhones nicht zuverlässig interaktiv. Für Safari gibt es eine Empfänger-Datei ohne private Entwurfsdaten.</p><p>1. Die Geschenkdatei sichern und mit dem Safari-Link verschicken.<br>2. In WhatsApp oder Mail: die Datei über „Teilen“ in „Dateien“ sichern.<br>3. Die Empfängerperson öffnet <a href="https://makandev.github.io/birthday-experience-studio/#gift" target="_blank" rel="noopener noreferrer">den BES-Geschenköffner in Safari</a> und wählt die gespeicherte Datei. Nicht die HTML-Vorschau in WhatsApp oder „Dateien“ verwenden.</p><p class="field-help">Die Seite muss zuerst laden; das Geschenk wird nur lokal gelesen, nicht hochgeladen. Keine Pflichtcloud für den HTML-Export. Echte iPhone-Validierung steht noch aus – noch keine Release-Freigabe.</p><button class="button secondary" id="recipient-export">Empfänger-Datei für Safari sichern</button><button class="button quiet" id="recipient-share" hidden>Empfänger-Datei teilen</button><p class="field-help">Safari-Dateien brauchen das Offline-Profil mit eingebetteten Fotos. Die HTML-Datei bleibt für Browser verfügbar, die sie interaktiv öffnen können.</p><button class="button quiet" id="download-html">HTML-Datei für andere Browser sichern</button></details><div class="review-actions"><button class="button quiet" id="add-detail">Eine Erinnerung ergänzen</button><button class="button quiet" id="add-photo">Fotos ergänzen</button><button class="text-button" data-go="questions">Mehr erzählen · freiwillig</button></div><details id="manual-preview"><summary>Text, Farben und weitere Details selbst bearbeiten</summary><button class="button quiet full" type="button" data-go="writing">Text bearbeiten &amp; Fotos ergänzen</button><aside class="gift-settings">${settings}</aside></details></section></div>${detailDialog()}`;
+      )}</div>${creatorMoment === 'photo' ? mediaController.panel(project) : ''}<p class="field-help">Alles bleibt veränderbar. Varianten behalten deinen Text und deine Fotos; Rückgängig ist verfügbar.</p></section><div class="preview-frame-wrap"><p class="preview-label">${previewScene === 'letter' ? 'Deine persönlichen Worte · im Geschenk erst später enthüllt' : 'Empfängeransicht · ohne private Studio-Daten'}</p><p id="preview-error" role="alert"></p><iframe id="gift-preview" title="Vorschau des Geburtstagsgeschenks" sandbox="allow-scripts"></iframe></div><section class="panel finish-controls"><button class="button primary full" id="download" ${creatorMoment === 'full' ? '' : 'hidden'}>Geschenk als HTML sichern ↓</button><p class="field-help">Im Offline-Profil enthält diese eine HTML-Datei dein komplettes Geschenk: Text, Fotos, Gestaltung und Interaktionen. Keine BES-Seite, kein Upload und keine Anmeldung nötig.</p>${isIosDevice(navigator) ? '<p class="field-help">iPhone-Hinweis: HTML-Vorschauen in WhatsApp und „Dateien“ reagieren möglicherweise nicht auf Tippen. Dieses Öffnungsproblem ist noch ungelöst; die eigenständige HTML-Datei bleibt dein Geschenk.</p>' : ''}<details id="iphone-delivery"><summary>Optionale iPhone-Lesehilfe · experimentell</summary><p>Diese zusätzliche Lesehilfe ist freiwillig und ersetzt nicht dein HTML-Geschenk. Falls du sie ausprobieren möchtest, kannst du dafür eine separate Empfänger-Datei sichern. Echte iPhone-Validierung steht noch aus.</p><p>1. Die Geschenkdatei sichern und mit dem Safari-Link verschicken.<br>2. In WhatsApp oder Mail: die Datei über „Teilen“ in „Dateien“ sichern.<br>3. Die Empfängerperson öffnet <a href="https://makandev.github.io/birthday-experience-studio/#gift" target="_blank" rel="noopener noreferrer">den BES-Geschenköffner in Safari</a> und wählt die gespeicherte Datei. Nicht die HTML-Vorschau in WhatsApp oder „Dateien“ verwenden.</p><p class="field-help">Die Seite muss zuerst laden; das Geschenk wird nur lokal gelesen, nicht hochgeladen. Keine Pflichtcloud für den HTML-Export. Echte iPhone-Validierung steht noch aus – noch keine Release-Freigabe.</p><button class="button secondary" id="recipient-export">Empfänger-Datei für Safari sichern</button><button class="button quiet" id="recipient-share" hidden>Empfänger-Datei teilen</button><p class="field-help">Safari-Dateien brauchen das Offline-Profil mit eingebetteten Fotos. Die HTML-Datei bleibt für Browser verfügbar, die sie interaktiv öffnen können.</p></details><div class="review-actions"><button class="button quiet" id="add-detail">Eine Erinnerung ergänzen</button><button class="button quiet" id="add-photo">Fotos ergänzen</button><button class="text-button" data-go="questions">Mehr erzählen · freiwillig</button></div><details id="manual-preview"><summary>Text, Farben und weitere Details selbst bearbeiten</summary><button class="button quiet full" type="button" data-go="writing">Text bearbeiten &amp; Fotos ergänzen</button><aside class="gift-settings">${settings}</aside></details></section></div>${detailDialog()}`;
   }
   function directionControls(): string {
     const direction = directions.get(project.experience.directionId)!;
@@ -437,7 +437,8 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       document.getElementById(activeId)?.focus();
     }
   }
-  const safariDelivery = preferSafariRecipientFile(navigator);
+  let preparedHtml = '';
+  let preparedHtmlFilename = '';
   let preparedRecipientFile: File | null = null;
   let preparedRecipientRaw = '';
 
@@ -448,14 +449,13 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     const error = root.querySelector<HTMLElement>('#preview-error')!;
     const download = root.querySelector<HTMLButtonElement>('#download')!;
     download.disabled = true;
+    preparedHtml = '';
+    preparedHtmlFilename = '';
     preparedRecipientFile = null;
     preparedRecipientRaw = '';
     const recipientExport =
       root.querySelector<HTMLButtonElement>('#recipient-export')!;
     const share = root.querySelector<HTMLButtonElement>('#recipient-share')!;
-    const htmlDownload =
-      root.querySelector<HTMLButtonElement>('#download-html')!;
-    htmlDownload.disabled = true;
     recipientExport.disabled = true;
     share.hidden = true;
     try {
@@ -473,8 +473,13 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
         : null;
       iframe.srcdoc = html;
       error.textContent = '';
-      htmlDownload.disabled = false;
-      download.disabled = safariDelivery;
+      // Prepare full opening-first output before the intentional download tap.
+      // Never reuse a preview-only late scene or await storage in that gesture.
+      preparedHtml = exporters
+        .get(snapshot.exportConfig.exporterId)!
+        .export(snapshot, sources);
+      preparedHtmlFilename = exportFilename(snapshot.recipient.name);
+      download.disabled = false;
       try {
         preparedRecipientRaw = exportRecipientFile(snapshot, sources);
         preparedRecipientFile = new File(
@@ -1215,48 +1220,15 @@ ${pendingDirector.followUpQuestions.join('\n') || 'Keine weiteren Fragen.'}`;
             );
         });
     });
-    const downloadHtml = async () => {
-      try {
-        const snapshot = structuredClone(project);
-        const sources = await resolvePhotoSources(snapshot, assetStore);
-        downloadText(
-          exporters
-            .get(snapshot.exportConfig.exporterId)!
-            .export(snapshot, sources),
-          exportFilename(snapshot.recipient.name),
-        );
-        message(
-          'Dein Geschenk wurde als HTML-Datei heruntergeladen. Öffne sie zum Prüfen im Browser.',
-        );
-      } catch (cause) {
-        message(
-          cause instanceof Error
-            ? cause.message
-            : 'Bitte prüfe deine Bausteine.',
-        );
-      }
-    };
-    listen('download-html', 'click', () => {
-      void downloadHtml();
-    });
     listen('download', 'click', () => {
-      if (!safariDelivery) {
-        void downloadHtml();
+      if (!preparedHtml) {
+        message('Bitte warte, bis dein HTML-Geschenk bereit ist.');
         return;
       }
-      if (!preparedRecipientFile) {
-        message(
-          'Bitte wähle für die Safari-Geschenkdatei das Offline-Profil mit eingebetteten Fotos.',
-        );
-        return;
-      }
-      downloadText(
-        preparedRecipientRaw,
-        preparedRecipientFile.name,
-        'application/json',
-      );
+      // Same standalone artifact on every device; synchronous user activation.
+      downloadText(preparedHtml, preparedHtmlFilename);
       message(
-        'Deine öffentliche Geschenkdatei ist gesichert. Verschicke sie mit dem Safari-Link aus „Geschenk auf dem iPhone öffnen“. In WhatsApp zunächst in „Dateien“ sichern, dann im Safari-Geschenköffner auswählen.',
+        'Dein eigenständiges HTML-Geschenk ist gesichert. Im Offline-Profil enthält diese eine Datei alles; eine BES-Seite oder ein Upload ist zum Abspielen nicht nötig.',
       );
     });
     listen('reset', 'click', () =>

@@ -38,7 +38,7 @@ test('reproducible standalone Studio creates an offline gift without fetching bu
   ).toBeVisible();
   const event = page.waitForEvent('download');
   await page
-    .getByRole('button', { name: 'Geschenk erstellen', exact: false })
+    .getByRole('button', { name: 'Geschenk als HTML sichern', exact: false })
     .click();
   const file = await event;
   const gift = await readFile((await file.path())!, 'utf8');

@@ -43,12 +43,10 @@ test('touch creator: minimum-input opening, public refinement, optional photo an
   if ((await delivery.getAttribute('open')) === null)
     await delivery.locator('summary').tap();
   const event = page.waitForEvent('download');
-  const ios = test.info().project.name === 'mobile-webkit';
-  if (ios) {
-    await expect(delivery).toHaveAttribute('open', '');
-    await expect(page.locator('#download')).toHaveText('Für Safari sichern ↓');
-  }
-  await comfortable(page.locator(ios ? '#download' : '#recipient-export'));
+  await expect(page.locator('#download')).toHaveText(
+    'Geschenk als HTML sichern ↓',
+  );
+  await comfortable(page.locator('#recipient-export'));
   const file = await event;
   expect(file.suggestedFilename()).toMatch(/\.bes-gift\.json$/);
   const raw = await readFile((await file.path())!, 'utf8');
@@ -142,17 +140,41 @@ test('recipient mode avoids all creator storage, refuses hostile files and reads
   await expect(page.locator('#recipient-preview')).not.toBeVisible();
 });
 
-test('exact portable HTML works offline with touch progression, late reveal, back, reduced finale and replay', async ({
+test('primary download is standalone HTML on every device and runs offline with touch, late reveal, back, finale and replay', async ({
   page,
   context,
 }) => {
   test.setTimeout(60000);
-  const { createProject } = await import('../../src/domain/project');
-  const { createMagicStart } = await import('../../src/engines/magic-start');
-  const { exportHtml } = await import('../../src/export/html');
-  const p = createProject();
-  p.recipient.name = 'Sam';
-  const html = exportHtml(createMagicStart(p, 'Offline personal words.'));
+  await page.goto('./');
+  await page.locator('#magic-name').fill('Sam');
+  await comfortable(
+    page.getByRole('button', { name: 'Meinen ersten Moment ansehen' }),
+  );
+  await comfortable(
+    page.getByRole('button', { name: 'Eine Erinnerung ergänzen' }),
+  );
+  await page.locator('#public-detail').fill('Offline personal words.');
+  await comfortable(page.getByRole('button', { name: 'Meine Worte ansehen' }));
+  await expect(
+    page.frameLocator('#gift-preview').locator('body'),
+  ).toHaveAttribute('data-scene', 'letter');
+  await comfortable(
+    page.getByRole('button', { name: 'Direkt das ganze Geschenk ansehen' }),
+  );
+  await expect(page.locator('#iphone-delivery')).not.toHaveAttribute('open');
+  await expect(page.locator('#download')).toHaveText(
+    'Geschenk als HTML sichern ↓',
+  );
+  const downloaded = page.waitForEvent('download');
+  await comfortable(page.locator('#download'));
+  const file = await downloaded;
+  expect(file.suggestedFilename()).toMatch(/\.html$/);
+  const html = await readFile((await file.path())!, 'utf8');
+  expect(html).toMatch(/^<!doctype html>/i);
+  expect(html.match(/<script\b/g)).toHaveLength(1);
+  expect(html).not.toMatch(/data-preview-scene|<(link|iframe)\b|https?:\/\//i);
+  expect(html).not.toContain('answers');
+  await page.goto('about:blank');
   await context.setOffline(true);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const requests: string[] = [];

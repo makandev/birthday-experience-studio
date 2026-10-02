@@ -11,3 +11,7 @@ The user sends the public data file plus Safari reader link, then the recipient 
 No CreatorProject, workspace, portable-draft or ExportExperience migration is required. Envelope versioning permits a future deliberate upgrade; arbitrary fields/versions fail closed. Existing projection excludes private answers, relationship data, revisions/IDs/original bytes/metadata and credentials.
 
 Touch targets, safe areas, dynamic viewport and normal-flow controls, opaque-frame isolation, actual stage/reveal/finale/replay and Safari hash-only mode changes are regression requirements. Browser tests use desktop WebKit with iPhone dimensions/native touch plus additional Chromium/mobile coverage. Neither establishes physical iPhone, file://, Quick Look or OS share behavior. STATUS must keep the release blocked pending actual-device delivery/taps/accessibility acceptance. Checked main may supply a development preview for that acceptance; it is not a release claim.
+
+## Product correction: standalone HTML remains primary (2026-10-02)
+
+The user explicitly rejected a required second page/file-picker path. The temporary iPhone-primary JSON export is superseded: every device receives the complete standalone HTML from the primary export, synchronously prepared before the tap. The reader remains a collapsed optional experiment, never a substitute for HTML or proof that iPhone delivery is fixed. The iPhone HTML opening/release blocker remains unresolved.

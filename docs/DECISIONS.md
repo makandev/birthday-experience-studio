@@ -2,17 +2,17 @@
 
 ## Current accepted decisions
 
-| Decision                                                                                                     | Source                                                              | Status                                                    |
-| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | --------------------------------------------------------- |
-| TypeScript/Vite, native DOM Studio, Zod, Vitest/Playwright/axe                                               | [ADR 0001](adr/0001-typescript-local-first-vertical-slice.md)       | Active; no UI foundation rewrite                          |
-| Allowlisted recipient projection, escaped text, CSP and sandboxed preview                                    | ADR 0001 and [EXPORT_ARCHITECTURE](EXPORT_ARCHITECTURE.md)          | Active                                                    |
-| Creator schema v2 and validated historical v1 migration; separate private draft transfer                     | [ADR 0002](adr/0002-safe-drafts-and-v2-contract.md)                 | Active                                                    |
-| Declarative directions, bounded budgets, Offline/Online profiles, validated manual Director proposals        | [ADR 0003](adr/0003-coordinated-motion-and-untrusted-director.md)   | Active                                                    |
-| Immutable local original/derivative pairs, raster processing and portable JPEG copies                        | [ADR 0004](adr/0004-local-photo-assets-and-portable-copies.md)      | Active                                                    |
-| Shared IndexedDB transaction domain, revision fencing, central deletion and recovery-aware GC                | [ADR 0005](adr/0005-transactional-workspace-and-asset-lifecycle.md) | Storage-integrity milestone; validation tracked in STATUS |
-| Staged recipient runtime, preview-first creation                                                             | [ADR 0006](adr/0006-staged-recipient-runtime.md)                    | Active; physical/qualitative acceptance remains open      |
-| Recipient-only Safari file opener                                                                            | [ADR 0007](adr/0007-recipient-file-and-ios-release-gate.md)         | Active; real iPhone delivery remains a release gate       |
-| Zero-cost core, provider neutrality, safe declarative packs, optional hosting, Magic Start/Surprise Me goals | [PRODUCT_VISION](PRODUCT_VISION.md)                                 | Product contract; goals are not implementation claims     |
+| Decision                                                                                                     | Source                                                              | Status                                                     |
+| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ---------------------------------------------------------- |
+| TypeScript/Vite, native DOM Studio, Zod, Vitest/Playwright/axe                                               | [ADR 0001](adr/0001-typescript-local-first-vertical-slice.md)       | Active; no UI foundation rewrite                           |
+| Allowlisted recipient projection, escaped text, CSP and sandboxed preview                                    | ADR 0001 and [EXPORT_ARCHITECTURE](EXPORT_ARCHITECTURE.md)          | Active                                                     |
+| Creator schema v2 and validated historical v1 migration; separate private draft transfer                     | [ADR 0002](adr/0002-safe-drafts-and-v2-contract.md)                 | Active                                                     |
+| Declarative directions, bounded budgets, Offline/Online profiles, validated manual Director proposals        | [ADR 0003](adr/0003-coordinated-motion-and-untrusted-director.md)   | Active                                                     |
+| Immutable local original/derivative pairs, raster processing and portable JPEG copies                        | [ADR 0004](adr/0004-local-photo-assets-and-portable-copies.md)      | Active                                                     |
+| Shared IndexedDB transaction domain, revision fencing, central deletion and recovery-aware GC                | [ADR 0005](adr/0005-transactional-workspace-and-asset-lifecycle.md) | Storage-integrity milestone; validation tracked in STATUS  |
+| Staged recipient runtime, preview-first creation                                                             | [ADR 0006](adr/0006-staged-recipient-runtime.md)                    | Active; physical/qualitative acceptance remains open       |
+| Recipient-only Safari file opener                                                                            | [ADR 0007](adr/0007-recipient-file-and-ios-release-gate.md)         | Implemented optional experiment; not standalone acceptance |
+| Zero-cost core, provider neutrality, safe declarative packs, optional hosting, Magic Start/Surprise Me goals | [PRODUCT_VISION](PRODUCT_VISION.md)                                 | Product contract; goals are not implementation claims      |
 
 ## Historical and superseded decisions
 
@@ -36,3 +36,5 @@ The user's current instruction permits autonomous reversible engineering and int
 [ADR 0006](adr/0006-staged-recipient-runtime.md) selects seven stations plus closing, a maintained hash-allowed runtime, opaque scripted preview, bounded motion/skip/reduced/no-JS fallbacks and minimum-input confirm/change creation. No project/storage migration or dependency expansion. Previously mandatory public seed and 6–10 Quick questions are superseded; Quick v3 has three optional questions after first value.
 
 [ADR 0007](adr/0007-recipient-file-and-ios-release-gate.md) defines the recipient-only Offline data reader as an optional Safari delivery adapter, never uploaded/hosted gift or private-draft import. HTML file previews on iOS are not promised to execute. Real iPhone creation/delivery/taps remain release gates even after desktop WebKit passes.
+
+The user clarification keeps standalone HTML primary on all devices; the temporary iPhone-primary JSON action is superseded. ADR 0007 records the optional reader as an experiment, not fulfillment of the iPhone HTML delivery gate.

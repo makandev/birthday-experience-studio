@@ -1,4 +1,4 @@
-import { preferSafariRecipientFile } from '../src/studio/delivery';
+import { isIosDevice } from '../src/studio/delivery';
 import { describe, it, expect } from 'vitest';
 import { createProject } from '../src/domain/project';
 import { createMagicStart } from '../src/engines/magic-start';
@@ -132,7 +132,7 @@ describe('local delivery hint', () => {
     'chooses a safe presentation default for %s',
     (userAgent, platform, maxTouchPoints, expected) => {
       expect(
-        preferSafariRecipientFile({
+        isIosDevice({
           userAgent: String(userAgent),
           platform: String(platform),
           maxTouchPoints: Number(maxTouchPoints),

@@ -103,7 +103,7 @@ test('photos normalize orientation, preserve original, remove metadata and trans
   ).toBeVisible();
   const giftEvent = page.waitForEvent('download');
   await page
-    .getByRole('button', { name: 'Geschenk erstellen', exact: false })
+    .getByRole('button', { name: 'Geschenk als HTML sichern', exact: false })
     .click();
   const gift = await giftEvent;
   const html = await readFile((await gift.path())!, 'utf8');
@@ -250,7 +250,10 @@ test('external photos require explicit online consent and keep fallback text', a
     'Offline-Geschenke',
   );
   await expect(
-    page.getByRole('button', { name: 'Geschenk erstellen', exact: false }),
+    page.getByRole('button', {
+      name: 'Geschenk als HTML sichern',
+      exact: false,
+    }),
   ).toBeDisabled();
   expect(requests).toEqual([]);
   await page

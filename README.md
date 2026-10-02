@@ -39,7 +39,9 @@ Optional manual AI help shows exactly what would be shared. The provider-neutral
 
 ## iPhone / Safari: release gate still open
 
-Direct HTML opening in iOS Files/Mail/Messenger previews is not reliably interactive and is not claimed fixed. On iPhone/iPad, the primary export action saves a public **.bes-gift.json** file; HTML remains an explicit secondary option. The export screen provides this file on other devices too and the [Safari gift opener](https://makandev.github.io/birthday-experience-studio/#gift): save the received WhatsApp/Mail attachment through Share → Files, open the page in Safari and choose that saved gift file. Do not use the HTML attachment preview. The reader validates recipient-only Offline data and renders it locally with no upload; it needs its page loaded first. It never imports private drafts or arbitrary HTML. Native sharing is offered when supported, otherwise download the file.
+**The primary export is a standalone HTML gift on every device, including iPhone/iPad.** In Offline mode, that one file contains the text, photo copies, styles and maintained interaction runtime; the recipient does not need BES, an account, a second page or an upload. The complete opening-first HTML is prepared before the intentional download tap, with no awaited storage work in that gesture.
+
+Direct HTML opening in iOS Files/WhatsApp/Mail previews is still not reliably interactive and is not claimed fixed. This is an unresolved delivery/release blocker, not grounds to replace the gift format. An explicitly optional, collapsed experimental Safari file reader remains available under iPhone help. It reads a separate public .bes-gift.json file locally without upload, after its page loads. It does not satisfy the standalone HTML/iPhone acceptance requirement or become a required recipient step.
 
 Desktop WebKit and mobile touch checks approximate Safari; real iPhone creator/live/delivery/taps, OS share and Files behavior remain release-blocking device acceptance. See [iOS compatibility and exact device checks](docs/IOS_COMPATIBILITY.md). A development preview does not imply release approval.
 
