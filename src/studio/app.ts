@@ -13,6 +13,7 @@ import {
   orderForDirection,
 } from '../engines/composition';
 import { writingHelpers } from '../engines/writing';
+import { createMagicStart } from '../engines/magic-start';
 import { STORAGE_KEY, type StorageLike } from '../persistence/storage';
 import {
   readPortableDraft,
@@ -115,15 +116,18 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       ? 'Dein Browser erlaubt gerade kein lokales Speichern. Lass diese Seite offen, damit deine Eingaben erhalten bleiben.'
       : '';
   function saveStatus(): void {
-    const status = root.querySelector('#save-status');
-    if (status)
-      status.textContent = conflict
-        ? 'Konflikt – Änderungen bleiben nur in diesem Tab'
-        : queuedWrites
-          ? 'Wird auf diesem Gerät gespeichert …'
-          : saved
-            ? 'Auf diesem Gerät gespeichert'
-            : 'Speichern nicht möglich – Seite bitte offen lassen';
+    const text = conflict
+      ? 'Konflikt – Änderungen bleiben nur in diesem Tab'
+      : queuedWrites
+        ? 'Wird auf diesem Gerät gespeichert …'
+        : saved
+          ? 'Auf diesem Gerät gespeichert'
+          : 'Speichern nicht möglich – Seite bitte offen lassen';
+    root
+      .querySelectorAll('#save-status, #magic-save-status')
+      .forEach((status) => {
+        status.textContent = text;
+      });
   }
   function failed(cause: unknown): void {
     saved = false;
@@ -249,8 +253,27 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     persist();
     render(true);
   }
+  function canMagicStart(): boolean {
+    return (
+      !project.experience.blocks.length &&
+      !project.writing.wish.trim() &&
+      !project.writing.surprise.trim()
+    );
+  }
+  function magicStartDialog(): string {
+    if (!canMagicStart() || project.workflow.step !== 'start') return '';
+    return `<dialog id="magic-start-dialog" aria-labelledby="magic-start-title"><h2 id="magic-start-title">Ein erster persönlicher Anfang</h2><p>Ein Name, eure Verbindung und ein eigener Satz reichen für deine erste Vorschau – ohne KI. Danach kannst du Fotos ergänzen und alles weiter personalisieren.</p><form id="magic-form"><label for="magic-name">Wie heißt die Geburtstagsperson?</label><input id="magic-name" maxlength="120" required autocomplete="off" placeholder="Zum Beispiel Anna" value="${e(project.recipient.name)}"><label for="magic-relationship">Was verbindet euch?</label><select id="magic-relationship">${relationships
+      .all()
+      .map(
+        (r) =>
+          `<option value="${e(r.id)}" ${r.id === project.relationship.typeId ? 'selected' : ''}>${e(r.label)}</option>`,
+      )
+      .join(
+        '',
+      )}</select><label for="magic-message">Was möchtest du ihr oder ihm sagen? <span class="badge">Im Geschenk sichtbar</span></label><textarea id="magic-message" rows="4" maxlength="2000" required aria-describedby="magic-message-help" placeholder="Zum Beispiel: Danke, dass du immer ein offenes Ohr für mich hast.">${e(project.writing.letter)}</textarea><p id="magic-message-help" class="field-help">Dein Satz erscheint im Geschenk. Spätere Frageantworten bleiben privat. Wir speichern lokal und erfinden keine Erinnerungen.</p><p id="magic-save-status" class="field-help" role="status"></p><p id="magic-error" role="alert"></p><div class="actions"><button type="button" class="button quiet" id="close-magic">Zurück zum Start</button>${primary('Meine erste Vorschau erstellen')}</div></form></dialog>`;
+  }
   function startPage(): string {
-    return `<div class="hero-copy"><p class="eyebrow">Kleine Geste. Große Bedeutung.</p><h1>Ein Geschenk,<br>das nur <em>du</em><br>machen kannst.</h1><p class="lead">Für die Erinnerungen, die euch verbinden.<br>Und die Worte, die manchmal fehlen.</p><p>Wir helfen dir, daraus ein persönliches Geburtstagsgeschenk zu machen. Schritt für Schritt, in deinem Tempo.</p><form id="start-form"><div class="mode-grid"><label class="choice-card"><input type="radio" name="mode" value="quick" ${project.mode === 'quick' ? 'checked' : ''}><span><strong>Einfach anfangen</strong><small>Etwa 6–10 Fragen · ein persönlicher Anfang</small></span></label><label class="choice-card"><input type="radio" name="mode" value="deep" ${project.mode === 'deep' ? 'checked' : ''}><span><strong>Mehr Zeit für eure Geschichte</strong><small>Zusätzliche Fragen · mehr Raum für Erinnerungen</small></span></label></div>${primary('Mein Geschenk gestalten')}</form><p class="privacy-line">◈ Nur auf deinem Gerät. Keine Anmeldung. Keine KI nötig.</p></div><aside class="hero-art" aria-label="Ein persönlicher Brief als Geschenk"><span class="art-star star-one" aria-hidden="true">✦</span><span class="art-star star-two" aria-hidden="true">✧</span><div class="gift-paper"><p class="eyebrow">Nur für dich</p><span class="paper-flower" aria-hidden="true">${flower}</span><h2>Wie schön,<br>dass es dich gibt.</h2><p>Manche Menschen machen<br>die Welt ein bisschen wärmer.<br>Du bist einer davon.</p><div class="paper-line"></div><span class="paper-sign">Mit Liebe gemacht</span></div><p class="art-caption">Keine Vorlage kann eure Geschichte erzählen.<br>Aber du kannst es.</p></aside>`;
+    return `<div class="hero-copy"><p class="eyebrow">Kleine Geste. Große Bedeutung.</p><h1>Ein Geschenk,<br>das nur <em>du</em><br>machen kannst.</h1><p class="lead">Für die Erinnerungen, die euch verbinden.<br>Und die Worte, die manchmal fehlen.</p><p>Wir helfen dir, daraus ein persönliches Geburtstagsgeschenk zu machen. Schritt für Schritt, in deinem Tempo.</p><div class="quick-start">${canMagicStart() ? '<button class="button primary" id="magic-start">Schnell zur ersten Vorschau <span aria-hidden="true">→</span></button><p class="field-help">Name, eure Verbindung und ein Satz von dir.</p>' : '<button class="button primary" data-go="preview">Geschenk weitergestalten <span aria-hidden="true">→</span></button>'}</div><form id="start-form" class="start-alternative"><details id="start-mode"><summary>Lieber mit Fragen anfangen · Quick oder Deep</summary><div class="mode-grid"><label class="choice-card"><input type="radio" name="mode" value="quick" ${project.mode === 'quick' ? 'checked' : ''}><span><strong>Einfach anfangen</strong><small>Etwa 6–10 Fragen · ein persönlicher Anfang</small></span></label><label class="choice-card"><input type="radio" name="mode" value="deep" ${project.mode === 'deep' ? 'checked' : ''}><span><strong>Mehr Zeit für eure Geschichte</strong><small>Zusätzliche Fragen · mehr Raum für Erinnerungen</small></span></label></div></details><button class="button quiet" type="submit">Mein Geschenk gestalten</button></form><p class="privacy-line">◈ Nur auf deinem Gerät. Keine Anmeldung. Keine KI nötig.</p></div><aside class="hero-art" aria-label="Ein persönlicher Brief als Geschenk"><span class="art-star star-one" aria-hidden="true">✦</span><span class="art-star star-two" aria-hidden="true">✧</span><div class="gift-paper"><p class="eyebrow">Nur für dich</p><span class="paper-flower" aria-hidden="true">${flower}</span><h2>Wie schön,<br>dass es dich gibt.</h2><p>Manche Menschen machen<br>die Welt ein bisschen wärmer.<br>Du bist einer davon.</p><div class="paper-line"></div><span class="paper-sign">Mit Liebe gemacht</span></div><p class="art-caption">Deine Worte machen den Unterschied.<br>Wir geben ihnen einen schönen Rahmen.</p></aside>`;
   }
   function personPage(): string {
     return `<div class="section-head"><p class="eyebrow">01 · Dein Mensch</p><h1>Für wen ist<br>dein Geschenk?</h1><p class="lead">Ein Name. Eine Verbindung. Hier beginnt eure Geschichte.</p></div><form id="person-form" class="panel"><label for="recipient-name">Wie heißt die Geburtstagsperson?</label><input id="recipient-name" name="recipient-name" maxlength="120" required autocomplete="off" placeholder="Zum Beispiel Anna" value="${e(project.recipient.name)}"><label for="relationship">Was verbindet euch?</label><select id="relationship">${relationships
@@ -271,7 +294,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     const index = list.indexOf(question);
     const answer = project.answers[question.id];
     const progress = questionProgress(project);
-    return `<div class="section-head compact"><p class="eyebrow">02 · Eure Geschichte</p><h1>Die kleinen Dinge<br>machen es persönlich.</h1><p>Deine Antworten bleiben im Studio. Erst dein fertiger Geschenktext wird verschenkt.</p></div><form id="question-form" class="panel question-panel"><div class="question-meta"><span>Frage ${index + 1} von aktuell ${list.length}</span><span>${progress.done} beantwortet oder übersprungen</span></div><progress value="${progress.done}" max="${progress.total}" aria-label="Fragenfortschritt"></progress><label class="question-title" for="answer">${e(question.prompt)}</label>${question.type === 'choice' ? `<select id="answer"><option value="">Bitte auswählen</option>${question.options!.map((option) => `<option value="${e(option.value)}" ${answer?.value === option.value ? 'selected' : ''}>${e(option.label)}</option>`).join('')}</select>` : `<textarea id="answer" rows="5" maxlength="20000" placeholder="Ein Gedanke oder ein Satz reicht …">${e(answer?.value ?? '')}</textarea>`}<details class="help"><summary>Hilf mir dabei · Beispiele anzeigen</summary><p>${e(question.help)}</p>${question.examples.map((example) => `<blockquote>${e(example)}</blockquote>`).join('')}</details><div class="gentle-actions"><button type="button" class="text-button" id="unknown">Ich weiß es nicht</button><button type="button" class="text-button" id="skip">Frage überspringen</button></div><div class="actions"><button class="button quiet" type="button" id="question-back">Zurück</button>${primary(index === list.length - 1 ? 'Weiter zu meinen Worten' : 'Nächste Frage')}</div><button type="button" class="text-button finish-questions" data-go="writing">Ich möchte jetzt schreiben</button></form>`;
+    return `<div class="section-head compact"><p class="eyebrow">02 · Eure Geschichte</p><h1>Die kleinen Dinge<br>machen es persönlich.</h1><p>Deine Antworten bleiben im Studio. Erst dein fertiger Geschenktext wird verschenkt.</p></div><form id="question-form" class="panel question-panel"><label for="question-mode">Wie viel Raum möchtest du eurer Geschichte geben?</label><select id="question-mode"><option value="quick" ${project.mode === 'quick' ? 'selected' : ''}>Quick · etwa 6–10 wichtige Fragen</option><option value="deep" ${project.mode === 'deep' ? 'selected' : ''}>Deep · mehr persönliche Fragen</option></select><div class="question-meta"><span>Frage ${index + 1} von aktuell ${list.length}</span><span>${progress.done} beantwortet oder übersprungen</span></div><progress value="${progress.done}" max="${progress.total}" aria-label="Fragenfortschritt"></progress><label class="question-title" for="answer">${e(question.prompt)}</label>${question.type === 'choice' ? `<select id="answer"><option value="">Bitte auswählen</option>${question.options!.map((option) => `<option value="${e(option.value)}" ${answer?.value === option.value ? 'selected' : ''}>${e(option.label)}</option>`).join('')}</select>` : `<textarea id="answer" rows="5" maxlength="20000" placeholder="Ein Gedanke oder ein Satz reicht …">${e(answer?.value ?? '')}</textarea>`}<details class="help"><summary>Hilf mir dabei · Beispiele anzeigen</summary><p>${e(question.help)}</p>${question.examples.map((example) => `<blockquote>${e(example)}</blockquote>`).join('')}</details><div class="gentle-actions"><button type="button" class="text-button" id="unknown">Ich weiß es nicht</button><button type="button" class="text-button" id="skip">Frage überspringen</button></div><div class="actions"><button class="button quiet" type="button" id="question-back">Zurück</button>${primary(index === list.length - 1 ? 'Weiter zu meinen Worten' : 'Nächste Frage')}</div><button type="button" class="text-button finish-questions" data-go="writing">Ich möchte jetzt schreiben</button></form>`;
   }
   function writingPage(): string {
     return `<div class="section-head"><p class="eyebrow">03 · Deine Worte</p><h1>Es muss nicht perfekt sein.<br>Es muss von dir kommen.</h1><p class="lead">Alles in den folgenden Textfeldern kann im Geschenk sichtbar werden.</p></div><div class="writing-layout"><form id="writing-form" class="panel"><label for="writing-method">Wie möchtest du anfangen?</label><select id="writing-method"><option value="guided" ${project.writing.method === 'guided' ? 'selected' : ''}>Mit ein bisschen Hilfe</option><option value="self" ${project.writing.method === 'self' ? 'selected' : ''}>Ich schreibe selbst</option><option value="external" ${project.writing.method === 'external' ? 'selected' : ''}>Optional: Hilfe einer externen KI</option></select>${project.writing.method === 'guided' ? `<div class="writing-help"><p>„Was ich an dir schätze …“<br>„Ich werde nie vergessen, wie wir …“<br>„Für dein neues Lebensjahr wünsche ich dir …“</p><button type="button" class="button secondary" id="guided">Antworten als Textvorschlag übernehmen</button><small>Du entscheidest, was bleibt. Der Vorschlag wird nicht automatisch ins Geschenk übernommen.</small></div>` : ''}${project.writing.method === 'external' ? `<details class="external-help" open><summary>So funktioniert die freiwillige KI-Hilfe</summary><ol><li>Lies unten die vollständige Anweisung.</li><li>Kopiere sie und füge sie in deine bevorzugte KI ein.</li><li>Kopiere deren Antwort hier in deinen Brief.</li><li>Prüfe den Text und entferne alles, was privat bleiben soll.</li></ol><p><strong>Die Anweisung enthält deinen Namen für die Geburtstagsperson und deine aktiven Antworten, auch persönliche Grenzen.</strong> Durch manuelles Einfügen gibst du diese Informationen an den gewählten Dienst weiter. Das Studio sendet nichts.</p><label for="external-prompt">Das würdest du weitergeben</label><textarea id="external-prompt" rows="8" readonly>${e(writingHelpers.get('external-prompt')!.generate(project))}</textarea><button type="button" class="button secondary" id="copy-prompt">Prompt kopieren</button></details>` : ''}<label for="letter">Dein persönlicher Brief <span class="badge">Im Geschenk sichtbar</span></label><textarea id="letter" rows="9" maxlength="20000" required placeholder="Liebe/r ${e(project.recipient.name)}, …">${e(project.writing.letter)}</textarea><label for="wish">Dein Geburtstagswunsch <span class="optional">optional</span></label><textarea id="wish" rows="3" maxlength="20000" placeholder="Für dein neues Lebensjahr wünsche ich dir …">${e(project.writing.wish)}</textarea><label for="surprise">Eine kleine Überraschung <span class="optional">optional</span></label><textarea id="surprise" rows="3" maxlength="20000" placeholder="Zum Beispiel: Ich lade dich zu einem gemeinsamen Frühstück ein!">${e(project.writing.surprise)}</textarea><p class="field-help">Diese Nachricht öffnet die Geburtstagsperson mit einem Klick.</p>${mediaController.panel(project)}<div class="actions"><button type="button" class="button quiet" data-go="questions">Zurück</button>${primary('Mein Geschenk ansehen')}</div></form><aside class="side-note"><span aria-hidden="true">✧</span><h2>Deine Worte zählen.</h2><p>Ein einfacher, ehrlicher Satz ist oft schöner als der perfekte Text.</p><p>Private Antworten, Hintergrundinformationen und die KI-Anweisung gehören nicht zum Export. Prüfe trotzdem, was du in deinen Brief übernimmst.</p></aside></div><dialog id="suggestion-dialog" aria-labelledby="suggestion-title"><h2 id="suggestion-title">Dein Textvorschlag</h2><p>Hier werden ausgewählte Antworten zu Geschenktext. Prüfe sie, bevor du sie übernimmst.</p><textarea id="suggestion" rows="10" maxlength="20000"></textarea><div class="actions"><button type="button" class="button quiet" id="cancel-suggestion">Abbrechen</button><button type="button" class="button primary" id="accept-suggestion">In meinen Brief übernehmen</button></div></dialog>`;
@@ -285,7 +308,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       )
       .join(
         '',
-      )}</select></details><details id="block-settings" class="advanced"><summary>Inhalt und Reihenfolge ändern</summary><h2>Deine Bausteine</h2><p class="field-help">Du entscheidest, was vorkommt und in welcher Reihenfolge.</p><ul class="block-list">${project.experience.blocks.map((block, index) => `<li><label><input id="block-${e(block.id)}" type="checkbox" data-block="${e(block.id)}" ${block.enabled ? 'checked' : ''}>${e(blocks.get(block.type)?.label ?? `Unbekannter Baustein (${block.type})`)}</label><div><button class="icon-button" type="button" id="up-${e(block.id)}" data-move="${e(block.id)}" data-direction="-1" aria-label="${e(blocks.get(block.type)?.label ?? block.type)} nach oben" ${index === 0 ? 'disabled' : ''}>↑</button><button class="icon-button" type="button" id="down-${e(block.id)}" data-move="${e(block.id)}" data-direction="1" aria-label="${e(blocks.get(block.type)?.label ?? block.type)} nach unten" ${index === project.experience.blocks.length - 1 ? 'disabled' : ''}>↓</button></div></li>`).join('')}</ul><button class="text-button" id="recommend">Vorschlag wiederherstellen</button><p class="field-help">Aktiviert die ausgefüllten Bausteine und setzt ihre Reihenfolge zurück.</p></details>${profileControls()}<button class="text-button" id="integrations">Optionale Hilfe &amp; Regie-Ideen</button><div class="export-note"><strong>Ein Geschenk zum Mitnehmen</strong><p>Du erhältst eine einzelne HTML-Datei. Sie lässt sich im Browser öffnen, auch ohne Internet. Zum Verschenken als Datei verschicken.</p></div><button class="button primary full" id="download">Geschenk erstellen <span aria-hidden="true">↓</span></button><button class="button quiet full" type="button" data-go="writing">Text bearbeiten</button></aside><div class="preview-frame-wrap"><p class="preview-label">Empfängeransicht · ohne Studio-Daten</p><p id="preview-error" role="alert"></p><iframe id="gift-preview" title="Vorschau des Geburtstagsgeschenks" sandbox=""></iframe></div></div>`;
+      )}</select></details><details id="block-settings" class="advanced"><summary>Inhalt und Reihenfolge ändern</summary><h2>Deine Bausteine</h2><p class="field-help">Du entscheidest, was vorkommt und in welcher Reihenfolge.</p><ul class="block-list">${project.experience.blocks.map((block, index) => `<li><label><input id="block-${e(block.id)}" type="checkbox" data-block="${e(block.id)}" ${block.enabled ? 'checked' : ''}>${e(blocks.get(block.type)?.label ?? `Unbekannter Baustein (${block.type})`)}</label><div><button class="icon-button" type="button" id="up-${e(block.id)}" data-move="${e(block.id)}" data-direction="-1" aria-label="${e(blocks.get(block.type)?.label ?? block.type)} nach oben" ${index === 0 ? 'disabled' : ''}>↑</button><button class="icon-button" type="button" id="down-${e(block.id)}" data-move="${e(block.id)}" data-direction="1" aria-label="${e(blocks.get(block.type)?.label ?? block.type)} nach unten" ${index === project.experience.blocks.length - 1 ? 'disabled' : ''}>↓</button></div></li>`).join('')}</ul><button class="text-button" id="recommend">Vorschlag wiederherstellen</button><p class="field-help">Aktiviert die ausgefüllten Bausteine und setzt ihre Reihenfolge zurück.</p></details>${profileControls()}<button class="text-button" id="integrations">Optionale Hilfe &amp; Regie-Ideen</button><div class="export-note"><strong>Ein Geschenk zum Mitnehmen</strong><p>Du erhältst eine einzelne HTML-Datei. Sie lässt sich im Browser öffnen, auch ohne Internet. Zum Verschenken als Datei verschicken.</p></div><button class="button primary full" id="download">Geschenk erstellen <span aria-hidden="true">↓</span></button><button class="button quiet full" type="button" data-go="writing">Text bearbeiten &amp; Fotos ergänzen</button><button class="text-button" data-go="questions">Mit Fragen persönlicher machen</button></aside><div class="preview-frame-wrap"><p class="preview-label">Empfängeransicht · ohne Studio-Daten</p><p id="preview-error" role="alert"></p><iframe id="gift-preview" title="Vorschau des Geburtstagsgeschenks" sandbox=""></iframe></div></div>`;
   }
   function directionControls(): string {
     const direction = directions.get(project.experience.directionId)!;
@@ -343,7 +366,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     const stepIndex = steps.findIndex(
       (step) => step.id === project.workflow.step,
     );
-    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.2</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Letzte Änderung rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer><section id="conflict-panel" class="panel" role="alert" ${conflict ? '' : 'hidden'}><h2>Deine Geschenke wurden in einem anderen Tab geändert</h2><p>Dieser Tab überschreibt keine neueren Daten. Sichere zuerst deine Eingaben; danach kannst du den aktuellen gespeicherten Stand übernehmen. Bei gelöschten Fotos kann nur der Text gesichert werden.</p><button class="button secondary" id="conflict-backup">Eingaben dieses Tabs sichern</button><button class="button primary" id="conflict-reload">Gespeicherten Stand übernehmen</button></section>${draftDialog()}${integrationDialog()}<dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Dieses Geschenk endgültig löschen?</h2><p>Private Antworten, Geschenktext und die Wiederherstellung dieses Geschenks werden gelöscht. Originalfotos und Fotokopien werden nur gelöscht, wenn kein anderes Geschenk sie benötigt. Sichere wichtige Daten vorher als Datei. Diese Löschung kann nicht rückgängig gemacht werden.</p><button class="button quiet" id="cancel-delete">Geschenk behalten</button><button class="button primary" id="confirm-delete">Endgültig löschen</button></dialog><dialog id="cleanup-dialog" aria-labelledby="cleanup-title"><h2 id="cleanup-title">Unbenutzte Fotodaten endgültig entfernen?</h2><p>Dadurch endet die lokale Rückgängig-Möglichkeit für alle Geschenke. Nur Fotos ohne verbleibende Projektreferenz werden gelöscht. Sichere wichtige Originale vorher.</p><button class="button quiet" id="cancel-cleanup">Fotodaten behalten</button><button class="button primary" id="confirm-cleanup">Fotodaten bereinigen</button></dialog><dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
+    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.2</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Letzte Änderung rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer><section id="conflict-panel" class="panel" role="alert" ${conflict ? '' : 'hidden'}><h2>Deine Geschenke wurden in einem anderen Tab geändert</h2><p>Dieser Tab überschreibt keine neueren Daten. Sichere zuerst deine Eingaben; danach kannst du den aktuellen gespeicherten Stand übernehmen. Bei gelöschten Fotos kann nur der Text gesichert werden.</p><button class="button secondary" id="conflict-backup">Eingaben dieses Tabs sichern</button><button class="button primary" id="conflict-reload">Gespeicherten Stand übernehmen</button></section>${draftDialog()}${integrationDialog()}${magicStartDialog()}<dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Dieses Geschenk endgültig löschen?</h2><p>Private Antworten, Geschenktext und die Wiederherstellung dieses Geschenks werden gelöscht. Originalfotos und Fotokopien werden nur gelöscht, wenn kein anderes Geschenk sie benötigt. Sichere wichtige Daten vorher als Datei. Diese Löschung kann nicht rückgängig gemacht werden.</p><button class="button quiet" id="cancel-delete">Geschenk behalten</button><button class="button primary" id="confirm-delete">Endgültig löschen</button></dialog><dialog id="cleanup-dialog" aria-labelledby="cleanup-title"><h2 id="cleanup-title">Unbenutzte Fotodaten endgültig entfernen?</h2><p>Dadurch endet die lokale Rückgängig-Möglichkeit für alle Geschenke. Nur Fotos ohne verbleibende Projektreferenz werden gelöscht. Sichere wichtige Originale vorher.</p><button class="button quiet" id="cancel-cleanup">Fotodaten behalten</button><button class="button primary" id="confirm-cleanup">Fotodaten bereinigen</button></dialog><dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
     for (const details of root.querySelectorAll<HTMLDetailsElement>(
       'details[id]',
     )) {
@@ -624,6 +647,66 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     listen('home', 'click', (event) => {
       event.preventDefault();
       go('start');
+    });
+    listen('magic-start', 'click', () => {
+      const dialog = root.querySelector<HTMLDialogElement>(
+        '#magic-start-dialog',
+      )!;
+      dialog.showModal();
+      root.querySelector<HTMLInputElement>('#magic-name')!.focus();
+    });
+    listen('close-magic', 'click', () => {
+      root.querySelector<HTMLDialogElement>('#magic-start-dialog')!.close();
+      root.querySelector<HTMLElement>('#magic-start')!.focus();
+    });
+    listen('magic-name', 'input', (event) => {
+      project.recipient.name = (event.target as HTMLInputElement).value;
+      persist();
+    });
+    listen('magic-relationship', 'change', (event) => {
+      const id = (event.target as HTMLSelectElement).value;
+      project.relationship.typeId = id;
+      project.relationship.uncertain = id === 'uncertain';
+      project.relationship.dimensions.context =
+        relationships.get(id)?.context ?? 'mixed';
+      persist();
+    });
+    listen('magic-message', 'input', (event) => {
+      project.writing.letter = (event.target as HTMLTextAreaElement).value;
+      persist();
+    });
+    listen('magic-form', 'submit', (event) => {
+      event.preventDefault();
+      const error = root.querySelector<HTMLElement>('#magic-error')!;
+      if (conflict) {
+        error.textContent = 'Bitte löse zuerst den Speicherkonflikt.';
+        return;
+      }
+      try {
+        const next = createMagicStart(
+          project,
+          root.querySelector<HTMLTextAreaElement>('#magic-message')!.value,
+        );
+        undo = structuredClone(project);
+        project = next;
+        persist();
+        render(true);
+        message(
+          'Deine erste Vorschau ist bereit. Prüfe den Geschenktext; Fotos und weitere persönliche Worte kannst du jederzeit ergänzen.',
+        );
+      } catch {
+        error.textContent =
+          'Bitte gib einen Namen und einen eigenen Satz ein. Eine vorhandene Komposition bleibt unverändert.';
+      }
+    });
+    listen('question-mode', 'change', (event) => {
+      project.mode = (event.target as HTMLSelectElement).value as
+        'quick' | 'deep';
+      const list = activeQuestions(project);
+      if (!list.some((q) => q.id === project.workflow.questionId))
+        project.workflow.questionId = list[0].id;
+      persist();
+      render();
     });
     listen('start-form', 'submit', (event) => {
       event.preventDefault();

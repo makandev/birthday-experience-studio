@@ -46,3 +46,33 @@ test('production Pages subpath loads assets and creates an isolated offline gift
   expect(errors).toEqual([]);
   expect(failed).toEqual([]);
 });
+
+test('production Pages Magic Start reaches a real recipient preview', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('./');
+  await page
+    .getByRole('button', { name: 'Schnell zur ersten Vorschau' })
+    .click();
+  await page
+    .getByLabel('Wie heißt die Geburtstagsperson?')
+    .fill('Pages Magic recipient');
+  await page.getByLabel('Was verbindet euch?').selectOption('colleague');
+  await page
+    .getByLabel('Was möchtest du ihr oder ihm sagen?')
+    .fill('Danke für die schöne Zusammenarbeit.');
+  await page
+    .getByRole('button', { name: 'Meine erste Vorschau erstellen' })
+    .click();
+  await expect(
+    page.getByLabel('Wie soll sich dein Geschenk anfühlen?'),
+  ).toHaveValue('elegant');
+  await expect(
+    page
+      .frameLocator('#gift-preview')
+      .getByText('Danke für die schöne Zusammenarbeit.', { exact: false }),
+  ).toBeVisible();
+  expect(errors).toEqual([]);
+});

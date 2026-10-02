@@ -848,3 +848,27 @@ dialog p {
 .photo-editor input[type='file'] {
   max-width: 100%;
 }
+
+.quick-start {
+  margin: 24px 0;
+}
+.start-alternative {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.start-alternative > button {
+  margin-top: 12px;
+}
+
+@media (max-width: 640px) {
+  #magic-start-dialog {
+    padding: 22px;
+  }
+  #magic-start-dialog .actions {
+    flex-direction: column-reverse;
+  }
+  #magic-start-dialog .actions .button {
+    flex: auto;
+    width: 100%;
+  }
+}
