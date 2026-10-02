@@ -54,7 +54,9 @@ export function experienceStrategy(
         : archetype === 'emotional'
           ? 3200
           : archetype === 'playful'
-            ? 2400
+            ? experience.composition?.pace === 'gentle'
+              ? 3200
+              : 2400
             : 4000,
   };
 }
@@ -146,8 +148,8 @@ export function composeScenes(experience: ExportExperience): RecipientScene[] {
         ? [
             'opening',
             moment,
-            'letter',
             'choice',
+            'letter',
             'surprise',
             'encore',
             'finale',
@@ -176,15 +178,19 @@ export function composeScenes(experience: ExportExperience): RecipientScene[] {
         : [
             'opening',
             moment,
-            'letter',
             'choice',
+            'letter',
             'surprise',
             'encore',
             'finale',
             'closing',
           ];
     order = order.filter(
-      (id) => (id !== 'surprise' || surprise) && (id !== 'letter' || letter),
+      (id) =>
+        (id !== 'surprise' || surprise) &&
+        (id !== 'letter' || letter) &&
+        (id !== 'choice' || letter || surprise) &&
+        (id !== 'encore' || !strategy.respectful),
     );
   }
   const championLabels = [
@@ -193,7 +199,7 @@ export function composeScenes(experience: ExportExperience): RecipientScene[] {
     'Meinen Moment entdecken',
     'Zu deinen persönlichen Worten',
     'Eine kleine Überraschung',
-    'Okay … eine allerletzte Sache',
+    'Noch ein letzter Moment',
     'Zum Abschluss',
     '',
   ];
@@ -212,12 +218,10 @@ export function publicCoreMessage(experience: ExportExperience): string {
     experience.blocks.find((block) => block.type === 'letter')?.data.text ?? '';
   const line = letter
     .split(/\n+/)
-    .map((value) => value.trim())
-    .find(
-      (value) =>
-        value &&
-        !/^(hallo\b|liebe[rs]?\b|alles gute zum geburtstag)/i.test(value),
-    );
+    .map((value) =>
+      value.trim().replace(/^(hallo|liebe[rs]?)\s+[^,\n]{1,120},\s*/i, ''),
+    )
+    .find((value) => value && !/^alles gute zum geburtstag!?$/i.test(value));
   const text =
     line ||
     experience.blocks.find((block) => block.type === 'wish')?.data.text ||

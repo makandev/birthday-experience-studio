@@ -19,9 +19,7 @@ test('two actions to first opening; confirm, public detail, optional photo and f
     .click();
   const frame = page.frameLocator('#gift-preview');
   await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
-  await expect(
-    frame.getByRole('heading', { name: /Alles Gute zum Geburtstag/ }),
-  ).toBeVisible();
+  await expect(frame.getByRole('heading', { name: /Anna/ })).toBeVisible();
   await expect(frame.locator('.letter-reveal')).not.toBeVisible();
   await expect(page.locator('#download')).not.toBeVisible();
   const initial = await readStoredProject(page);

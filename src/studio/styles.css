@@ -1009,3 +1009,71 @@ dialog {
   height: calc(100svh - 100px);
   min-height: 540px;
 }
+
+.composition-compare {
+  margin-top: 18px;
+  border-top: 1px solid var(--line, #e5d8c6);
+  padding-top: 14px;
+}
+.composition-compare summary {
+  cursor: pointer;
+  min-height: 44px;
+}
+.composition-compare button[aria-pressed='true'] {
+  outline: 2px solid #886637;
+  outline-offset: 2px;
+}
+.preview-frame-wrap #edit-visible-copy {
+  display: block;
+  margin: 12px auto;
+}
+.preview-review {
+  background: linear-gradient(125deg, #fffdf8, #fff0db);
+}
+.review-actions .button {
+  transition: transform 160ms ease;
+}
+.review-actions .button:active {
+  transform: scale(0.98);
+}
+@media (prefers-reduced-motion: reduce) {
+  .review-actions .button {
+    transition: none;
+    transform: none;
+  }
+}
+
+.optional-progress {
+  display: none;
+}
+.workspace:has(.preview-first-layout) {
+  padding-top: 20px;
+}
+.section-head.compact {
+  margin-bottom: 18px;
+}
+.section-head.compact h1 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  margin: 8px 0;
+}
+.section-head.compact > p:last-child {
+  margin: 8px 0;
+  font-size: 0.9rem;
+}
+.preview-frame-wrap {
+  scroll-margin-top: 20px;
+}
+@media (max-width: 640px) {
+  .section-head.compact > p:last-child {
+    display: none;
+  }
+  .section-head.compact {
+    margin-bottom: 12px;
+  }
+  .workspace:has(.preview-first-layout) {
+    padding-top: 12px;
+  }
+  .preview-label {
+    margin: 6px 0;
+  }
+}

@@ -45,7 +45,7 @@ test('exact offline gift bytes provide deliberate seven-station progression, cho
   await page.locator('.wish-envelope summary').click();
   await expect(page.locator('.wish-envelope .revealed')).toBeVisible();
   await expect(page.locator('#stage-next')).toHaveText(
-    'Okay … eine allerletzte Sache',
+    'Noch ein letzter Moment',
   );
   await page.locator('#stage-next').click();
   await expect(page.locator('#stage-next')).toBeDisabled();

@@ -5,7 +5,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { readStoredProject } from '../browser-storage';
 async function writing(page: import('@playwright/test').Page) {
   await page.goto('/');
-  await page.locator('nav button[data-go="person"]').click();
+  await page.locator('button[data-go="person"]:visible').click();
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
     .fill('Photo recipient');

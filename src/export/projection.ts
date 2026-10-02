@@ -82,7 +82,9 @@ export function projectExperience(
             ...project.experience.composition,
             register:
               project.relationship.dimensions.formality >= 3 ||
-              project.relationship.dimensions.context === 'professional'
+              project.relationship.dimensions.context === 'professional' ||
+              project.relationship.dimensions.closeness <= 1 ||
+              project.relationship.uncertain
                 ? ('respectful' as const)
                 : ('personal' as const),
             pace:

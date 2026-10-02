@@ -5,7 +5,7 @@ import legacy from '../fixtures/project-v1.json' with { type: 'json' };
 import { STORAGE_KEY } from '../../src/persistence/storage';
 async function writing(page: Page) {
   await page.goto('/');
-  await page.locator('nav button[data-go="person"]').click();
+  await page.locator('button[data-go="person"]:visible').click();
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
     .fill('Shared recipient');
@@ -58,7 +58,7 @@ test('multi-context: same-profile stale tab is fenced without hints; independent
   try {
     await isolatedPage.goto('/');
     await expect(
-      isolatedPage.locator('nav button[data-go="person"]'),
+      isolatedPage.locator('button[data-go="person"]:visible'),
     ).toBeVisible();
     await page.getByLabel('Dein persönlicher Brief').fill('Newer from tab A');
     await readStoredProject(page);
@@ -153,7 +153,9 @@ test('simultaneous browser autosaves have one winner, then deletion invalidates 
     .getByRole('button', { name: 'Aktuelles Geschenk löschen' })
     .click();
   await winner.getByRole('button', { name: 'Endgültig löschen' }).click();
-  await expect(winner.locator('nav button[data-go="person"]')).toBeVisible();
+  await expect(
+    winner.locator('button[data-go="person"]:visible'),
+  ).toBeVisible();
   await loser
     .getByLabel('Dein persönlicher Brief')
     .fill('Cannot resurrect deleted project');
@@ -166,7 +168,7 @@ test('simultaneous browser autosaves have one winner, then deletion invalidates 
   await loser
     .getByRole('button', { name: 'Gespeicherten Stand übernehmen' })
     .click();
-  await expect(loser.locator('nav button[data-go="person"]')).toBeVisible();
+  await expect(loser.locator('button[data-go="person"]:visible')).toBeVisible();
 });
 test('real storage migration is one-time and confirmed cleanup preserves referenced original bytes', async ({
   page,

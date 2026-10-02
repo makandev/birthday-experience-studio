@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 import { readStoredProject } from '../browser-storage';
 async function preview(page: import('@playwright/test').Page) {
   await page.goto('/');
-  await page.locator('nav button[data-go="person"]').click();
+  await page.locator('button[data-go="person"]:visible').click();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Sam');
   await page
     .getByRole('button', { name: 'Weiter zu eurer Geschichte' })
@@ -14,6 +14,7 @@ async function preview(page: import('@playwright/test').Page) {
   await page.getByLabel('Dein persönlicher Brief').fill('You matter.');
   await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
   await page.locator('#manual-preview > summary').click();
+  await expect(page.locator('#manual-preview')).toHaveAttribute('open', '');
 }
 test('coordinated directions, creator control, reduced motion and mobile effect budgets', async ({
   page,

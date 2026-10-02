@@ -15,7 +15,11 @@ import {
   orderForDirection,
 } from '../engines/composition';
 import { writingHelpers } from '../engines/writing';
-import { createMagicStart, publicBirthdayLetter } from '../engines/magic-start';
+import {
+  createMagicStart,
+  publicBirthdayLetter,
+  isStarterBirthdayLetter,
+} from '../engines/magic-start';
 import type { SceneId } from '../engines/scenes';
 import { STORAGE_KEY, type StorageLike } from '../persistence/storage';
 import {
@@ -101,6 +105,15 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
   let detailBase: CreatorProject | null = null;
   let pendingImport: DraftBundle | null = null;
   let previewGeneration = 0;
+  let creatorInteraction = 0;
+  for (const event of ['pointerdown', 'keydown', 'wheel'])
+    root.addEventListener(
+      event,
+      () => {
+        creatorInteraction += 1;
+      },
+      { capture: true, passive: true },
+    );
   let importEpoch = 0;
   const assetStore = new BrowserAssetStore();
   const mediaController = new MediaController(assetStore, {
@@ -296,7 +309,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
               '',
             )}</select>${vibeChoices()}<p id="magic-error" role="alert"></p>${primary('Meinen ersten Moment ansehen')}</form>`
         : '<button class="button primary" data-go="preview">Geschenk weitergestalten →</button>'
-    }<p class="privacy-line">Nur auf deinem Gerät. Keine Anmeldung. Keine KI nötig.<br>Persönliche Details und Fotos kannst du später ergänzen.</p></div><aside class="hero-art" aria-label="Ein persönlicher Geburtstagsmoment"><span class="art-star star-one" aria-hidden="true">✦</span><div class="gift-paper"><p class="eyebrow">Ein Moment nur für dich</p><span class="paper-flower" aria-hidden="true">${flower}</span><h2>Heute darf es<br>besonders sein.</h2><p>Ein kleiner Weg.<br>Deine Worte. Eine Überraschung.<br>Und ein Abschluss zum Erinnern.</p><div class="paper-line"></div><span class="paper-sign">Persönlich gemacht</span></div></aside>`;
+    }<button type="button" class="text-button" data-go="person">Lieber Schritt für Schritt gestalten</button><p class="privacy-line">Nur auf deinem Gerät. Keine Anmeldung. Keine KI nötig.<br>Persönliche Details und Fotos kannst du später ergänzen.</p></div><aside class="hero-art" aria-label="Ein persönlicher Geburtstagsmoment"><span class="art-star star-one" aria-hidden="true">✦</span><div class="gift-paper"><p class="eyebrow">Ein Moment nur für dich</p><span class="paper-flower" aria-hidden="true">${flower}</span><h2>Heute darf es<br>besonders sein.</h2><p>Ein kleiner Weg.<br>Deine Worte. Eine Überraschung.<br>Und ein Abschluss zum Erinnern.</p><div class="paper-line"></div><span class="paper-sign">Persönlich gemacht</span></div></aside>`;
   }
   function personPage(): string {
     return `<div class="section-head"><p class="eyebrow">01 · Dein Mensch</p><h1>Für wen ist<br>dein Geschenk?</h1><p class="lead">Ein Name. Eine Verbindung. Hier beginnt eure Geschichte.</p></div><form id="person-form" class="panel"><label for="recipient-name">Wie heißt die Geburtstagsperson?</label><input id="recipient-name" name="recipient-name" maxlength="120" required autocomplete="off" placeholder="Zum Beispiel Anna" value="${e(project.recipient.name)}"><label for="relationship">Was verbindet euch?</label><select id="relationship">${relationships
@@ -349,7 +362,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
         : 'Ohne Foto weiter',
       full: 'Gefällt mir',
     };
-    return `<div class="section-head compact"><p class="eyebrow">Gemeinsam gestalten · ${creatorMoment === 'full' ? 'Dein Geschenk' : 'Schritt ' + { opening: 1, personal: 2, photo: 3, full: 4 }[creatorMoment] + ' von 4'}</p><h1>${titles[creatorMoment]}</h1><p>Das ist die echte Empfängeransicht mit Stationen, Atmosphäre und Überraschungen. Du bestimmst, wie viel du ergänzen möchtest.</p></div><div class="preview-first-layout"><section class="panel preview-review" aria-label="Gemeinsam weitergestalten"><div class="review-actions"><button class="button primary" id="confirm-view" ${creatorMoment === 'full' ? 'hidden' : ''}>${nextLabel[creatorMoment]}</button><button class="button secondary" id="change-view">Anders machen</button><button class="button secondary" id="surprise-view">Überrasch mich</button><button class="text-button" id="full-preview" ${creatorMoment === 'full' ? 'hidden' : ''}>Direkt das ganze Geschenk ansehen</button></div><div id="review-vibes" hidden>${directions
+    return `<div class="section-head compact"><p class="eyebrow">Gemeinsam gestalten · ${creatorMoment === 'full' ? 'Dein Geschenk' : 'Schritt ' + { opening: 1, personal: 2, photo: 3, full: 4 }[creatorMoment] + ' von 4'}</p><h1>${titles[creatorMoment]}</h1><p>Das ist die echte Empfängeransicht mit Stationen, Atmosphäre und Überraschungen. Du bestimmst, wie viel du ergänzen möchtest.</p></div><div class="preview-first-layout"><div class="preview-frame-wrap"><p class="preview-label">${previewScene === 'letter' ? 'Deine persönlichen Worte · im Geschenk erst später enthüllt' : 'Empfängeransicht · ohne private Studio-Daten'}</p><p id="preview-error" role="alert"></p><iframe id="gift-preview" title="Vorschau des Geburtstagsgeschenks" sandbox="allow-scripts"></iframe><button class="button quiet" id="edit-visible-copy">Persönliche Worte direkt ändern</button></div><section class="panel preview-review" aria-label="Gemeinsam weitergestalten"><div class="review-actions"><button class="button primary" id="confirm-view" ${creatorMoment === 'full' ? 'hidden' : ''}>${nextLabel[creatorMoment]}</button><button class="button secondary" id="change-view">Anders machen</button><button class="button secondary" id="surprise-view">Überrasch mich</button><button class="text-button" id="full-preview" ${creatorMoment === 'full' ? 'hidden' : ''}>Direkt das ganze Geschenk ansehen</button></div><div id="review-vibes" hidden>${directions
       .all()
       .map(
         (d) =>
@@ -357,7 +370,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       )
       .join(
         '',
-      )}</div>${creatorMoment === 'photo' ? mediaController.panel(project) : ''}<p class="field-help">Alles bleibt veränderbar. Varianten behalten deinen Text und deine Fotos; Rückgängig ist verfügbar.</p></section><div class="preview-frame-wrap"><p class="preview-label">${previewScene === 'letter' ? 'Deine persönlichen Worte · im Geschenk erst später enthüllt' : 'Empfängeransicht · ohne private Studio-Daten'}</p><p id="preview-error" role="alert"></p><iframe id="gift-preview" title="Vorschau des Geburtstagsgeschenks" sandbox="allow-scripts"></iframe></div><section class="panel finish-controls"><button class="button primary full" id="download" ${creatorMoment === 'full' ? '' : 'hidden'}>Geschenk als HTML sichern ↓</button><p class="field-help">Im Offline-Profil enthält diese eine HTML-Datei dein komplettes Geschenk: Text, Fotos, Gestaltung und Interaktionen. Keine BES-Seite, kein Upload und keine Anmeldung nötig.</p>${isIosDevice(navigator) ? '<p class="field-help">iPhone-Hinweis: HTML-Vorschauen in WhatsApp und „Dateien“ reagieren möglicherweise nicht auf Tippen. Dieses Öffnungsproblem ist noch ungelöst; die eigenständige HTML-Datei bleibt dein Geschenk.</p>' : ''}<details id="iphone-delivery"><summary>Optionale iPhone-Lesehilfe · experimentell</summary><p>Diese zusätzliche Lesehilfe ist freiwillig und ersetzt nicht dein HTML-Geschenk. Falls du sie ausprobieren möchtest, kannst du dafür eine separate Empfänger-Datei sichern. Echte iPhone-Validierung steht noch aus.</p><p>1. Die Geschenkdatei sichern und mit dem Safari-Link verschicken.<br>2. In WhatsApp oder Mail: die Datei über „Teilen“ in „Dateien“ sichern.<br>3. Die Empfängerperson öffnet <a href="https://makandev.github.io/birthday-experience-studio/#gift" target="_blank" rel="noopener noreferrer">den BES-Geschenköffner in Safari</a> und wählt die gespeicherte Datei. Nicht die HTML-Vorschau in WhatsApp oder „Dateien“ verwenden.</p><p class="field-help">Die Seite muss zuerst laden; das Geschenk wird nur lokal gelesen, nicht hochgeladen. Keine Pflichtcloud für den HTML-Export. Echte iPhone-Validierung steht noch aus – noch keine Release-Freigabe.</p><button class="button secondary" id="recipient-export">Empfänger-Datei für Safari sichern</button><button class="button quiet" id="recipient-share" hidden>Empfänger-Datei teilen</button><p class="field-help">Safari-Dateien brauchen das Offline-Profil mit eingebetteten Fotos. Die HTML-Datei bleibt für Browser verfügbar, die sie interaktiv öffnen können.</p></details><div class="review-actions"><button class="button quiet" id="add-detail">Eine Erinnerung ergänzen</button><button class="button quiet" id="add-photo">Fotos ergänzen</button><button class="text-button" data-go="questions">Mehr erzählen · freiwillig</button></div><details id="manual-preview"><summary>Text, Farben und weitere Details selbst bearbeiten</summary><button class="button quiet full" type="button" data-go="writing">Text bearbeiten &amp; Fotos ergänzen</button><aside class="gift-settings">${settings}</aside></details></section></div>${detailDialog()}`;
+      )}</div><details class="composition-compare"><summary>Zwei Geschenkwege vergleichen</summary><p>Gleiche Worte und Fotos, andere Inszenierung. Du entscheidest; Rückgängig bleibt möglich.</p><div class="review-actions"><button type="button" class="button secondary" data-review-variant="challenger" aria-pressed="${project.experience.composition?.variant === 'challenger'}">Neue Inszenierung</button><button type="button" class="button secondary" data-review-variant="champion" aria-pressed="${project.experience.composition?.variant !== 'challenger'}">Klassischer Weg</button></div></details>${creatorMoment === 'photo' ? mediaController.panel(project) : ''}<p class="field-help">Alles bleibt veränderbar. Varianten behalten deinen Text und deine Fotos; Rückgängig ist verfügbar.</p></section><section class="panel finish-controls"><button class="button primary full" id="download" ${creatorMoment === 'full' ? '' : 'hidden'}>Geschenk als HTML sichern ↓</button><p class="field-help">Im Offline-Profil enthält diese eine HTML-Datei dein komplettes Geschenk: Text, Fotos, Gestaltung und Interaktionen. Keine BES-Seite, kein Upload und keine Anmeldung nötig.</p>${isIosDevice(navigator) ? '<p class="field-help">iPhone-Hinweis: HTML-Vorschauen in WhatsApp und „Dateien“ reagieren möglicherweise nicht auf Tippen. Dieses Öffnungsproblem ist noch ungelöst; die eigenständige HTML-Datei bleibt dein Geschenk.</p>' : ''}<details id="iphone-delivery"><summary>Optionale iPhone-Lesehilfe · experimentell</summary><p>Diese zusätzliche Lesehilfe ist freiwillig und ersetzt nicht dein HTML-Geschenk. Falls du sie ausprobieren möchtest, kannst du dafür eine separate Empfänger-Datei sichern. Echte iPhone-Validierung steht noch aus.</p><p>1. Die Geschenkdatei sichern und mit dem Safari-Link verschicken.<br>2. In WhatsApp oder Mail: die Datei über „Teilen“ in „Dateien“ sichern.<br>3. Die Empfängerperson öffnet <a href="https://makandev.github.io/birthday-experience-studio/#gift" target="_blank" rel="noopener noreferrer">den BES-Geschenköffner in Safari</a> und wählt die gespeicherte Datei. Nicht die HTML-Vorschau in WhatsApp oder „Dateien“ verwenden.</p><p class="field-help">Die Seite muss zuerst laden; das Geschenk wird nur lokal gelesen, nicht hochgeladen. Keine Pflichtcloud für den HTML-Export. Echte iPhone-Validierung steht noch aus – noch keine Release-Freigabe.</p><button class="button secondary" id="recipient-export">Empfänger-Datei für Safari sichern</button><button class="button quiet" id="recipient-share" hidden>Empfänger-Datei teilen</button><p class="field-help">Safari-Dateien brauchen das Offline-Profil mit eingebetteten Fotos. Die HTML-Datei bleibt für Browser verfügbar, die sie interaktiv öffnen können.</p></details><div class="review-actions"><button class="button quiet" id="add-detail">Eine Erinnerung ergänzen</button><button class="button quiet" id="add-photo">Fotos ergänzen</button><button class="text-button" data-go="questions">Mehr erzählen · freiwillig</button></div><details id="manual-preview"><summary>Text, Farben und weitere Details selbst bearbeiten</summary><button class="button quiet full" type="button" data-go="writing">Text bearbeiten &amp; Fotos ergänzen</button><aside class="gift-settings">${settings}</aside></details></section></div>${detailDialog()}<dialog id="scene-edit-dialog" aria-labelledby="scene-edit-title"><h2 id="scene-edit-title">Die Worte im Geschenk</h2><form id="scene-edit-form"><label for="scene-edit-text">Deine persönlichen Worte · im Geschenk sichtbar</label><textarea id="scene-edit-text" rows="7" maxlength="20000" required>${e(project.writing.letter)}</textarea><p>Nur dieser öffentliche Text ändert sich. Dein restliches Geschenk bleibt erhalten.</p><div class="actions"><button type="button" class="button quiet" id="cancel-scene-edit">Behalten</button>${primary('Änderung ansehen')}</div></form></dialog>`;
   }
   function directionControls(): string {
     const direction = directions.get(project.experience.directionId)!;
@@ -415,7 +428,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     const stepIndex = steps.findIndex(
       (step) => step.id === project.workflow.step,
     );
-    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.2</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Letzte Änderung rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer><section id="conflict-panel" class="panel" role="alert" ${conflict ? '' : 'hidden'}><h2>Deine Geschenke wurden in einem anderen Tab geändert</h2><p>Dieser Tab überschreibt keine neueren Daten. Sichere zuerst deine Eingaben; danach kannst du den aktuellen gespeicherten Stand übernehmen. Bei gelöschten Fotos kann nur der Text gesichert werden.</p><button class="button secondary" id="conflict-backup">Eingaben dieses Tabs sichern</button><button class="button primary" id="conflict-reload">Gespeicherten Stand übernehmen</button></section>${draftDialog()}${integrationDialog()}<dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Dieses Geschenk endgültig löschen?</h2><p>Private Antworten, Geschenktext und die Wiederherstellung dieses Geschenks werden gelöscht. Originalfotos und Fotokopien werden nur gelöscht, wenn kein anderes Geschenk sie benötigt. Sichere wichtige Daten vorher als Datei. Diese Löschung kann nicht rückgängig gemacht werden.</p><button class="button quiet" id="cancel-delete">Geschenk behalten</button><button class="button primary" id="confirm-delete">Endgültig löschen</button></dialog><dialog id="cleanup-dialog" aria-labelledby="cleanup-title"><h2 id="cleanup-title">Unbenutzte Fotodaten endgültig entfernen?</h2><p>Dadurch endet die lokale Rückgängig-Möglichkeit für alle Geschenke. Nur Fotos ohne verbleibende Projektreferenz werden gelöscht. Sichere wichtige Originale vorher.</p><button class="button quiet" id="cancel-cleanup">Fotodaten behalten</button><button class="button primary" id="confirm-cleanup">Fotodaten bereinigen</button></dialog><dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
+    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.2</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav ${['start', 'preview'].includes(project.workflow.step) ? 'optional-progress' : ''}" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Letzte Änderung rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer><section id="conflict-panel" class="panel" role="alert" ${conflict ? '' : 'hidden'}><h2>Deine Geschenke wurden in einem anderen Tab geändert</h2><p>Dieser Tab überschreibt keine neueren Daten. Sichere zuerst deine Eingaben; danach kannst du den aktuellen gespeicherten Stand übernehmen. Bei gelöschten Fotos kann nur der Text gesichert werden.</p><button class="button secondary" id="conflict-backup">Eingaben dieses Tabs sichern</button><button class="button primary" id="conflict-reload">Gespeicherten Stand übernehmen</button></section>${draftDialog()}${integrationDialog()}<dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Dieses Geschenk endgültig löschen?</h2><p>Private Antworten, Geschenktext und die Wiederherstellung dieses Geschenks werden gelöscht. Originalfotos und Fotokopien werden nur gelöscht, wenn kein anderes Geschenk sie benötigt. Sichere wichtige Daten vorher als Datei. Diese Löschung kann nicht rückgängig gemacht werden.</p><button class="button quiet" id="cancel-delete">Geschenk behalten</button><button class="button primary" id="confirm-delete">Endgültig löschen</button></dialog><dialog id="cleanup-dialog" aria-labelledby="cleanup-title"><h2 id="cleanup-title">Unbenutzte Fotodaten endgültig entfernen?</h2><p>Dadurch endet die lokale Rückgängig-Möglichkeit für alle Geschenke. Nur Fotos ohne verbleibende Projektreferenz werden gelöscht. Sichere wichtige Originale vorher.</p><button class="button quiet" id="cancel-cleanup">Fotodaten behalten</button><button class="button primary" id="confirm-cleanup">Fotodaten bereinigen</button></dialog><dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
     for (const details of root.querySelectorAll<HTMLDetailsElement>(
       'details[id]',
     )) {
@@ -444,6 +457,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
 
   async function updatePreview(showResult = false): Promise<void> {
     const generation = ++previewGeneration;
+    const interactionAtStart = creatorInteraction;
     const snapshot = structuredClone(project);
     const iframe = root.querySelector<HTMLIFrameElement>('#gift-preview')!;
     const error = root.querySelector<HTMLElement>('#preview-error')!;
@@ -467,7 +481,11 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       iframe.hidden = false;
       iframe.onload = showResult
         ? () => {
-            if (generation === previewGeneration && iframe.isConnected)
+            if (
+              generation === previewGeneration &&
+              iframe.isConnected &&
+              creatorInteraction === interactionAtStart
+            )
               iframe.scrollIntoView({ block: 'start', behavior: 'instant' });
           }
         : null;
@@ -772,6 +790,11 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       }
       try {
         const next = createMagicStart(project, '');
+        next.experience.composition = {
+          version: 1,
+          variant: 'challenger',
+          arc: 'portrait',
+        };
         undo = structuredClone(project);
         project = next;
         creatorMoment = 'opening';
@@ -826,7 +849,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       const base = detailBase.writing.letter;
       const letter = !message
         ? base
-        : base === publicBirthdayLetter(project.recipient.name)
+        : isStarterBirthdayLetter(base, project.recipient.name)
           ? publicBirthdayLetter(project.recipient.name, message)
           : `${base}\n\n${message}`;
       if (letter.length > 20000) {
@@ -894,14 +917,56 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
           );
         }),
       );
+    root
+      .querySelectorAll<HTMLButtonElement>('[data-review-variant]')
+      .forEach((button) =>
+        button.addEventListener('click', () => {
+          undo = structuredClone(project);
+          project.experience.composition = {
+            version: 1,
+            variant:
+              button.dataset.reviewVariant === 'champion'
+                ? 'champion'
+                : 'challenger',
+            arc: project.experience.composition?.arc ?? 'portrait',
+          };
+          previewScene = 'opening';
+          persist();
+          render(true);
+        }),
+      );
+    listen('edit-visible-copy', 'click', () => {
+      root.querySelector<HTMLDialogElement>('#scene-edit-dialog')!.showModal();
+      root.querySelector<HTMLTextAreaElement>('#scene-edit-text')!.focus();
+    });
+    listen('cancel-scene-edit', 'click', () => {
+      root.querySelector<HTMLDialogElement>('#scene-edit-dialog')!.close();
+      root.querySelector<HTMLButtonElement>('#edit-visible-copy')!.focus();
+    });
+    listen('scene-edit-form', 'submit', (event) => {
+      event.preventDefault();
+      undo = structuredClone(project);
+      project.writing.letter = root
+        .querySelector<HTMLTextAreaElement>('#scene-edit-text')!
+        .value.trim();
+      syncComposition(project);
+      previewScene = 'letter';
+      persist();
+      render(true);
+    });
     listen('surprise-view', 'click', () => {
       undo = structuredClone(project);
       previewScene = 'opening';
-      const list = directions.all();
-      const index = list.findIndex(
-        (d) => d.id === project.experience.directionId,
-      );
-      chooseDirection(list[(index + 1) % list.length].id);
+      project.experience.composition = {
+        version: 1,
+        variant: 'challenger',
+        arc:
+          project.experience.composition?.arc === 'encore'
+            ? 'portrait'
+            : 'encore',
+      };
+      persist();
+      render(true);
     });
     listen('recipient-name', 'input', (event) => {
       project.recipient.name = (event.target as HTMLInputElement).value;

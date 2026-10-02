@@ -15,7 +15,7 @@ test('reproducible standalone Studio creates an offline gift without fetching bu
   page.on('pageerror', (error) => errors.push(error.message));
   await context.setOffline(true);
   await page.setContent(html);
-  await page.locator('nav button[data-go="person"]').click();
+  await page.locator('button[data-go="person"]:visible').click();
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
     .fill('Standalone recipient');

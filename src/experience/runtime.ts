@@ -1,7 +1,23 @@
 // Trusted static runtime. Never interpolate recipient, imported or AI data here.
 export const RECIPIENT_RUNTIME = String.raw`(() => {
 'use strict';
-const scenes = [...document.querySelectorAll('.gift-scene')];
+const originalScenes = [...document.querySelectorAll('.gift-scene')];
+let scenes = [...originalScenes];
+const challenger = document.body.dataset.variant === 'challenger';
+const phaseMs = Math.min(4500, Math.max(2000, Number(document.body.dataset.phaseMs) || 4500));
+const finaleStyle = document.body.dataset.finaleStyle;
+const originalChoiceResponse = document.getElementById('choice-response')?.textContent || '';
+const originalMomentIntro = document.getElementById('moment-intro')?.textContent || '';
+const gotoLabels = {choice:'Deinen Weg wählen',curiosity:'Einen Moment auspacken',moments:'Das Bild entdecken',letter:'Zu deinen persönlichen Worten',surprise:'Den Wunsch auspacken',encore:'Zum Abspann?',finale:'Diesen Moment feiern',closing:'Zum Mitnehmen'};
+const originalEcho = document.querySelector('.choice-echo')?.textContent || '';
+if (challenger && finaleStyle === 'keepsake') {
+  const source = document.querySelector('.photo-deck .photo-image');
+  if (source) {
+    const photo = source.cloneNode(false); photo.classList.add('keepsake-photo'); photo.removeAttribute('loading'); photo.setAttribute('aria-hidden','true');
+    document.querySelector('.finale-message')?.append(photo);
+  }
+}
+const sceneIs = id => scenes[current]?.dataset.scene === id;
 const next = document.getElementById('stage-next');
 const back = document.getElementById('stage-back');
 const progress = document.getElementById('stage-progress');
@@ -12,7 +28,7 @@ const intensity = Math.min(3, Math.max(0, Number(document.body.dataset.intensity
 const canvas = document.getElementById('confetti');
 const ctx = canvas.getContext('2d');
 const messages = [...document.querySelectorAll('.finale-message')];
-const labels = ['Geschenk öffnen', 'Ich bin bereit', 'Meinen Moment entdecken', 'Zu deinen persönlichen Worten', 'Eine kleine Überraschung', 'Okay … eine allerletzte Sache', 'Zum Abschluss'];
+
 let current = 0;
 let frame = 0;
 let timers = [];
@@ -44,6 +60,33 @@ function burst(strong = false) {
   }
   frame = requestAnimationFrame(draw);
 }
+function fireworks() {
+  stopConfetti();
+  if (!moving() || !ctx || document.body.dataset.respectful === 'true') return;
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  const count = Math.min(innerWidth < 640 ? 72 : 144, 48 * intensity);
+  const started = performance.now();
+  const colors = document.body.dataset.archetype === 'playful' ? ['#ef9a66','#b1dbbe','#dfb0da'] : ['#edcb80','#fff6df','#bf9754'];
+  function draw(now) {
+    if (!moving()) { stopConfetti(); return; }
+    const t = (now - started) / 3200;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (t >= 1) { frame = 0; return; }
+    for (let i = 0; i < count; i++) {
+      const group = i % 3; const age = Math.max(0, (t - group * .12) / .65);
+      if (age <= 0 || age >= 1) continue;
+      const angle = i * 2.39996; const radius = Math.min(canvas.width,canvas.height) * .32 * Math.sin(age * Math.PI / 2);
+      const x = canvas.width * (.25 + group * .25) + Math.cos(angle) * radius;
+      const y = canvas.height * (.24 + group * .07) + Math.sin(angle) * radius + age * age * 65;
+      ctx.globalAlpha = (1 - age) * .85; ctx.fillStyle = colors[group];
+      ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle=colors[group];ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-Math.cos(angle)*10*(1-age),y-Math.sin(angle)*10*(1-age));ctx.stroke();
+    }
+    ctx.globalAlpha=1;frame=requestAnimationFrame(draw);
+  }
+  frame=requestAnimationFrame(draw);
+}
+function finaleEffect() { if (!challenger) burst(true); else if (finaleStyle !== 'keepsake') fireworks(); }
 function finishFinale() {
   clearFinale(); messages.forEach(message => message.classList.add('active'));
   next.disabled = false; document.body.dataset.finaleComplete = 'true'; document.getElementById('finale-status').textContent = 'Dein Abschluss ist bereit.';
@@ -52,9 +95,9 @@ function startFinale() {
   document.body.dataset.finaleComplete = 'false';
   messages.forEach(message => message.classList.remove('active'));
   if (!moving()) { finishFinale(); return; }
-  next.disabled = true; messages[0].classList.add('active'); burst(true);
-  const phase = index => { messages.forEach((message, i) => message.classList.toggle('active', i === index)); if (index === 2) burst(true); };
-  timers = [setTimeout(() => phase(1), 4500), setTimeout(() => phase(2), 9000), setTimeout(() => { next.disabled = false; document.body.dataset.finaleComplete = 'true'; document.getElementById('finale-status').textContent = 'Dein Abschluss ist bereit.'; }, 13500)];
+  next.disabled = true; messages[0].classList.add('active'); if (!challenger) burst(true);
+  const phase = index => { messages.forEach((message, i) => message.classList.toggle('active', i === index)); if (index === 2) finaleEffect(); };
+  timers = [setTimeout(() => phase(1), phaseMs), setTimeout(() => phase(2), phaseMs * 2), setTimeout(() => { next.disabled = false; document.body.dataset.finaleComplete = 'true'; document.getElementById('finale-status').textContent = 'Dein Abschluss ist bereit.'; }, phaseMs * 3)];
 }
 function updateClock() {
   clearInterval(clockTimer);
@@ -63,33 +106,36 @@ function updateClock() {
     document.getElementById('time-greeting').textContent = hour < 11 ? 'Guten Morgen' : hour < 18 ? 'Einen schönen Tag' : 'Guten Abend';
     document.getElementById('live-clock').textContent = now.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
   };
-  tick(); if (current === 0 && !document.hidden) clockTimer = setInterval(tick, 1000);
+  tick(); if (sceneIs('opening') && !document.hidden) clockTimer = setInterval(tick, 1000);
 }
 function show(index, focus = true) {
   if (!Number.isInteger(index) || index < 0 || index >= scenes.length) return;
   clearFinale(); stopConfetti(); current = index;
   scenes.forEach((scene, i) => { scene.hidden = i !== index; });
-  counter.textContent = index === 7 ? 'Dein Abschluss' : 'Station ' + (index + 1) + ' von 7';
-  progress.value = Math.min(index + 1, 7);
-  back.disabled = index === 0; next.hidden = index === 7; next.disabled = false;
-  next.textContent = labels[index] || 'Zum Abschluss';
+  counter.textContent = sceneIs('closing') ? 'Dein Abschluss' : 'Station ' + (index + 1) + ' von ' + (scenes.length - 1);
+  progress.max = scenes.length - 1; progress.value = Math.min(index + 1, scenes.length - 1);
+  back.disabled = index === 0; next.hidden = sceneIs('closing'); next.disabled = false;
+  next.textContent = challenger ? (sceneIs('opening') ? 'Geschenk öffnen' : gotoLabels[scenes[index + 1]?.dataset.scene] || 'Zum Mitnehmen') : scenes[index].dataset.nextLabel || 'Zum Abschluss';
   document.body.dataset.scene = scenes[index].dataset.scene;
+  document.body.dataset.sceneOrder = scenes.map(scene => scene.dataset.scene).join(',');
   if (focus) { const heading = scenes[index].querySelector('[data-scene-heading]'); if (heading) heading.focus(); scrollTo(0, 0); }
   updateClock();
-  if (index === 6) startFinale(); else if (index > 0 && index < 7) burst();
+  if (sceneIs('finale')) startFinale(); else if (index > 0 && index < scenes.length - 1 && (!challenger || document.body.dataset.archetype === 'playful' && sceneIs('surprise'))) burst();
 }
 function motionChanged() {
   document.body.dataset.paused = moving() ? 'false' : 'true';
   motionOff.disabled = reduce.matches || intensity === 0;
-  if (!moving()) { stopConfetti(); if (current === 6) finishFinale(); }
+  if (!moving()) { stopConfetti(); if (sceneIs('finale')) finishFinale(); }
 }
 // Activate a deliberate touch once using its actual target/coordinates. Some
 // mobile opaque-frame paths misplace the compatibility mouse click. Keep native
 // keyboard/mouse click support, reject scroll/cancel and deduplicate that click.
 let touchActivationAt = -Infinity;
-document.addEventListener('pointerdown', () => { touchActivationAt = -Infinity; }, true);
+let pointerObserved = false;
+const runtimeStarted = performance.now();
+document.addEventListener('pointerdown', () => { pointerObserved = true; touchActivationAt = -Infinity; }, true);
 document.addEventListener('click', event => {
-  if (event.detail > 0 && performance.now() - touchActivationAt < 800) {
+  if (event.detail > 0 && ((!pointerObserved && performance.now() - runtimeStarted < 1200) || performance.now() - touchActivationAt < 800)) {
     event.preventDefault(); event.stopImmediatePropagation();
   }
 }, true);
@@ -117,10 +163,36 @@ document.querySelectorAll('[data-choice]').forEach(button => activate(button, ()
   const choice = button.dataset.choice; if (!Object.hasOwn(choices, choice)) return;
   document.querySelectorAll('[data-choice]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
   document.getElementById('choice-response').textContent = choices[choice];
-  document.getElementById('moment-intro').textContent = choices[choice]; burst();
+  const moment = document.getElementById('moment-intro'); if (moment) moment.textContent = choices[choice];
+  if (challenger) {
+    const route = button.dataset.route;
+    const target = scenes.findIndex((scene, index) => index > current && scene.dataset.scene === route);
+    if (target > current) {
+      const [selected] = scenes.splice(target, 1); scenes.splice(current + 1, 0, selected);
+      next.textContent = 'Jetzt: ' + button.textContent.trim();
+      document.getElementById('choice-response').textContent = 'Deine Wahl kommt als Nächstes. Die anderen Momente bleiben für später.';
+    }
+    const echo = document.querySelector('.choice-echo'); if (echo) echo.textContent = button.dataset.echo || originalEcho;
+  } else burst();
 }));
-activate(document.getElementById('skip-finale'), () => { finishFinale(); show(7); });
-activate(document.getElementById('replay'), () => { document.querySelectorAll('details[open]').forEach(item => item.open = false); show(0); });
+activate(document.getElementById('skip-finale'), () => { finishFinale(); show(scenes.findIndex(scene => scene.dataset.scene === 'closing')); });
+activate(document.getElementById('replay'), () => {
+  scenes = [...originalScenes];
+  document.querySelectorAll('[data-choice]').forEach(item => item.setAttribute('aria-pressed','false'));
+  const echo = document.querySelector('.choice-echo'); if (echo) echo.textContent=originalEcho;
+  const response = document.getElementById('choice-response'); if(response) response.textContent=originalChoiceResponse;
+  const moment = document.getElementById('moment-intro'); if(moment) moment.textContent=originalMomentIntro;
+  document.querySelectorAll('details[open]').forEach(item => item.open = false); selectPhoto(0); show(0);
+});
+const fireworksAgain = document.getElementById('fireworks-again'); if (fireworksAgain) activate(fireworksAgain, fireworks);
+function selectPhoto(index) {
+  const photos = [...document.querySelectorAll('[data-photo]')];
+  if (!photos.length || !Number.isInteger(index) || index < 0 || index >= photos.length) return;
+  photos.forEach((photo,i) => photo.hidden = i !== index);
+  document.querySelectorAll('[data-photo-select]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.photoSelect) === index)));
+}
+document.querySelectorAll('[data-photo-select]').forEach(button => activate(button, () => selectPhoto(Number(button.dataset.photoSelect))));
+selectPhoto(0);
 document.querySelectorAll('summary').forEach(summary => activate(summary, event => { event.preventDefault(); const details = summary.parentElement; details.open = !details.open; }));
 motionOff.addEventListener('change', motionChanged);
 reduce.addEventListener('change', motionChanged);
@@ -133,4 +205,4 @@ if (previewIndex >= 0 && scenes[previewIndex].dataset.scene === 'letter') docume
 })();`;
 // Regenerate deliberately after runtime edits; the module test pins the exact bytes.
 export const RECIPIENT_RUNTIME_HASH =
-  'h94OCbjkmRLSc8jEwh/yuKfda1GNycik2Im88PC5vP8=';
+  'Dl0arhHlFucR6jDKYEQkoLjjwCXPh94gIgsGWee1oHw=';

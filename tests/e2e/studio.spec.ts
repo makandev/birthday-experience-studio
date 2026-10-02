@@ -11,7 +11,7 @@ test('vertical slice, restore, isolated preview and offline gift with no network
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
-  await page.locator('nav button[data-go="person"]').click();
+  await page.locator('button[data-go="person"]:visible').click();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Anna');
   await page
     .getByRole('button', { name: 'Weiter zu eurer Geschichte' })
@@ -114,7 +114,7 @@ test('guided writing requires approval, reset can be cancelled and undone', asyn
   page,
 }) => {
   await page.goto('/');
-  await page.locator('nav button[data-go="person"]').click();
+  await page.locator('button[data-go="person"]:visible').click();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Alex');
   await page
     .getByRole('button', { name: 'Weiter zu eurer Geschichte' })
@@ -178,7 +178,7 @@ test('unreadable drafts remain protected and hostile text is inert', async ({
       STORAGE_KEY,
     ),
   ).toBe('{broken');
-  await page.locator('nav button[data-go="person"]').click();
+  await page.locator('button[data-go="person"]:visible').click();
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
     .fill('<img src=x onerror=alert(1)>');
@@ -225,7 +225,7 @@ test('mobile layout and core accessibility checks', async ({ page }) => {
     path: 'test-results/studio-mobile.png',
     fullPage: true,
   });
-  await page.locator('nav button[data-go="person"]').click();
+  await page.locator('button[data-go="person"]:visible').click();
   await check();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Sam');
   await page
@@ -241,7 +241,7 @@ test('mobile layout and core accessibility checks', async ({ page }) => {
   await page.locator('#manual-preview > summary').click();
   await check();
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.locator('nav button[data-go="start"]').click();
+  await page.locator('#home').click();
   await page.screenshot({
     path: 'test-results/studio-desktop.png',
     fullPage: true,
@@ -262,7 +262,7 @@ test('blocked storage gives a warning while editing remains usable', async ({
   await expect(
     page.getByRole('status').filter({ hasText: 'Dein Browser erlaubt' }),
   ).toBeVisible();
-  await page.locator('nav button[data-go="person"]').click();
+  await page.locator('button[data-go="person"]:visible').click();
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Sam');
   await expect(page.locator('#save-status')).toHaveText(
     'Speichern nicht möglich – Seite bitte offen lassen',

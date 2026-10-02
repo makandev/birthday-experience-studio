@@ -23,10 +23,7 @@ test('touch creator: minimum-input opening, public refinement, optional photo an
   const frame = page.frameLocator('#gift-preview');
   await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
   await comfortable(frame.locator('#stage-next'));
-  await expect(frame.locator('body')).toHaveAttribute(
-    'data-scene',
-    'curiosity',
-  );
+  await expect(frame.locator('body')).toHaveAttribute('data-scene', 'choice');
   await comfortable(
     page.getByRole('button', { name: 'Gefällt mir', exact: true }),
   );
@@ -63,14 +60,7 @@ test('touch creator: minimum-input opening, public refinement, optional photo an
     'data-scene',
     'opening',
   );
-  for (const scene of [
-    'curiosity',
-    'choice',
-    'moments',
-    'letter',
-    'surprise',
-    'finale',
-  ]) {
+  for (const scene of ['choice', 'curiosity', 'letter', 'surprise', 'finale']) {
     await comfortable(recipient.locator('#stage-next'));
     await expect(recipient.locator('body')).toHaveAttribute(
       'data-scene',
@@ -78,10 +68,13 @@ test('touch creator: minimum-input opening, public refinement, optional photo an
     );
     if (scene === 'choice') {
       await comfortable(
-        recipient.getByRole('button', { name: 'Ein Lächeln', exact: true }),
+        recipient.getByRole('button', {
+          name: 'Ein kleines Lächeln',
+          exact: true,
+        }),
       );
       await expect(recipient.locator('#choice-response')).toContainText(
-        'Lächeln',
+        'Deine Wahl kommt als Nächstes',
       );
     }
     if (scene === 'surprise') {
@@ -180,19 +173,12 @@ test('primary download is standalone HTML on every device and runs offline with 
   const requests: string[] = [];
   page.on('request', (r) => requests.push(r.url()));
   await page.setContent(html);
-  for (const scene of [
-    'curiosity',
-    'choice',
-    'moments',
-    'letter',
-    'surprise',
-    'finale',
-  ]) {
+  for (const scene of ['choice', 'curiosity', 'letter', 'surprise', 'finale']) {
     await comfortable(page.locator('#stage-next'));
     await expect(page.locator('body')).toHaveAttribute('data-scene', scene);
     if (scene === 'choice')
       await comfortable(
-        page.getByRole('button', { name: 'Ein warmer Moment', exact: true }),
+        page.getByRole('button', { name: 'Ein kleines Lächeln', exact: true }),
       );
     if (scene === 'letter') {
       await comfortable(page.locator('.letter-reveal summary'));

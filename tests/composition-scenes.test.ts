@@ -104,7 +104,6 @@ describe('bounded variable scene composition', () => {
     );
     expect(composeScenes(projectExperience(p)).map((s) => s.id)).toEqual([
       'opening',
-      'choice',
       'curiosity',
       'finale',
       'closing',
@@ -157,4 +156,13 @@ describe('bounded variable scene composition', () => {
     raw.experience.composition.instructions = 'run';
     expect(() => readRecipientFile(JSON.stringify(raw))).toThrow();
   });
+});
+
+it('retains authored words after a same-line greeting as the finale core', () => {
+  const p = project();
+  p.experience.blocks.find((b) => b.type === 'letter')!.data.text =
+    'Hallo Alex, eine ausdrücklich freigegebene Kernbotschaft.';
+  expect(publicCoreMessage(projectExperience(p))).toBe(
+    'eine ausdrücklich freigegebene Kernbotschaft.',
+  );
 });

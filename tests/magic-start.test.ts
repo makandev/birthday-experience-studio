@@ -79,3 +79,20 @@ describe('explicit public Magic Start', () => {
     expect(html).toContain('&lt;script&gt;');
   });
 });
+
+describe('contextual public starter copy', () => {
+  it('changes the public fallback by chosen direction without invented personal facts or private input', () => {
+    const letters = ['emotional', 'funny', 'cinematic', 'elegant'].map(
+      (direction) => {
+        const p = createProject();
+        p.recipient.name = 'Alex';
+        p.experience.directionId = direction as typeof p.experience.directionId;
+        p.answers.context = { status: 'answered', value: 'PRIVATE_FACT' };
+        const gift = createMagicStart(p);
+        expect(gift.writing.letter).not.toContain('PRIVATE_FACT');
+        return gift.writing.letter;
+      },
+    );
+    expect(new Set(letters).size).toBe(4);
+  });
+});

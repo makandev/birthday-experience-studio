@@ -76,9 +76,6 @@ test('production Pages recipient opener reads only public gift data with no uplo
   const frame = page.frameLocator('#recipient-preview');
   await expect(frame.locator('body')).toHaveAttribute('data-scene', 'opening');
   await frame.locator('#stage-next').click();
-  await expect(frame.locator('body')).toHaveAttribute(
-    'data-scene',
-    'curiosity',
-  );
+  await expect(frame.locator('body')).toHaveAttribute('data-scene', 'choice');
   expect(requests).toEqual([]);
 });
