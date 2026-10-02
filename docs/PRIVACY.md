@@ -21,3 +21,7 @@ Ein Entwurf und eine Backup-Kopie liegen unverschlüsselt im Browserprofil. Kein
 ## Entwurfsdateien und Sammlung
 
 Creator-Sicherungen enthalten private Antworten. Sie sind keine Empfängergeschenke. Import wird geprüft und bestätigt; das aktuelle Geschenk bleibt lokal erhalten. Bis zu acht inaktive Geschenke sind möglich. Keine Zugangsdaten in Projekten; unbekannte Root-Felder werden zurückgewiesen. Ein Speicherversagen lässt die bestehende Sammlung unberührt beziehungsweise versucht ihren Rollback.
+
+## Optionale Regie-Ideen
+
+Der manuelle Director-Prompt enthält nur explizite Geschenktexte und ist vor Weitergabe sichtbar. Seine privaten Frageideen werden nicht automatisch gespeichert oder exportiert. Kein API-Anbieter und keine Zugangsdatenfelder sind implementiert. Externe Medienzustimmung wird beim Import gelöscht; Online-Fotos können die IP-Adresse der Empfängerperson an einen gewählten Dienst offenlegen.

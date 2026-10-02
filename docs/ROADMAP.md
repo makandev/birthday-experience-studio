@@ -31,7 +31,7 @@ Der 0.1-Architekturpfad ist erstmals implementiert: Shell, v1-Modell, Registries
 ## 0.2 Foundation milestones
 
 1. Abgeschlossen: 0.1 in GitHub sichern; sichere Entwurfsdateien, Sammlung, reale Migration, SECURITY und Bedrohungsmodell.
-2. Als Nächstes: koordinierte Motion-Richtungen, Exportprofile und validierte provider-neutrale Director-Vorschläge.
+2. Abgeschlossen: koordinierte Motion-Richtungen, Exportprofile und validierte provider-neutrale manuelle Director-Vorschläge.
 3. Danach: lokale, metadatenbereinigte Fotoderivate mit Originalerhalt, IndexedDB und eingebettetem Export.
 
 Zero-cost Core, Creator-/Empfängergrenze und sichere deklarative Community-Inhalte sind dauerhafte Anforderungen, keine optionale Release-Politur.

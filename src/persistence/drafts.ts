@@ -2,7 +2,9 @@ import { parseProject, type CreatorProject } from '../domain/project';
 import { parseBoundedJson, MAX_PROJECT_BYTES } from '../security/json';
 export function readDraft(raw: string): CreatorProject {
   try {
-    return parseProject(parseBoundedJson(raw));
+    const project = parseProject(parseBoundedJson(raw));
+    project.exportConfig.externalMediaConsent = false;
+    return project;
   } catch {
     throw new Error(
       'Dieser Entwurf ist beschädigt, zu groß oder benötigt eine andere BES-Version. Dein aktuelles Geschenk bleibt erhalten.',

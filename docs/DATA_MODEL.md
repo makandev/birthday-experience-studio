@@ -50,3 +50,7 @@ Migrationen werden nach Quellversion registriert und sequenziell angewendet, ans
 ## Schema v2
 
 V2 ergänzt explizite Exportprofile und Zustimmung für externe Medien, Richtung/Intensität sowie diskriminierte Medienquellen `local | external | unavailable`. V1 wird vor Migration gegen seinen historischen Vertrag geprüft; Antworten, Texte und Reihenfolge bleiben erhalten. Historische Projekte erhalten Intensität 0 und Offline-Profil. Die neuen Felder werden in folgenden Milestones aktiviert.
+
+## Aktivierte v2-Regie/Profile
+
+Richtung und Intensität werden in der UI gewählt, zum Export projiziert und in Motion-Pläne übersetzt. ExportExperience erhält erlaubte Richtung, Intensität, Profil und aufgelöste externe Origins. Private Director-Vorschläge und Frageideen werden nicht in den Export projiziert. Director v1 ist ein separater, streng validierter Datenvertrag.

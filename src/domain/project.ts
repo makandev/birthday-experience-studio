@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { safeExternalUrl } from '../security/urls';
 
 export const SCHEMA_VERSION = 2;
 export const safeId = z
@@ -81,7 +82,22 @@ export const legacyProjectSchema = z.object({
 });
 export const mediaSourceSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('local'), assetId: safeId }).strict(),
-  z.object({ type: z.literal('external'), url: z.string().max(2048) }).strict(),
+  z
+    .object({
+      type: z.literal('external'),
+      url: z
+        .string()
+        .max(2048)
+        .refine((value) => {
+          try {
+            safeExternalUrl(value);
+            return true;
+          } catch {
+            return false;
+          }
+        }),
+    })
+    .strict(),
   z.object({ type: z.literal('unavailable') }).strict(),
 ]);
 export const projectSchema = legacyProjectSchema

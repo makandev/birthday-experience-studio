@@ -59,12 +59,18 @@ describe('recipient-safe single HTML export', () => {
     expect(html).toContain('Ein persönlicher Brief.');
     expect(html).toContain('<details>');
     expect(html).toContain('<summary>');
-    expect(Object.keys(projectExperience(project))).toEqual([
-      'schemaVersion',
-      'locale',
-      'themeId',
-      'blocks',
-    ]);
+    expect(Object.keys(projectExperience(project)).sort()).toEqual(
+      [
+        'schemaVersion',
+        'locale',
+        'themeId',
+        'directionId',
+        'intensity',
+        'profile',
+        'externalDomains',
+        'blocks',
+      ].sort(),
+    );
   });
   it('escapes hostile names and all authored text', () => {
     const project = fixture();

@@ -39,3 +39,7 @@ Die Fach-Engines sind unabhängig vom Browser. Zod validiert das v1-Projekt an R
 ## Sichere Entwurfsverwaltung
 
 Schema v2 und reale v1-Migration ergänzen die bestehenden Grenzen. `security/json.ts` prüft JSON-Budgets und reservierte Keys; `persistence/drafts.ts` trennt Creator-Sicherung vom Empfängerexport. `persistence/library.ts` behält bis zu acht inaktive Projekte und versucht bei fehlgeschlagenen Speicherwechseln einen Rollback. Keine automatische Löschung, keine Garantie für Mehrtab-Transaktionen.
+
+## Koordinierte Experience und optionale Regie
+
+Deklarative Directions verbinden Theme, Typografie, Reihenfolge, Medienstil, Pacing und endliche Effekte. Preview/Export teilen denselben scriptfreien Renderer. `integrations/` bietet bisher ausschließlich manuelle Vorschläge; strikte Vorschlagsschemas prüfen Daten vor Bestätigung und Anwendung. Siehe MOTION.md, INTEGRATIONS.md und ADR 0003.

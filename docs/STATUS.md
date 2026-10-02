@@ -18,7 +18,7 @@ Keine Accounts, KI-API, Telemetrie oder automatischen Übertragungen. Nur bewuss
 - Die Browserdaten sind unverschlüsselt. Der Export ist frei teilbar und ebenfalls unverschlüsselt; aufklappbare Überraschungen sind kein Geheimnisschutz.
 - Text aus Antworten wird nach ausdrücklicher Übernahme sichtbar. Eine technische Allowlist erkennt keine privaten Inhalte im selbst verfassten Brief.
 - Unbekannte Erweiterungen werden beim Export nicht still verworfen. Ein Upgrade-/Recovery-Editor ist noch nicht vorhanden.
-- Empfehlungen beschränken sich auf ausgefüllte Texte in vier Bausteinen; tiefere Komposition, Intensität und Längensteuerung folgen später.
+- Fünf Grundbausteine und deklarative Directions steuern Theme, Typografie, Reihenfolge, Pacing und Motion. Vollständige viewportgesteuerte Dramaturgie und Längensteuerung bleiben offen.
 - Kein Service Worker; Studio-Neuladen offline ist nicht zugesichert. Die exportierte HTML-Datei ist eigenständig.
 - Grundlegende WCAG-Prüfungen sind automatisiert; echte Screenreader-, Browser- und Anfänger-Tests stehen aus.
 - Browserautomatisierung nutzt in dieser Cloud `/usr/bin/chromium`: Browserdownload ist gesperrt, `file://` ist durch Browserrichtlinie blockiert. Der heruntergeladene Dateiinhalt wird im Offline-Browser vollständig geprüft; direktes Dateiöffnen muss auf einem normalen Gerät ergänzt werden.
@@ -37,3 +37,7 @@ Keine Accounts, KI-API, Telemetrie oder automatischen Übertragungen. Nur bewuss
 Die geprüfte 0.1-Implementierung wurde als Commit `1fc0cec` auf GitHub-Branch `codex/bes-foundations` gesichert. `main` bleibt bis zur Integration auf seinem ursprünglichen Dokumentationsstand. Neue Änderungen werden in kohärenten Milestones auf demselben Branch gesichert.
 
 Entwurfsimport/-export, bewusste Importbestätigung, sichere Sammlung ohne stilles Verdrängen, v1→v2-Migration, JSON-Budgets und Bedrohungsmodell sind implementiert. Motion/Profile und Medienverträge sind in v2 vorbereitet; deren Laufzeit folgt in den nächsten Milestones.
+
+## Koordinierte Motion und manuelle Regie
+
+Directions, Intensität 0–3, endliche CSS-Effekte, mobile Budgets, reduced-motion und Empfänger-Abschaltung sind implementiert. Exportprofile und Abhängigkeitsprüfung sind aktiv. Der provider-neutrale Regie-Dialog prüft manuelle JSON-Vorschläge; API-Provider, Schlüsselverwaltung und automatisch installierte Follow-up-Fragen sind ausdrücklich noch nicht vorhanden. Fotoquellen werden im folgenden Milestone angeschlossen.

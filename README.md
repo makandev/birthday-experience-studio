@@ -89,3 +89,5 @@ src/
 Siehe [Architektur](docs/ARCHITECTURE.md), [Entscheidungen](docs/DECISIONS.md) und [aktuellen Entwicklungsstand](docs/STATUS.md). Vor Änderungen `AGENTS.md` und relevante Dokumente lesen.
 
 Der Creator-Vertrag ist nun Schema v2. Historische v1-Dateien werden validiert und migriert; unbekannte Versionen bleiben geschützt. Ein Import ist auf 2 MB und begrenzte Tiefe/Sammlungen beschränkt. Siehe [SECURITY.md](SECURITY.md) und [Bedrohungsmodell](docs/THREAT_MODEL.md).
+
+Neu in 0.2: koordinierte Stimmung (Emotional/Fröhlich/Elegant/Filmisch), Bewegungsintensität und Empfänger-Abschaltung, ausdrückliche Offline-/Online-Profile sowie geprüfte manuelle Regie-Ideen. Kein API-Anbieter ist eingebaut. Siehe [Motion](docs/MOTION.md) und [optionale Hilfe](docs/INTEGRATIONS.md).

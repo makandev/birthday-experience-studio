@@ -22,3 +22,7 @@ Themes style blocks without owning their semantic content.
 Die Block-Registry definiert `intro`, `letter`, `wish`, `reveal`, jeweils v1 mit erlaubten Textfeldern und Empfänger-Renderer. Native `details` liefert die erste Interaktion ohne Scripts. Komposition empfiehlt die Grundstruktur nach vorhandenen Geschenktexten; Aktivierung und Reihenfolge bleiben unter Kontrolle des Creators. Inhaltsänderungen aktualisieren bekannte Instanzen, ohne Reihenfolge/Aktivierung zu überschreiben.
 
 Themes Warm/Klar/Festlich sind separate Registrierungen mit Farb-/Typografietokens. Unbekannte Theme-IDs verwenden Warm. Weitergehende Beziehungssignale, Medien und viele Blockarten bleiben Folgearbeit.
+
+## Richtungen und Abschluss
+
+Emotional, Fröhlich, Elegant und Filmisch koordinieren Darstellung und Reihenfolge. Ein eigener Finale-Baustein ergänzt die kleine Grundkomposition. Manuelle Theme-/Blockänderungen bleiben möglich; Textsynchronisierung erhält Reihenfolge und Aktivierung. Bewegungsintensität 0–3, mobile Budgets und reduzierte Bewegung gelten auch für den Empfängerexport. Die erste Choreografie startet beim Laden; eine vollständige viewportgesteuerte Dramaturgie bleibt Folgearbeit.

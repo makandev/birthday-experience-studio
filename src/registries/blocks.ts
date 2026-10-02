@@ -40,4 +40,12 @@ export const blocks = new Registry<BlockDefinition>([
     render: (data) =>
       `<section class="card"><details><summary>Eine kleine Überraschung für dich ✧</summary><div class="revealed">${paragraphs(data.text)}</div></details></section>`,
   },
+  {
+    id: 'finale',
+    version: 1,
+    label: 'Abschluss',
+    fields: ['text'],
+    render: (data) =>
+      `<section class="card wish"><p class="eyebrow">Dein Tag. Dein neues Jahr.</p><h2>${escapeHtml(data.text)}</h2></section>`,
+  },
 ]);

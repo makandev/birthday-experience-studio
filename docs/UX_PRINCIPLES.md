@@ -20,3 +20,7 @@ Fünf Schritte mit Rücknavigation, große primäre Aktionen, sichtbarer Speiche
 ## Sicherung und Wiederaufnahme
 
 „Meine Geschenke & Sicherung“ bündelt Creator-Backup, geprüften Import und die lokale Sammlung mit einfachen Aktionen. Import zeigt zuerst eine Zusammenfassung; Änderungen folgen erst nach Bestätigung. Dialoge haben benannte Überschriften, Schrittzahlen sind für Screenreader dekorativ.
+
+## Bewegung und Regie
+
+Eine verständliche Stimmungswahl koordiniert Effekte; Bewegung kann auf 0 gestellt werden und der Empfänger kann sie abschalten. Geräteeinstellungen für reduzierte Bewegung haben Vorrang. Regie-Vorschläge werden geprüft, als konkrete Änderungen beschrieben und erst dann übernommen; Rückgängig ist verfügbar. Fokus wird beim Neurendern von Auswahlfeldern erhalten.

@@ -136,7 +136,7 @@ test('guided writing requires approval, reset can be cancelled and undone', asyn
     }),
   ).toBeVisible();
   await page
-    .getByRole('button', { name: 'Neustart rückgängig machen' })
+    .getByRole('button', { name: 'Letzte Änderung rückgängig machen' })
     .click();
   await expect(page.getByLabel('Dein persönlicher Brief')).toHaveValue(
     /Du bist immer da/,

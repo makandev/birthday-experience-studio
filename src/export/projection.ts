@@ -1,16 +1,22 @@
 import { parseProject, type CreatorProject } from '../domain/project';
 import { blocks } from '../registries/blocks';
 import { themes } from '../registries/themes';
+import { requireCapabilities } from './capabilities';
 export interface ExportExperience {
   schemaVersion: 1;
   locale: 'de';
   themeId: string;
+  directionId: string;
+  intensity: number;
+  profile: 'offline' | 'online';
+  externalDomains: string[];
   blocks: { type: string; version: number; data: Record<string, string> }[];
 }
 export function projectExperience(input: CreatorProject): ExportExperience {
   const project = parseProject(input);
   if (!project.recipient.name.trim())
     throw new Error('Bitte gib zuerst den Namen ein.');
+  const capabilities = requireCapabilities(project);
   const exported = project.experience.blocks
     .filter((block) => block.enabled)
     .map((block) => {
@@ -34,6 +40,10 @@ export function projectExperience(input: CreatorProject): ExportExperience {
   return {
     schemaVersion: 1,
     locale: 'de',
+    directionId: project.experience.directionId,
+    intensity: project.experience.intensity,
+    profile: project.exportConfig.profile,
+    externalDomains: capabilities.externalDomains,
     themeId: themes.get(project.experience.themeId)?.id ?? 'warm',
     blocks: exported,
   };

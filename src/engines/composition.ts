@@ -1,6 +1,7 @@
 import type { CreatorProject, ExperienceBlock } from '../domain/project';
+import { directions } from '../registries/motion';
 export function recommendBlocks(project: CreatorProject): ExperienceBlock[] {
-  return [
+  const recommended: ExperienceBlock[] = [
     {
       id: 'intro-1',
       type: 'intro',
@@ -29,7 +30,26 @@ export function recommendBlocks(project: CreatorProject): ExperienceBlock[] {
       enabled: Boolean(project.writing.surprise.trim()),
       data: { text: project.writing.surprise },
     },
+    {
+      id: 'finale-1',
+      type: 'finale',
+      version: 1,
+      enabled: true,
+      data: { text: 'Schön, dass es dich gibt.' },
+    },
   ];
+  return orderForDirection(project.experience.directionId, recommended);
+}
+export function orderForDirection(
+  directionId: string,
+  items: ExperienceBlock[],
+): ExperienceBlock[] {
+  const order = directions.get(directionId)?.blockOrder ?? [];
+  const rank = (type: string) => {
+    const index = order.indexOf(type as (typeof order)[number]);
+    return index < 0 ? 99 : index;
+  };
+  return [...items].sort((a, b) => rank(a.type) - rank(b.type));
 }
 export function syncComposition(project: CreatorProject): void {
   const suggested = recommendBlocks(project);

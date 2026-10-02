@@ -7,7 +7,11 @@ import { relationships } from '../registries/relationships';
 import { themes } from '../registries/themes';
 import { blocks } from '../registries/blocks';
 import { activeQuestions, questionProgress } from '../engines/questions';
-import { recommendBlocks, syncComposition } from '../engines/composition';
+import {
+  recommendBlocks,
+  syncComposition,
+  orderForDirection,
+} from '../engines/composition';
 import { writingHelpers } from '../engines/writing';
 import {
   restoreProject,
@@ -17,6 +21,15 @@ import {
 } from '../persistence/storage';
 import { readDraft, writeDraft } from '../persistence/drafts';
 import { readLibrary, replaceActiveProject } from '../persistence/library';
+import { directions } from '../registries/motion';
+import { recommendDirection } from '../engines/motion';
+import {
+  directorPrompt,
+  parseDirectorProposal,
+  applyDirectorProposal,
+  type DirectorProposal,
+} from '../integrations/director';
+import { analyzeCapabilities } from '../export/capabilities';
 import { MAX_PROJECT_BYTES } from '../security/json';
 import { exporters, exportFilename } from '../export/html';
 import { escapeHtml as e } from '../experience/text';
@@ -48,6 +61,7 @@ export function mountStudio(root: HTMLDivElement): void {
   let saved = restored.status === 'restored';
   let undo: CreatorProject | null = null;
   let pendingImport: CreatorProject | null = null;
+  let pendingDirector: DirectorProposal | null = null;
   let notice =
     restored.status === 'invalid'
       ? 'Dein gespeicherter Entwurf konnte nicht gelesen werden. Er bleibt unverändert. Sichere ihn oder beginne bewusst neu.'
@@ -122,7 +136,7 @@ export function mountStudio(root: HTMLDivElement): void {
     return `<div class="section-head"><p class="eyebrow">03 · Deine Worte</p><h1>Es muss nicht perfekt sein.<br>Es muss von dir kommen.</h1><p class="lead">Alles in den folgenden Textfeldern kann im Geschenk sichtbar werden.</p></div><div class="writing-layout"><form id="writing-form" class="panel"><label for="writing-method">Wie möchtest du anfangen?</label><select id="writing-method"><option value="guided" ${project.writing.method === 'guided' ? 'selected' : ''}>Mit ein bisschen Hilfe</option><option value="self" ${project.writing.method === 'self' ? 'selected' : ''}>Ich schreibe selbst</option><option value="external" ${project.writing.method === 'external' ? 'selected' : ''}>Optional: Hilfe einer externen KI</option></select>${project.writing.method === 'guided' ? `<div class="writing-help"><p>„Was ich an dir schätze …“<br>„Ich werde nie vergessen, wie wir …“<br>„Für dein neues Lebensjahr wünsche ich dir …“</p><button type="button" class="button secondary" id="guided">Antworten als Textvorschlag übernehmen</button><small>Du entscheidest, was bleibt. Der Vorschlag wird nicht automatisch ins Geschenk übernommen.</small></div>` : ''}${project.writing.method === 'external' ? `<details class="external-help" open><summary>So funktioniert die freiwillige KI-Hilfe</summary><ol><li>Lies unten die vollständige Anweisung.</li><li>Kopiere sie und füge sie in deine bevorzugte KI ein.</li><li>Kopiere deren Antwort hier in deinen Brief.</li><li>Prüfe den Text und entferne alles, was privat bleiben soll.</li></ol><p><strong>Die Anweisung enthält deinen Namen für die Geburtstagsperson und deine aktiven Antworten, auch persönliche Grenzen.</strong> Durch manuelles Einfügen gibst du diese Informationen an den gewählten Dienst weiter. Das Studio sendet nichts.</p><label for="external-prompt">Das würdest du weitergeben</label><textarea id="external-prompt" rows="8" readonly>${e(writingHelpers.get('external-prompt')!.generate(project))}</textarea><button type="button" class="button secondary" id="copy-prompt">Prompt kopieren</button></details>` : ''}<label for="letter">Dein persönlicher Brief <span class="badge">Im Geschenk sichtbar</span></label><textarea id="letter" rows="9" maxlength="20000" required placeholder="Liebe/r ${e(project.recipient.name)}, …">${e(project.writing.letter)}</textarea><label for="wish">Dein Geburtstagswunsch <span class="optional">optional</span></label><textarea id="wish" rows="3" maxlength="20000" placeholder="Für dein neues Lebensjahr wünsche ich dir …">${e(project.writing.wish)}</textarea><label for="surprise">Eine kleine Überraschung <span class="optional">optional</span></label><textarea id="surprise" rows="3" maxlength="20000" placeholder="Zum Beispiel: Ich lade dich zu einem gemeinsamen Frühstück ein!">${e(project.writing.surprise)}</textarea><p class="field-help">Diese Nachricht öffnet die Geburtstagsperson mit einem Klick.</p><div class="actions"><button type="button" class="button quiet" data-go="questions">Zurück</button>${primary('Mein Geschenk ansehen')}</div></form><aside class="side-note"><span aria-hidden="true">✧</span><h2>Deine Worte zählen.</h2><p>Ein einfacher, ehrlicher Satz ist oft schöner als der perfekte Text.</p><p>Private Antworten, Hintergrundinformationen und die KI-Anweisung gehören nicht zum Export. Prüfe trotzdem, was du in deinen Brief übernimmst.</p></aside></div><dialog id="suggestion-dialog" aria-labelledby="suggestion-title"><h2 id="suggestion-title">Dein Textvorschlag</h2><p>Hier werden ausgewählte Antworten zu Geschenktext. Prüfe sie, bevor du sie übernimmst.</p><textarea id="suggestion" rows="10" maxlength="20000"></textarea><div class="actions"><button type="button" class="button quiet" id="cancel-suggestion">Abbrechen</button><button type="button" class="button primary" id="accept-suggestion">In meinen Brief übernehmen</button></div></dialog>`;
   }
   function previewPage(): string {
-    return `<div class="section-head compact"><p class="eyebrow">04 · Dein Geschenk</p><h1>So sieht dein<br>Geschenk aus.</h1><p>Nur diese Empfängeransicht wird exportiert. Nimm dir einen Moment zum Prüfen.</p></div><div class="preview-layout"><aside class="panel gift-settings"><label for="theme">Welche Stimmung passt?</label><select id="theme">${themes
+    return `<div class="section-head compact"><p class="eyebrow">04 · Dein Geschenk</p><h1>So sieht dein<br>Geschenk aus.</h1><p>Nur diese Empfängeransicht wird exportiert. Nimm dir einen Moment zum Prüfen.</p></div><div class="preview-layout"><aside class="panel gift-settings">${directionControls()}<label for="theme">Welche Stimmung passt?</label><select id="theme">${themes
       .all()
       .map(
         (theme) =>
@@ -130,7 +144,26 @@ export function mountStudio(root: HTMLDivElement): void {
       )
       .join(
         '',
-      )}</select><h2>Deine Bausteine</h2><p class="field-help">Du entscheidest, was vorkommt und in welcher Reihenfolge.</p><ul class="block-list">${project.experience.blocks.map((block, index) => `<li><label><input type="checkbox" data-block="${e(block.id)}" ${block.enabled ? 'checked' : ''}>${e(blocks.get(block.type)?.label ?? `Unbekannter Baustein (${block.type})`)}</label><div><button class="icon-button" type="button" data-move="${e(block.id)}" data-direction="-1" aria-label="${e(blocks.get(block.type)?.label ?? block.type)} nach oben" ${index === 0 ? 'disabled' : ''}>↑</button><button class="icon-button" type="button" data-move="${e(block.id)}" data-direction="1" aria-label="${e(blocks.get(block.type)?.label ?? block.type)} nach unten" ${index === project.experience.blocks.length - 1 ? 'disabled' : ''}>↓</button></div></li>`).join('')}</ul><button class="text-button" id="recommend">Vorschlag wiederherstellen</button><p class="field-help">Aktiviert die ausgefüllten Bausteine und setzt ihre Reihenfolge zurück.</p><div class="export-note"><strong>Ein Geschenk zum Mitnehmen</strong><p>Du erhältst eine einzelne HTML-Datei. Sie lässt sich im Browser öffnen, auch ohne Internet. Zum Verschenken als Datei verschicken.</p></div><button class="button primary full" id="download">Geschenk erstellen <span aria-hidden="true">↓</span></button><button class="button quiet full" type="button" data-go="writing">Text bearbeiten</button></aside><div class="preview-frame-wrap"><p class="preview-label">Empfängeransicht · ohne Studio-Daten</p><p id="preview-error" role="alert"></p><iframe id="gift-preview" title="Vorschau des Geburtstagsgeschenks" sandbox=""></iframe></div></div>`;
+      )}</select><h2>Deine Bausteine</h2><p class="field-help">Du entscheidest, was vorkommt und in welcher Reihenfolge.</p><ul class="block-list">${project.experience.blocks.map((block, index) => `<li><label><input type="checkbox" data-block="${e(block.id)}" ${block.enabled ? 'checked' : ''}>${e(blocks.get(block.type)?.label ?? `Unbekannter Baustein (${block.type})`)}</label><div><button class="icon-button" type="button" data-move="${e(block.id)}" data-direction="-1" aria-label="${e(blocks.get(block.type)?.label ?? block.type)} nach oben" ${index === 0 ? 'disabled' : ''}>↑</button><button class="icon-button" type="button" data-move="${e(block.id)}" data-direction="1" aria-label="${e(blocks.get(block.type)?.label ?? block.type)} nach unten" ${index === project.experience.blocks.length - 1 ? 'disabled' : ''}>↓</button></div></li>`).join('')}</ul><button class="text-button" id="recommend">Vorschlag wiederherstellen</button><p class="field-help">Aktiviert die ausgefüllten Bausteine und setzt ihre Reihenfolge zurück.</p>${profileControls()}<button class="text-button" id="integrations">Optionale Hilfe &amp; Regie-Ideen</button><div class="export-note"><strong>Ein Geschenk zum Mitnehmen</strong><p>Du erhältst eine einzelne HTML-Datei. Sie lässt sich im Browser öffnen, auch ohne Internet. Zum Verschenken als Datei verschicken.</p></div><button class="button primary full" id="download">Geschenk erstellen <span aria-hidden="true">↓</span></button><button class="button quiet full" type="button" data-go="writing">Text bearbeiten</button></aside><div class="preview-frame-wrap"><p class="preview-label">Empfängeransicht · ohne Studio-Daten</p><p id="preview-error" role="alert"></p><iframe id="gift-preview" title="Vorschau des Geburtstagsgeschenks" sandbox=""></iframe></div></div>`;
+  }
+  function directionControls(): string {
+    const direction = directions.get(project.experience.directionId)!;
+    return `<label for="direction">Wie soll sich dein Geschenk anfühlen?</label><select id="direction">${directions
+      .all()
+      .map(
+        (d) =>
+          `<option value="${d.id}" ${direction.id === d.id ? 'selected' : ''}>${e(d.label)}</option>`,
+      )
+      .join(
+        '',
+      )}</select><p class="field-help">${e(direction.description)}</p><label for="intensity">Wie viel Bewegung? <output id="intensity-value" for="intensity">${project.experience.intensity}</output> von 3</label><input id="intensity" type="range" min="0" max="3" step="1" value="${project.experience.intensity}"><p class="field-help">0 = ganz ruhig. Weniger Bewegung wird auf Wunsch des Geräts automatisch berücksichtigt.</p><button class="text-button" id="suggest-direction">Passende Stimmung vorschlagen</button>`;
+  }
+  function profileControls(): string {
+    const report = analyzeCapabilities(project);
+    return `<label for="export-profile">Wo soll das Geschenk funktionieren?</label><select id="export-profile"><option value="offline" ${project.exportConfig.profile === 'offline' ? 'selected' : ''}>Überall ohne Internet (empfohlen)</option><option value="online" ${project.exportConfig.profile === 'online' ? 'selected' : ''}>Online, mit optionalen externen Quellen</option></select><p class="field-help">Offline benötigt lokale Inhalte. Online-Fotos können ausfallen; eine beschreibende Bildunterschrift bleibt sichtbar.</p>${report.externalDomains.length ? `<div class="external-warning"><p>Ausgewählte externe Fotoquellen: ${e(report.externalDomains.join(', '))}</p><label><input type="checkbox" id="external-consent" ${project.exportConfig.externalMediaConsent ? 'checked' : ''}>Ich möchte diese externen Fotos verwenden. Die Dienste können beim Öffnen die Empfängeradresse sehen.</label></div>` : '<p class="field-help">Dieses Geschenk braucht derzeit keine externen Quellen.</p>'}`;
+  }
+  function integrationDialog(): string {
+    return `<dialog id="integration-dialog" aria-labelledby="integration-title"><h2 id="integration-title">Optionale Hilfe für dein Geschenk</h2><p>BES funktioniert vollständig ohne KI. Wenn du möchtest, kannst du eine KI deiner Wahl um Regie-Ideen bitten: Stimmung, Reihenfolge und ergänzende Fragen. BES verbindet sich mit keinem Dienst.</p><p>Es gibt noch keine eingebauten API-Anbieter oder Eingabefelder für Zugangsdaten. Kosten und Anmeldung hängen vom selbst gewählten Dienst ab und können sich ändern.</p><label for="director-prompt">Das würdest du manuell weitergeben</label><textarea id="director-prompt" rows="7" readonly>${e(directorPrompt(project))}</textarea><p class="field-help">Diese Anweisung enthält deine freigegebenen Geschenktexte. Prüfe sie vor dem Kopieren. Zugangsdaten gehören niemals hierher.</p><label for="director-json">Regie-Vorschlag als JSON einfügen</label><textarea id="director-json" rows="6" maxlength="65536" placeholder="Nur die JSON-Antwort, ohne Code oder Markdown"></textarea><button class="button secondary" id="review-director">Vorschlag prüfen</button><pre id="director-review" class="director-review" role="status"></pre><button class="button primary" id="apply-director" hidden>Geprüfte Stimmung &amp; Reihenfolge übernehmen</button><div class="actions"><button class="button quiet" id="close-integrations">Zurück zum Geschenk</button></div></dialog>`;
   }
   function draftDialog(): string {
     let collection: CreatorProject[] = [];
@@ -152,6 +185,9 @@ export function mountStudio(root: HTMLDivElement): void {
       )}</ul><button class="button secondary" id="new-project">Weiteres Geschenk anfangen</button><p class="field-help">Bis zu acht weitere Geschenke. Browserdaten sind nicht dauerhaft garantiert – sichere wichtige Entwürfe als Datei.</p><div class="actions"><button class="button quiet" id="close-drafts">Zurück zum Geschenk</button></div></dialog>`;
   }
   function render(focus = false): void {
+    const activeId = root.contains(document.activeElement)
+      ? (document.activeElement as HTMLElement)?.id
+      : undefined;
     const page = {
       start: startPage,
       person: personPage,
@@ -162,7 +198,7 @@ export function mountStudio(root: HTMLDivElement): void {
     const stepIndex = steps.findIndex(
       (step) => step.id === project.workflow.step,
     );
-    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.1</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Neustart rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer>${draftDialog()}<dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
+    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.2</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Letzte Änderung rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer>${draftDialog()}${integrationDialog()}<dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
     bind();
     if (project.workflow.step === 'preview' && !protectedDraft) updatePreview();
     if (focus) {
@@ -171,6 +207,8 @@ export function mountStudio(root: HTMLDivElement): void {
         heading.tabIndex = -1;
         heading.focus();
       }
+    } else if (activeId) {
+      document.getElementById(activeId)?.focus();
     }
   }
   function updatePreview(): void {
@@ -478,6 +516,101 @@ export function mountStudio(root: HTMLDivElement): void {
           );
         },
       );
+    });
+    const chooseDirection = (
+      id: CreatorProject['experience']['directionId'],
+    ): void => {
+      project.experience.directionId = id;
+      project.experience.themeId = directions.get(id)!.themeId;
+      project.experience.blocks = orderForDirection(
+        id,
+        project.experience.blocks,
+      );
+      persist();
+      render();
+    };
+    listen('direction', 'change', (event) =>
+      chooseDirection(
+        (event.target as HTMLSelectElement)
+          .value as CreatorProject['experience']['directionId'],
+      ),
+    );
+    listen('suggest-direction', 'click', () =>
+      chooseDirection(
+        recommendDirection(
+          project,
+        ) as CreatorProject['experience']['directionId'],
+      ),
+    );
+    listen('intensity', 'input', (event) => {
+      project.experience.intensity = Number(
+        (event.target as HTMLInputElement).value,
+      );
+      root.querySelector<HTMLOutputElement>('#intensity-value')!.textContent =
+        String(project.experience.intensity);
+      persist();
+      updatePreview();
+    });
+    listen('export-profile', 'change', (event) => {
+      project.exportConfig.profile = (event.target as HTMLSelectElement)
+        .value as 'offline' | 'online';
+      project.exportConfig.externalMediaConsent = false;
+      persist();
+      render();
+    });
+    listen('external-consent', 'change', (event) => {
+      project.exportConfig.externalMediaConsent = (
+        event.target as HTMLInputElement
+      ).checked;
+      persist();
+      updatePreview();
+    });
+    listen('integrations', 'click', () =>
+      root.querySelector<HTMLDialogElement>('#integration-dialog')!.showModal(),
+    );
+    listen('close-integrations', 'click', () =>
+      root.querySelector<HTMLDialogElement>('#integration-dialog')!.close(),
+    );
+    listen('director-json', 'input', () => {
+      pendingDirector = null;
+      root.querySelector<HTMLButtonElement>('#apply-director')!.hidden = true;
+    });
+    listen('review-director', 'click', () => {
+      const review = root.querySelector<HTMLElement>('#director-review')!;
+      const apply = root.querySelector<HTMLButtonElement>('#apply-director')!;
+      pendingDirector = null;
+      apply.hidden = true;
+      try {
+        pendingDirector = parseDirectorProposal(
+          root.querySelector<HTMLTextAreaElement>('#director-json')!.value,
+          project,
+        );
+        review.textContent = `Geprüfter Vorschlag: ${directions.get(pendingDirector.directionId)!.label}, Bewegung ${pendingDirector.intensity}/3, Thema ${themes.get(pendingDirector.themeId)!.label}.
+Reihenfolge: ${pendingDirector.blockOrder.join(' → ')}
+Private Fragen zum Nachdenken (werden nicht automatisch hinzugefügt):
+${pendingDirector.followUpQuestions.join('\n') || 'Keine weiteren Fragen.'}`;
+        apply.hidden = false;
+      } catch {
+        review.textContent =
+          'Dieser Vorschlag ist nicht gültig oder passt nicht zu deinem Geschenk. Bitte verwende die angegebenen Einstellungen und vorhandenen Bausteine. Nichts wurde geändert.';
+      }
+    });
+    listen('apply-director', 'click', () => {
+      if (!pendingDirector) return;
+      try {
+        undo = structuredClone(project);
+        project = applyDirectorProposal(project, pendingDirector);
+        pendingDirector = null;
+        persist();
+        render(true);
+        message(
+          'Die geprüfte Stimmung und Reihenfolge wurden übernommen. Du kannst alles selbst ändern oder rückgängig machen.',
+        );
+      } catch {
+        message(
+          'Der Vorschlag passt nicht mehr zum aktuellen Geschenk. Bitte prüfe ihn erneut.',
+        );
+      }
     });
     listen('theme', 'change', (event) => {
       project.experience.themeId = (event.target as HTMLSelectElement).value;

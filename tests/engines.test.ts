@@ -114,7 +114,7 @@ describe('writing and composition', () => {
     project.experience.blocks.find((b) => b.type === 'letter')!.enabled = false;
     project.writing.letter = 'Updated';
     syncComposition(project);
-    expect(project.experience.blocks[0].type).toBe('reveal');
+    expect(project.experience.blocks[0].type).toBe('finale');
     expect(
       project.experience.blocks.find((b) => b.type === 'letter'),
     ).toMatchObject({ enabled: false, data: { text: 'Updated' } });

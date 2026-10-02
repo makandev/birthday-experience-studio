@@ -14,3 +14,5 @@ Scope: local creator, browser persistence, imported drafts, recipient exports, o
 | External integrations → application | secret leakage, prompt injection, unwanted cost                   | no concrete API providers enabled; typed provider-neutral data contract required                                              | future providers need official-source review and trusted credential handling |
 
 Media and coordinated motion controls are documented with their implementation milestones. Do not treat unsupported media declarations as permission to fetch or execute them.
+
+Director-Vorschläge haben einen strikten Datenvertrag und eine vollständige Permutation vorhandener Block-IDs. Tool-/Code-/API-Key-Felder werden abgelehnt. Frageideen bleiben inert. Effects sind erlaubte Tokens mit endlichen Budgets, keine fremden CSS-/JS-Strings. Import setzt externe Quellenzustimmung zurück; Profilprüfung verwirft keine fehlenden Abhängigkeiten still.

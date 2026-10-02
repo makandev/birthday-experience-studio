@@ -1,0 +1,111 @@
+import { test, expect } from '@playwright/test';
+import { STORAGE_KEY } from '../../src/persistence/storage';
+async function preview(page: import('@playwright/test').Page) {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Mein Geschenk gestalten' }).click();
+  await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Sam');
+  await page
+    .getByRole('button', { name: 'Weiter zu eurer Geschichte' })
+    .click();
+  await page
+    .getByRole('button', { name: 'Ich möchte jetzt schreiben' })
+    .click();
+  await page.getByLabel('Dein persönlicher Brief').fill('You matter.');
+  await page.getByRole('button', { name: 'Mein Geschenk ansehen' }).click();
+}
+test('coordinated directions, creator control, reduced motion and mobile effect budgets', async ({
+  page,
+}) => {
+  await preview(page);
+  await page
+    .getByLabel('Wie soll sich dein Geschenk anfühlen?')
+    .selectOption('funny');
+  await page.locator('#intensity').focus();
+  await page.keyboard.press('End');
+  const frame = page.frameLocator('#gift-preview');
+  await expect(frame.locator('.sparkles i')).toHaveCount(12);
+  await frame.getByLabel('Bewegung ausschalten').check();
+  expect(
+    await frame
+      .locator('.motion-block')
+      .first()
+      .evaluate((element) => getComputedStyle(element).animationName),
+  ).toBe('none');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.getByLabel('Welche Stimmung passt?').selectOption('minimal');
+  expect(
+    await frame
+      .locator('.motion-block')
+      .first()
+      .evaluate((element) => getComputedStyle(element).animationName),
+  ).toBe('none');
+  await expect(frame.locator('.sparkles')).not.toBeVisible();
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(
+    await frame
+      .locator('.sparkles i')
+      .evaluateAll(
+        (elements) =>
+          elements.filter((el) => getComputedStyle(el).display !== 'none')
+            .length,
+      ),
+  ).toBeLessThanOrEqual(6);
+  await page.reload();
+  await expect(
+    page.getByLabel('Wie soll sich dein Geschenk anfühlen?'),
+  ).toHaveValue('funny');
+});
+test('director proposal is reviewed, hostile code fields rejected, valid changes undoable', async ({
+  page,
+}) => {
+  await preview(page);
+  await page
+    .getByRole('button', { name: 'Optionale Hilfe & Regie-Ideen' })
+    .click();
+  await expect(
+    page.getByRole('dialog', { name: 'Optionale Hilfe für dein Geschenk' }),
+  ).toBeVisible();
+  const ids = await page.evaluate(
+    (key) =>
+      JSON.parse(localStorage.getItem(key)!).experience.blocks.map(
+        (b: { id: string }) => b.id,
+      ),
+    STORAGE_KEY,
+  );
+  const proposal = {
+    schemaVersion: 1,
+    directionId: 'cinematic',
+    themeId: 'warm',
+    intensity: 2,
+    tone: 'warm',
+    blockOrder: ids.reverse(),
+    followUpQuestions: ['<script>alert(1)</script> is inert data'],
+  };
+  await page
+    .getByLabel('Regie-Vorschlag als JSON einfügen')
+    .fill(JSON.stringify({ ...proposal, execute: 'fetch secrets' }));
+  await page.getByRole('button', { name: 'Vorschlag prüfen' }).click();
+  await expect(page.locator('#director-review')).toContainText('nicht gültig');
+  await expect(page.locator('#apply-director')).not.toBeVisible();
+  await page
+    .getByLabel('Regie-Vorschlag als JSON einfügen')
+    .fill(JSON.stringify(proposal));
+  await page.getByRole('button', { name: 'Vorschlag prüfen' }).click();
+  await expect(page.locator('#director-review')).toContainText(
+    '<script>alert(1)</script>',
+  );
+  await expect(page.locator('#director-review script')).toHaveCount(0);
+  await page
+    .getByRole('button', { name: 'Geprüfte Stimmung & Reihenfolge übernehmen' })
+    .click();
+  await expect(
+    page.getByLabel('Wie soll sich dein Geschenk anfühlen?'),
+  ).toHaveValue('cinematic');
+  await page
+    .getByRole('button', { name: 'Letzte Änderung rückgängig machen' })
+    .click();
+  await expect(
+    page.getByLabel('Wie soll sich dein Geschenk anfühlen?'),
+  ).toHaveValue('emotional');
+});
