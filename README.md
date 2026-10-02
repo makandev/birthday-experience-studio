@@ -6,7 +6,7 @@ Tell BES about the person, add memories/photos, and assemble a personal interact
 
 ## Live Studio / GitHub Pages
 
-Intended public URL: <https://makandev.github.io/birthday-experience-studio/>. The workflow is implemented; activation and the first live deployment are **not yet verified** because this cloud environment blocks the GitHub API and Pages host. If Pages is not enabled, repository **Settings → Pages → Build and deployment → Source: GitHub Actions** must be set. No additional hosting service is needed.
+Intended public URL: <https://makandev.github.io/birthday-experience-studio/>. The workflow is implemented and its GitHub build/test job passed; **live deployment is blocked until Pages is activated**. The available integration rejects the Pages API activation with HTTP 403. In repository **Settings → Pages → Build and deployment**, enable Pages with **Source: GitHub Actions**. The repository is private; Pages availability depends on the existing GitHub plan. Do not make the repository public or buy a plan automatically. No additional hosting service is needed.
 
 `.github/workflows/pages.yml` deploys checked `main` pushes (or a manual run on `main`): locked npm install, TypeScript, lint, formatting, module tests, production build, and a Chromium production-subpath gift-creation smoke test must pass before only `dist/` is uploaded. Deployment uses GitHub's short-lived workflow token/OIDC, never application credentials. `npm run build:pages` selects `/birthday-experience-studio/`; normal development/builds retain `/`. The Studio has no path-based client router.
 

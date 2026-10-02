@@ -31,3 +31,7 @@ Director-Vorschläge haben einen strikten Datenvertrag und eine vollständige Pe
 - Validated legacy values retire with a journal only after IDB initialization commits. Interrupted retirement blocks mutations; changed legacy values are protected. Unreadable/overflow backups quarantine cleanup. Older application builds cannot participate in this protocol and should be closed before upgrading.
 - Root schemas, bounded projects and same-project recovery IDs protect GC reference computation. Missing asset bytes do not prevent safe deletion; corrupt/future roots stop writes/cleanup.
 - Independent profiles cannot synchronize; OS storage loss, secure erasure, in-flight export leases and automated repair of unknown backups remain outside guarantees.
+
+## Optional GitHub Pages boundary
+
+Static Studio hosting sends ordinary request metadata to GitHub but never uploads creator content automatically. Only dist from checked main is deployed. A malicious application on another path of makandev.github.io shares browser-origin privileges and could read/modify local creator storage; repository paths do not isolate it. Mitigation is trusted co-hosted content or separate origins, plus private backups. No account/backend or telemetry is introduced into core creation.
