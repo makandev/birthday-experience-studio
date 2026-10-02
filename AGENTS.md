@@ -55,7 +55,7 @@ In the same executing BES task, run a short self-audit after each coherent miles
 
 ## Current product quality / iOS gates
 
-Preview-first confirm/change is the default: name + safe relationship/vibe defaults, actual opening, optional public detail/photo, updated scene and whole gift. No mandatory questionnaire before value; Quick v3 has three optional questions and Deep remains contextual. Preserve the user-described Original Experience Benchmark staged emotional benchmark; do not equate technical tests with qualitative acceptance.
+Preview-first confirm/change is the default: name + safe relationship/vibe defaults, actual opening, optional public detail/photo, updated scene and whole gift. No mandatory questionnaire before value; Quick v3 has three optional questions and Deep remains contextual. Preserve the user-described Original Experience Benchmark for emotional staging; do not equate technical tests with qualitative acceptance.
 
 Recipient output uses seven scenes + closing and a single maintained hash-allowed runtime, not authored/imported executable code. Preview/reader allow-scripts without allow-same-origin; public recipient data files are strict Offline projections, never private drafts. ADRs 0006/0007 update earlier script-free restrictions while preserving storage/security.
 

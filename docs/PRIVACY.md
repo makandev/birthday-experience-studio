@@ -27,3 +27,7 @@ GitHub Pages serves only static Studio code, not creator projects, imported medi
 ## Recipient-only Safari delivery
 
 A .bes-gift.json file contains public ExportExperience data only; it is distinct from a private draft. The optional #gift reader loads its page normally, then reads the selected file locally, without upload, URL payload, logs or creator storage initialization. Source validation initially allows only embedded Offline data. The maintained gift runtime has no storage/network/provider capability. Delayed station/native reveal controls pacing; all public words are already in the file, not encrypted or protected from inspection. Sharing is deliberate through a prepared public File, with native cancellation/fallback. Physical iPhone delivery is an open release gate.
+
+## Benchmark documentation
+
+Use **Original Experience Benchmark** for the abstract quality reference. Describe experience mechanics and quality goals without the original recipient identity, personal messages, locations, dates or original media. Documentation review is distinct from an original-artifact comparison and from Git-history erasure; state the actual scope and evidence.
