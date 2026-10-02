@@ -25,3 +25,7 @@ Recipient output uses explicit allowed fields, escaped text, a restrictive CSP a
 Browser storage and downloaded drafts are unencrypted. A person with access to the browser profile/file can read private data. Clearing browser data can remove projects. Allowlisted recipient text can still contain private facts deliberately or accidentally copied by its author. We support one active browser tab at a time; cross-tab concurrent editing has not yet been made transactional.
 
 See [threat model](docs/THREAT_MODEL.md), [privacy](docs/PRIVACY.md), and [status](docs/STATUS.md).
+
+## Media controls
+
+Local import checks raster signatures and pixel budgets before decoding, rejects script-capable formats, normalizes/re-encodes pixels and retains originals separately. Export accepts only bounded derivatives and rejects original EXIF/comment markers. Portable assets are matched, reprocessed and assigned fresh IDs; staged imported assets cannot overwrite earlier originals. Online sources require consent, URL restrictions and origin-bounded CSP; no external image fetch proxy exists. Host cookies/IP disclosure remains possible. Removed files are retained for recovery until a future cleanup feature or browser-data removal. See [MEDIA.md](docs/MEDIA.md).

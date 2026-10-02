@@ -32,6 +32,7 @@ Der 0.1-Architekturpfad ist erstmals implementiert: Shell, v1-Modell, Registries
 
 1. Abgeschlossen: 0.1 in GitHub sichern; sichere Entwurfsdateien, Sammlung, reale Migration, SECURITY und Bedrohungsmodell.
 2. Abgeschlossen: koordinierte Motion-Richtungen, Exportprofile und validierte provider-neutrale manuelle Director-Vorschläge.
-3. Danach: lokale, metadatenbereinigte Fotoderivate mit Originalerhalt, IndexedDB und eingebettetem Export.
+3. Abgeschlossen: lokale, metadatenbereinigte Fotoderivate mit Originalerhalt, IndexedDB, portablen Kopien und eingebettetem Export.
+4. Nächster zusammenhängender Schritt: Anfänger-/Keyboard-Verhalten und adaptive Dimensionsregeln vertiefen.
 
 Zero-cost Core, Creator-/Empfängergrenze und sichere deklarative Community-Inhalte sind dauerhafte Anforderungen, keine optionale Release-Politur.

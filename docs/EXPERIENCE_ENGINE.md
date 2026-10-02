@@ -26,3 +26,7 @@ Themes Warm/Klar/Festlich sind separate Registrierungen mit Farb-/Typografietoke
 ## Richtungen und Abschluss
 
 Emotional, Fröhlich, Elegant und Filmisch koordinieren Darstellung und Reihenfolge. Ein eigener Finale-Baustein ergänzt die kleine Grundkomposition. Manuelle Theme-/Blockänderungen bleiben möglich; Textsynchronisierung erhält Reihenfolge und Aktivierung. Bewegungsintensität 0–3, mobile Budgets und reduzierte Bewegung gelten auch für den Empfängerexport. Die erste Choreografie startet beim Laden; eine vollständige viewportgesteuerte Dramaturgie bleibt Folgearbeit.
+
+## Fotomoment
+
+Ein expliziter Foto-Baustein verbindet Bild mit eigenem Alt-Text und Erinnerungstext. Contain/Cover und Mitte/Oben/Unten sind nichtdestruktive Anzeigeoptionen. Direction wählt weiche, Polaroid- oder breite Präsentation. Neue Fotos werden neben bestehenden Fotomomenten beziehungsweise nach der Begrüßung eingeordnet, ohne vorhandene Bausteine umzubauen. Weitergehende Galerie-/Timeline-/Fullscreen-Varianten bleiben Folgearbeit.

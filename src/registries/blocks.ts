@@ -48,4 +48,12 @@ export const blocks = new Registry<BlockDefinition>([
     render: (data) =>
       `<section class="card wish"><p class="eyebrow">Dein Tag. Dein neues Jahr.</p><h2>${escapeHtml(data.text)}</h2></section>`,
   },
+  {
+    id: 'photo',
+    version: 1,
+    label: 'Fotomoment',
+    fields: ['alt', 'caption', 'fit', 'position'],
+    render: (data) =>
+      `<section class="card photo-card"><figure><img class="photo-image" src="${escapeHtml(data.src)}" alt="${escapeHtml(data.alt)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="object-fit:${data.fit === 'cover' ? 'cover' : 'contain'};object-position:${data.position === 'top' ? 'top' : data.position === 'bottom' ? 'bottom' : 'center'}"><figcaption>${paragraphs(data.caption)}</figcaption><p class="photo-description">${escapeHtml(data.alt)}</p></figure></section>`,
+  },
 ]);

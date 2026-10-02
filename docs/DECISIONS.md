@@ -23,3 +23,5 @@ Do not settle these merely because a prototype makes one option convenient. Reco
 [ADR 0002 – Safe drafts and v2 contract](adr/0002-safe-drafts-and-v2-contract.md) dokumentiert Migration, Import-/Sammlungsgrenzen und sichere deklarative Erweiterungen.
 
 [ADR 0003 – Coordinated motion and untrusted Director](adr/0003-coordinated-motion-and-untrusted-director.md) dokumentiert Directions, endliche Effekte, Profile und den sicheren manuellen Regie-Vertrag.
+
+[ADR 0004 – Local photo assets and portable copies](adr/0004-local-photo-assets-and-portable-copies.md) dokumentiert Original/Derivat-Trennung, Codec-/Speichergrenzen, native Browserverarbeitung und Quellprofile.

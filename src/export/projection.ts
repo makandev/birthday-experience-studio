@@ -1,6 +1,8 @@
 import { parseProject, type CreatorProject } from '../domain/project';
 import { blocks } from '../registries/blocks';
 import { themes } from '../registries/themes';
+import { safeExternalUrl } from '../security/urls';
+import { validateProcessedDataUrl } from '../media/formats';
 import { requireCapabilities } from './capabilities';
 export interface ExportExperience {
   schemaVersion: 1;
@@ -12,7 +14,10 @@ export interface ExportExperience {
   externalDomains: string[];
   blocks: { type: string; version: number; data: Record<string, string> }[];
 }
-export function projectExperience(input: CreatorProject): ExportExperience {
+export function projectExperience(
+  input: CreatorProject,
+  sources: Record<string, string> = {},
+): ExportExperience {
   const project = parseProject(input);
   if (!project.recipient.name.trim())
     throw new Error('Bitte gib zuerst den Namen ein.');
@@ -32,6 +37,24 @@ export function projectExperience(input: CreatorProject): ExportExperience {
             `Bitte ergänze den Baustein „${definition.label}“ oder deaktiviere ihn.`,
           );
         data[field] = block.data[field];
+      }
+      if (block.type === 'photo') {
+        if (
+          !['contain', 'cover'].includes(data.fit) ||
+          !['center', 'top', 'bottom'].includes(data.position)
+        )
+          throw new Error('Bitte prüfe den Bildausschnitt.');
+        const media = project.media.find((m) => m.id === block.data.mediaId)!;
+        if (media.source.type === 'local') {
+          const src = sources[media.source.assetId];
+          if (!src)
+            throw new Error(
+              'Ein Foto fehlt auf diesem Gerät. Bitte ergänze es oder deaktiviere seinen Baustein.',
+            );
+          validateProcessedDataUrl(src);
+          data.src = src;
+        } else if (media.source.type === 'external')
+          data.src = safeExternalUrl(media.source.url).href;
       }
       return { type: definition.id, version: definition.version, data };
     });

@@ -24,3 +24,7 @@ Fünf Schritte mit Rücknavigation, große primäre Aktionen, sichtbarer Speiche
 ## Bewegung und Regie
 
 Eine verständliche Stimmungswahl koordiniert Effekte; Bewegung kann auf 0 gestellt werden und der Empfänger kann sie abschalten. Geräteeinstellungen für reduzierte Bewegung haben Vorrang. Regie-Vorschläge werden geprüft, als konkrete Änderungen beschrieben und erst dann übernommen; Rückgängig ist verfügbar. Fokus wird beim Neurendern von Auswahlfeldern erhalten.
+
+## Fotos ohne Datenverlust
+
+Dateiauswahl und Drag/Drop sind Alternativen. Klar sichtbare Formate/Größenlimits, lokaler Verarbeitungsstatus, Alt-Text, Erinnerungstext und reversible Bildposition helfen Anfängern. Fehlgeschlagene Imports behalten vorhandene Texte. Originale und Geschenk-Kopien sind sprachlich getrennt; entfernte Bilder können wiederhergestellt werden. Online-Zustimmung benennt die Quellen und den Unterschied zu Offline.

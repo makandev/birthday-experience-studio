@@ -74,7 +74,7 @@ test('hostile imports are refused, no files are executed and active data stays u
   await page.getByLabel('Gesicherten BES-Entwurf öffnen').setInputFiles({
     name: 'big.json',
     mimeType: 'application/json',
-    buffer: Buffer.alloc(2 * 1024 * 1024 + 1, 'a'),
+    buffer: Buffer.alloc(8 * 1024 * 1024 + 1, 'a'),
   });
   await expect(page.locator('#import-summary')).toContainText('zu groß');
   await page.keyboard.press('Escape');

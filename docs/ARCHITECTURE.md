@@ -43,3 +43,7 @@ Schema v2 und reale v1-Migration ergänzen die bestehenden Grenzen. `security/js
 ## Koordinierte Experience und optionale Regie
 
 Deklarative Directions verbinden Theme, Typografie, Reihenfolge, Medienstil, Pacing und endliche Effekte. Preview/Export teilen denselben scriptfreien Renderer. `integrations/` bietet bisher ausschließlich manuelle Vorschläge; strikte Vorschlagsschemas prüfen Daten vor Bestätigung und Anwendung. Siehe MOTION.md, INTEGRATIONS.md und ADR 0003.
+
+## Lokale Medien
+
+Binärdaten liegen getrennt in IndexedDB; CreatorProject enthält nur begrenzte Metadaten und Quellenreferenzen. `media/` verarbeitet Rasterfotos, löst aktive Derivate auf und prüft portable Sicherungen. `studio/media.ts` kapselt den Medien-Controller. Preview-/Download-Snapshots verhindern, dass verspätete Asset-Lesevorgänge neuere Auswahl überschreiben. Siehe MEDIA.md und ADR 0004.

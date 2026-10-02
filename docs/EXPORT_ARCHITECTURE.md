@@ -29,3 +29,7 @@ Der gleiche HTML-Inhalt wird im isolierten iframe als `srcdoc` angezeigt. Modult
 ## Capability-Profile
 
 Offline/Restricted prüft ausgewählte Abhängigkeiten und verbietet externe Medien. Standard/Online benötigt explizite Quellenzustimmung; Imports setzen sie zurück. Fehlende oder unsupported Medien blockieren Export, deaktivierte Bausteine nicht. Das reine Textgeschenk benötigt in beiden Profilen keine externen Ressourcen. Empfänger-CSP erlaubt nur die bewusst ausgewählten externen Foto-Origins; kein allgemeines Netzwerk oder Scripts. Renderer bleibt scriptfrei, Motion ist CSS und HTML.
+
+## Aufgelöste Fotoderivate
+
+Ausgewählte lokale Quellen werden asynchron aus IndexedDB gelesen; anschließend bleibt Projektion/Rendering synchron und geprüft. Erlaubte JPEG-Data-URLs werden nach Signatur, Dimension, Bytebudget und privaten Metadatenmarkern geprüft. Aktive Originale, ungeprüfte SVG-Data-URLs, ursprüngliche Dateinamen und private Medienmetadaten gelangen nicht in HTML. Online lädt nur bewusste Quellen mit sichtbarem beschreibendem Fallback. Das Geschenk ist maximal 6 MiB; portable Creator-Sicherungen maximal 8 MiB inkl. Fotokopien.

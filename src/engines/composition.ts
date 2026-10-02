@@ -38,7 +38,13 @@ export function recommendBlocks(project: CreatorProject): ExperienceBlock[] {
       data: { text: 'Schön, dass es dich gibt.' },
     },
   ];
-  return orderForDirection(project.experience.directionId, recommended);
+  const existingPhotos = project.experience.blocks.filter(
+    (block) => block.type === 'photo',
+  );
+  return orderForDirection(project.experience.directionId, [
+    ...recommended,
+    ...existingPhotos,
+  ]);
 }
 export function orderForDirection(
   directionId: string,

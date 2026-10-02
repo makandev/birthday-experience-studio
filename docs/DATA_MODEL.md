@@ -54,3 +54,7 @@ V2 ergänzt explizite Exportprofile und Zustimmung für externe Medien, Richtung
 ## Aktivierte v2-Regie/Profile
 
 Richtung und Intensität werden in der UI gewählt, zum Export projiziert und in Motion-Pläne übersetzt. ExportExperience erhält erlaubte Richtung, Intensität, Profil und aufgelöste externe Origins. Private Director-Vorschläge und Frageideen werden nicht in den Export projiziert. Director v1 ist ein separater, streng validierter Datenvertrag.
+
+## Aktive Fotoquellen und portable Sicherungen
+
+Lokale Medien referenzieren zufällige Asset-IDs in IndexedDB, das Original und JPEG-Derivat getrennt speichert. Foto-Bausteine verwenden mediaId, explizite Beschreibung/Bildunterschrift und erlaubte Fit-/Positionswerte. Der Export ersetzt die Quellenreferenz durch ein geprüftes Bild-SRC; Originalname, IDs und EXIF werden nicht projiziert. Ein portabler Creator-Entwurf darf Geschenkderivate im strikten bes-draft-v1-Envelope tragen; Import prüft die Zuordnung und remappt Asset-IDs. Originale werden nicht in diese Sicherung aufgenommen.

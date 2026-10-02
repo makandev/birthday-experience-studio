@@ -16,3 +16,11 @@ Scope: local creator, browser persistence, imported drafts, recipient exports, o
 Media and coordinated motion controls are documented with their implementation milestones. Do not treat unsupported media declarations as permission to fetch or execute them.
 
 Director-Vorschläge haben einen strikten Datenvertrag und eine vollständige Permutation vorhandener Block-IDs. Tool-/Code-/API-Key-Felder werden abgelehnt. Frageideen bleiben inert. Effects sind erlaubte Tokens mit endlichen Budgets, keine fremden CSS-/JS-Strings. Import setzt externe Quellenzustimmung zurück; Profilprüfung verwirft keine fehlenden Abhängigkeiten still.
+
+## Media trust boundary
+
+- Filename/MIME → decoder: actual raster signature and pre-decode dimensions, byte/pixel caps, no SVG/GIF; decoder still has its own platform attack surface.
+- EXIF/comments → recipient: originals stay local, orientation-normalized pixels are re-encoded; metadata-bearing export derivatives are rejected.
+- Portable bytes → local asset store: strict matching, bounded data URLs, fresh IDs and reprocessing; only confirmed assets are stored. Cross-store failures may leave unreferenced copies, never overwrite originals.
+- External source → recipient: public HTTPS without credentials/queries/ports, explicit Online consent, selected-origin CSP, no referrer and persistent text fallback. DNS is not independently verified; no server proxy exists.
+- Removal → storage: references disappear but original/derivative assets remain for undo and retained projects. Permanent cleanup is an explicitly documented gap.

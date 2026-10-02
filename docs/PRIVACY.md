@@ -25,3 +25,7 @@ Creator-Sicherungen enthalten private Antworten. Sie sind keine Empfängergesche
 ## Optionale Regie-Ideen
 
 Der manuelle Director-Prompt enthält nur explizite Geschenktexte und ist vor Weitergabe sichtbar. Seine privaten Frageideen werden nicht automatisch gespeichert oder exportiert. Kein API-Anbieter und keine Zugangsdatenfelder sind implementiert. Externe Medienzustimmung wird beim Import gelöscht; Online-Fotos können die IP-Adresse der Empfängerperson an einen gewählten Dienst offenlegen.
+
+## Fotos
+
+Originale verbleiben lokal in IndexedDB und können separat gesichert werden. Für Empfänger werden nur neu encodierte Pixelkopien ohne ursprüngliche EXIF-/Kommentar-Metadaten freigegeben. Auch portable Creator-Sicherungen enthalten nur Geschenk-Fotokopien, zusammen mit privaten Antworten und Dateinamen. Entfernen aus dem Geschenk löscht lokale Bilddateien noch nicht endgültig; sie bleiben für Wiederherstellung und andere Geschenke erhalten. Browserdaten sind unverschlüsselt. Externe Online-Hosts können Empfänger-IP und gegebenenfalls eigene Cookies sehen; no-referrer ist kein Anonymitätsversprechen.
