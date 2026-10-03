@@ -53,3 +53,7 @@ These are engine/viewport/visual checks, not proof of physical iPhone delivery. 
 ## Current AI-native checkpoint — 2026-10-03
 
 Generated animation is tested separately under desktop WebKit and Chromium. Blob Worker loading failed in WebKit offline emulation; embedded data-URL loading is used instead, with identical storage/network isolation checks. Real iPhone Files/WhatsApp HTML execution is still unverified and release-blocking. Ollama loopback is a desktop local-service path, not an iPhone-local model claim; Free-only online auth requires provider signup/network for creation only.
+
+### Live AI transport finding (2026-10-03)
+
+Live HTTPS WebKit blocks the HTTP loopback Ollama request as mixed content before route interception; the private diagnostic recorded one mixed-content error and zero routed local requests. Therefore live mobile browser tests explicitly mock the HTTPS free-only OpenRouter transport, while local HTTP development tests mock Ollama. Neither mock proves actual inference/login. This change does not weaken sandbox, TLS or browser security and does not install an HTTPS proxy/backend. Local AI from Pages/Safari is not claimed supported; physical-device validation remains open.

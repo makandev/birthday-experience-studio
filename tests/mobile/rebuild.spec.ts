@@ -1,4 +1,4 @@
-import { connectLocalAi, acceptAiGift } from '../ai-fixture';
+import { connectSyntheticAi, acceptAiGift } from '../ai-fixture';
 import { test, expect } from '@playwright/test';
 import { createProject } from '../../src/domain/project';
 import { createMagicStart } from '../../src/engines/magic-start';
@@ -155,7 +155,7 @@ test('mobile creator compares a playable alternative and edits public copy at th
 }) => {
   await verifiedLiveResponses(page);
   await page.goto('./');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   await page.locator('#magic-name').fill('Alex');
   await page.locator('#magic-form button[type="submit"]').tap();
   await acceptAiGift(page);

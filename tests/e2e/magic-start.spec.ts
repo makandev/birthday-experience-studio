@@ -1,4 +1,4 @@
-import { connectLocalAi, acceptAiGift } from '../ai-fixture';
+import { connectSyntheticAi, acceptAiGift } from '../ai-fixture';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import AxeBuilder from '@axe-core/playwright';
@@ -12,7 +12,7 @@ test('AI-generated opening after explicit connection/review; confirm, public det
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   // Once connected: name, generate, review and adopt. Connection adds first-use setup.
   await expect(page.locator('#magic-form textarea')).toHaveCount(0);
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Anna');
@@ -81,7 +81,7 @@ test('mobile vibe alternatives preserve public text with undo; professional defa
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill(' ');
   await page
     .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })

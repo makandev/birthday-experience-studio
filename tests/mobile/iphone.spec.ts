@@ -1,4 +1,4 @@
-import { connectLocalAi, acceptAiGift } from '../ai-fixture';
+import { connectSyntheticAi, acceptAiGift } from '../ai-fixture';
 import { verifiedLiveResponses } from '../live-origin';
 import { test, expect, type Locator } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
@@ -17,7 +17,7 @@ test('touch creator: minimum-input opening, public refinement, optional photo an
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('./');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Anna');
   await comfortable(
     page.getByRole('button', { name: 'Mit KI mein Geschenk gestalten' }),
@@ -142,7 +142,7 @@ test('primary download is standalone HTML on every device and runs offline with 
 }) => {
   test.setTimeout(60000);
   await page.goto('./');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   await page.locator('#magic-name').fill('Sam');
   await comfortable(
     page.getByRole('button', { name: 'Mit KI mein Geschenk gestalten' }),
@@ -229,7 +229,7 @@ test('prepared public file sharing stays inside the intentional user gesture and
     });
   });
   await page.goto('./');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   await page.locator('#magic-name').fill('Share recipient');
   await page
     .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })

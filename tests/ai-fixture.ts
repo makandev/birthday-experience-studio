@@ -38,7 +38,48 @@ export async function mockLocalAi(page: Page) {
     });
   });
 }
-export async function connectLocalAi(page: Page) {
+export async function connectSyntheticAi(page: Page) {
+  // HTTPS WebKit can block HTTP loopback before routing. Live mobile checks
+  // use the real browser-safe HTTPS transport with a SYNTHETIC provider response.
+  // Neither branch proves actual inference/authentication.
+  if (new URL(page.url()).protocol === 'https:') {
+    await page.route('https://openrouter.ai/api/v1/**', async (route) => {
+      const auth = new URL(route.request().url()).pathname.endsWith(
+        '/auth/keys',
+      );
+      if (!auth)
+        expect(route.request().postDataJSON().model).toBe('openrouter/free');
+      return route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify(
+          auth
+            ? { key: 'SYNTHETIC_TEST_TOKEN_NOT_REAL' }
+            : {
+                choices: [
+                  {
+                    message: {
+                      content: JSON.stringify({
+                        version: 1,
+                        letter: 'Ein fiktiver öffentlicher Geburtstagsgruß.',
+                        wish: 'Ein guter Start in dein neues Lebensjahr.',
+                        surprise: '',
+                        animation: syntheticAnimation,
+                      }),
+                    },
+                  },
+                ],
+              },
+        ),
+      });
+    });
+    await page.locator('#ai-settings').click();
+    await page.locator('#ai-auth-start').click();
+    await page.locator('#ai-auth-code').fill('synthetic-test-auth-code');
+    await page.locator('#ai-auth-finish').click();
+    await expect(page.locator('#ai-status')).toHaveText('Kostenlose Online-KI');
+    await page.locator('#ai-close').click();
+    return;
+  }
   await mockLocalAi(page);
   await page.locator('#ai-settings').click();
   await page.locator('#ai-local-find').click();

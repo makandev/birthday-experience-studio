@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import {
-  connectLocalAi,
+  connectSyntheticAi,
   acceptAiGift,
   syntheticAnimation,
 } from '../ai-fixture';
@@ -24,7 +24,7 @@ test('review can be discarded, code can be regenerated without changing authored
   page,
 }) => {
   await page.goto('/');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   await page.locator('#magic-name').fill('Demo');
   await page.locator('#magic-form button[type="submit"]').click();
   await expect(page.locator('#ai-review')).toBeVisible();
@@ -144,7 +144,7 @@ test('quota failure leaves the saved project unchanged and makes no paid retry',
   page,
 }) => {
   await page.goto('/');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   await page.locator('#magic-name').fill('Demo');
   let calls = 0;
   await page.route('http://127.0.0.1:11434/api/chat', (route) => {

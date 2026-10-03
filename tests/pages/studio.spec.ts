@@ -1,4 +1,4 @@
-import { connectLocalAi, acceptAiGift } from '../ai-fixture';
+import { connectSyntheticAi, acceptAiGift } from '../ai-fixture';
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { verifiedLiveResponses } from '../live-origin';
@@ -17,7 +17,7 @@ test('production Pages preview-first loads subpath assets and downloads an isola
     if (/\/assets\//.test(r.url())) assets.push(r.url());
   });
   await page.goto('./');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   await page
     .getByLabel('Wie heißt die Geburtstagsperson?')
     .fill('Pages recipient');
@@ -56,7 +56,7 @@ test('production Pages recipient opener reads only public gift data with no uplo
   page,
 }) => {
   await page.goto('./');
-  await connectLocalAi(page);
+  await connectSyntheticAi(page);
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Gift reader');
   await page
     .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })
