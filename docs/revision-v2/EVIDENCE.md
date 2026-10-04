@@ -1,6 +1,8 @@
 # Evidenz und offene Abnahmen
 
-Stand: 4. Oktober 2026. Vorschlagsbranch `codex/bes-revision-v2-proposal`, Ausgangspunkt `9ce5fcc`. Keine Produktimplementierung oder Übernahme nach main.
+Historischer Vorschlags-Snapshot, vor der anschließenden Implementierungsfreigabe. Videos und Screenshots dieses Ordners zeigen das Konzeptstudio, nicht die ausgelieferte App. Aktuelle Produktionsprüfungen stehen in docs/STATUS.md und docs/EXPERIENCE_ACCEPTANCE.md.
+
+Stand des Vorschlags: 4. Oktober 2026. Vorschlagsbranch `codex/bes-revision-v2-proposal`, Ausgangspunkt `9ce5fcc`. Keine Produktimplementierung oder Übernahme nach main.
 
 ## Durchgeführte Arbeit
 

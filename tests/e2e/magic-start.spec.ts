@@ -14,7 +14,11 @@ test('AI-generated opening after explicit connection/review; confirm, public det
   await page.goto('/');
   await connectSyntheticAi(page);
   // Once connected: name, generate, review and adopt. Connection adds first-use setup.
-  await expect(page.locator('#magic-form textarea')).toHaveCount(0);
+  await expect(page.locator('#magic-form textarea')).toHaveCount(1);
+  await expect(page.locator('#magic-words')).not.toHaveAttribute(
+    'required',
+    '',
+  );
   await page.getByLabel('Wie heißt die Geburtstagsperson?').fill('Anna');
   await page
     .getByRole('button', { name: 'Mit KI mein Geschenk gestalten' })

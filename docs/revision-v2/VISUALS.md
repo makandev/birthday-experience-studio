@@ -1,6 +1,6 @@
 # Drei Richtungen zum Ansehen
 
-**Konzeptmaterial, kein Produktrelease.** Alle Motive sind neu erzeugte synthetische Fotografien. Keine privaten Referenzinhalte, echten Personen oder echten Erinnerungen. Die Filme zeigen bewusst geschriebene Designanimationen und deterministisch geschnittene Szenen; sie zeigen keine KI-Inferenz, reale Empfängerreaktion oder iPhone-Dateiöffnung.
+**Historisches Konzeptmaterial, kein Produktrelease.** Nachfolgend wurden alle drei Richtungen zur Implementierung freigegeben; die frühere A-Empfehlung wählt keinen automatischen Gewinner. Aktuelle Produktions- und Live-Evidenz: docs/STATUS.md und docs/EXPERIENCE_ACCEPTANCE.md. Alle Motive sind neu erzeugte synthetische Fotografien. Keine privaten Referenzinhalte, echten Personen oder echten Erinnerungen. Die Filme zeigen bewusst geschriebene Designanimationen und deterministisch geschnittene Szenen; sie zeigen keine KI-Inferenz, reale Empfängerreaktion oder iPhone-Dateiöffnung.
 
 [Das klickbare Konzeptstudio](konzeptstudio.html) lässt sich als einzelne HTML-Datei herunterladen und in einem Desktop-Browser öffnen. Es benötigt kein Netzwerk. Unter „Probe groß öffnen“ sind Öffnen, Auswahl, Botschaft, Abschluss, Zurück und Replay tatsächlich bedienbar. Der Prototyp ist ein visuelles Entscheidungswerkzeug; er speichert keine Projekte, verbindet keinen Provider und exportiert kein Produktgeschenk.
 

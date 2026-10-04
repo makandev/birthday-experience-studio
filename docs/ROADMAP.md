@@ -23,7 +23,7 @@ Transactional project/asset persistence, central confirmed deletion, reference/r
 | EXPERIMENT | Optional Safari file reader; further arcs only after a bounded comparison                      | Compare emotional value before adding an engine framework         |
 | REJECTED   | Generic site/AI/plugin platform, enterprise layers, mandatory cloud/free-tier core             | Outside product contract                                          |
 
-Current implementation preserves the original fixed Champion and adds three content-aware Challenger archetypes, consequential choice/message reveal and fitting multi-phase payoff and a name/defaults-first confirmation loop. Quick now has three optional questions; Deep is after first value. Native uncropped photo inspection uses one derivative payload. These replace the old next-gallery/scroll-only priorities. See STATUS for gates actually run, pending physical-device acceptance and live HEAD. No automated test proves the qualitative Original Experience Benchmark acceptance bar.
+The preceding rebuild preserved the original fixed Champion and added three content-aware Challenger archetypes, consequential choice/message reveal and fitting multi-phase payoff and a name/defaults-first confirmation loop. Quick now has three optional questions; Deep is after first value. Native uncropped photo inspection uses one derivative payload. These replace the old next-gallery/scroll-only priorities. See STATUS for gates actually run, pending physical-device acceptance and live HEAD. No automated test proves the qualitative Original Experience Benchmark acceptance bar.
 
 GitHub Pages is activated and serves checked main; every integration checks workflow, subpath assets and real live smoke. Optional Safari recipient file reading is local after the page loads; no cloud upload/mandatory hosting for the core. Development preview deployment allows iPhone acceptance but is not a release claim. Before release, satisfy iPhone delivery/taps, accessibility/novice quality, privacy/export, storage/migration and Offline gates. Do not expand the roadmap or call BES permanently finished.
 
@@ -32,3 +32,7 @@ Standalone HTML remains primary on iPhone/iPad too. The optional reader is an ex
 ## Current AI-native checkpoint — 2026-10-03
 
 Current NOW supersedes preset-only polish: validate AI-first generation against actual free/local models and the neutralized reference mechanism, then real iPhone/novice acceptance. This is one bounded authoring capability, not generic plugins/tools/backends. No more variants, marketing or paid provider scope before visible quality works.
+
+## Revision checkpoint — 2026-10-04
+
+NOW: validate and publish the implemented user-selected three-direction revision on the existing shared foundation, full rehearsal/contextual refinement and strict AI plan. This supersedes the earlier A-only proposal recommendation. NEXT: real local/free-only model responses plus actual novice/recipient and iPhone delivery evaluation; repair observed weaknesses in these three experiences. LATER: no broader platform or more archetypes before current experiences earn qualitative acceptance. Technical mock/browser checks and real human/device evidence remain separate.

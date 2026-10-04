@@ -1,8 +1,8 @@
 # BES Revision V2 — Vorschlag zur Bewertung
 
-**Status: Design- und Umsetzungsplan, noch keine neue Produktversion.**
+**Status: Alle drei Richtungen zur Umsetzung freigegeben; Produktionsintegration unter Prüfung.**
 
-Branch: `codex/bes-revision-v2-proposal`. Ausgangspunkt: `9ce5fcc5d66cfb6112ddb1394039c1052f6d59c8`. `main`, `codex/bes-foundations`, bestehende App, Projekte und Live-Seite bleiben unverändert. Dieser Branch darf bis zur Bewertung des Vorschlags nicht automatisch nach main integriert werden. Diese aktuelle Nutzeranweisung ersetzt für die Revision die ältere automatische Merge-Regel.
+Branch: `codex/bes-revision-v2-proposal`. Ausgangspunkt: `9ce5fcc5d66cfb6112ddb1394039c1052f6d59c8`. `main`, `codex/bes-foundations`, bestehende App, Projekte und Live-Seite bleiben unverändert. Die anschließende Nutzeranweisung erlaubt ausdrücklich die Umsetzung aller drei Richtungen sowie geprüfte Integration nach main/GitHub Pages. Die frühere Vorschlags-Sperre ist aufgehoben. Die folgende ursprüngliche Empfehlung A/B/C ist historische Designhypothese, keine Auswahl eines Gewinners.
 
 ## Empfehlung in einem Satz
 
@@ -31,7 +31,7 @@ Die Bilder und Filme sind **synthetische, manuell animierte Konzeptbeispiele**, 
 | **B · Surprise Box — Challenger**   | Ultramarin/Koralle, taktile Papiermechanik, Laschen und großer Fotoabzug                                             | Band lösen; Fach auswählen; zweites Fach bleibt erreichbar                 | Geöffnete Teile werden ein Geburtstagsbanner, eine kurze Konfettiwolke          | Darf weder kindlich noch gimmicklastig werden; keine erfundenen Insider                    |
 | **C · Light Premiere — Experiment** | Durchgehender dunkler Raum, ein Lichtmotiv, bildfüllende Fotos und starke Kontraste                                  | Licht zu Bild oder Worten führen; Brieföffnung beruhigt die Bewegung       | Gewählte Kernbotschaft und Motiv treffen sichtbar zusammen                      | Leere Kinopose bei wenig Inhalt; schwieriger bei Kontrast/Performance                      |
 
-Empfehlung: **A als erster vollständiger Kandidat**, B als ernsthafter Vergleich. C zunächst visualisieren und bewerten, nicht drei Produktionssysteme parallel bauen. Du kannst anhand der Beispiele eine andere Richtung wählen; es gibt keinen automatischen Gewinner.
+Aktuelle Entscheidung: **A, B und C vollständig auf einer gemeinsamen technischen Basis anbieten.** A bleibt eine Empfehlung für den neutralen Start, kein belegter Gewinner. Alle drei erhalten eigene Räume/Interaktionen/Finales; keine drei getrennten Apps.
 
 ## Neuer Creator: vier Momente, ein Hauptweg
 
@@ -126,10 +126,20 @@ Sie wird nicht übernommen, wenn sie nur auf Bildern hochwertiger aussieht, beim
 - [Bildübersicht](VISUALS.md): Screenshots aller drei Creator-/Recipient-/Finale-Ansichten.
 - Drei animierte Filme und GIF-Beispiele: Ablauf-/Art-Direction-Demonstrationen, nicht Laufzeit-/iPhone-/KI-Beweise.
 
-Nach deiner Bewertung wird die ausgewählte Richtung weiter ausgearbeitet. **Die bestehende App wird vorher weder ersetzt noch nach main zusammengeführt.**
+Die Bewertung ist erfolgt: der Nutzer möchte alle Richtungen. Geprüfte Integration ist ausdrücklich autorisiert; alte Projekte behalten ihren Renderer, bis sie bewusst einen neuen Entwurf übernehmen.
 
 ## Phasenstatus und Evidenz
 
-Phase 0 ist als überprüfbarer Vorschlag abgeschlossen: Plan, Reviews, drei klickbare Richtungen, Bilder, Filme und Prüfbericht liegen vor. Phase 1 hängt von der Bewertung dieses Vorschlags ab; Phase 2 vom funktionalen Kandidaten und verfügbaren echten Modellen; Phase 3 von stabiler Generation und Testgeräten; Phase 4 von technischer Abnahme und tatsächlichem Nutzervergleich. Keine Folgephase wird als bereits umgesetzt dargestellt.
+Phase 0 ist als überprüfbarer Vorschlag abgeschlossen: Plan, Reviews, drei klickbare Richtungen, Bilder, Filme und Prüfbericht liegen vor. Die aktuelle Freigabe umfasst alle drei Richtungen; Phase 1 wird gemeinsam umgesetzt. Phase 2 vom funktionalen Kandidaten und verfügbaren echten Modellen; Phase 3 von stabiler Generation und Testgeräten; Phase 4 von technischer Abnahme und tatsächlichem Nutzervergleich. Keine Folgephase wird als bereits umgesetzt dargestellt.
 
 Definition of Done für Phase 0: bestehende Dateien unverändert, eigener synchronisierter Branch, synthetische Visuals, bedienbare Beispiele, ehrliche Grenzen, nachvollziehbare Entscheidung. Ergebnisse und qualitative Schwächen: [EVIDENCE.md](EVIDENCE.md).
+
+## Aktueller Umsetzungsstand
+
+Phase 0 bleibt dokumentiert. Phase 1: drei gepflegte Recipient-Räume, sofortige Auswahlfolge, weiter erreichbare Inhalte und erhaltenes Schlussmotiv; große Probe und kontextuelle Änderung sind implementiert. Phase 2: strukturierter KI-Plan plus echte isolierte Zeichenlogik, Provider-Epoch und Mehrpunktprobe implementiert; tatsächliche Modellinferenz bleibt mangels Modell/Konto ungetestet. Phase 3: additive Plan-Kompatibilität, keine Datenbankmigration, alte Importe unverändert; mobile WebKit/Chromium und Offline werden geprüft. Phase 4: interne visuelle/Fachprüfung, keine Anfänger-/Käuferstudie, keine Benchmark-Siegerbehauptung. Integration veröffentlicht einen 0.x-Entwicklungsstand; menschliche und physische iPhone-Abnahme bleiben offen.
+
+Architektur: [ADR 0010](../adr/0010-three-revision-experiences.md). Aktuelle technische/live Evidenz steht in STATUS und EXPERIENCE_ACCEPTANCE. Die älteren Filme zeigen den Vorschlagsprototyp, nicht die aktuelle App.
+
+### Final validation record
+
+The real Studio and every maintained revision space have been traversed at mobile portrait in the production subpath, with separate synthetic-only visual observations in EXPERIENCE_ACCEPTANCE. Unit/schema/provider isolation, full desktop E2E and offline artifact checks passed. The detached-host race and an initially invalid regression fixture were repaired; final complete reruns passed 152 unit, 42 desktop, 36 mobile and two Pages checks, plus type/lint/format and normal/standalone/Pages builds. Publication follows these gates; remote/live results are tracked in STATUS. Real model inference, physical iPhone delivery and human preference/benchmark gates are not replaced by this development-preview delivery.

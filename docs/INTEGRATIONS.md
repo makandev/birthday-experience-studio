@@ -39,3 +39,7 @@ Manual Director copy/paste remains a provider-neutral advanced option. Its decla
 ## Evidence limits
 
 Automated provider tests use clearly synthetic mocked responses, including auth, quotas, privacy, review and offline execution. They do not prove real AI quality, reliable free availability, actual authentication or physical iPhone delivery. Technical acceptance and reference/experience acceptance remain separate.
+
+## Revision plan contract — 2026-10-04
+
+Generation requests a strict ExperiencePlan v1 (concept, unique bounded sceneOrder, pace) alongside public copy and the isolated drawing program. PublicBrief includes the deliberately selected concept and only a photo-availability boolean; photo bytes/metadata and private questionnaire answers remain excluded. The shared schema and compiler reject unsafe fields, invented content roles and omitted enabled gift content. Historical no-plan responses retain explicit compatibility behavior; they are not presented as fabricated AI planning. Provider-session epochs fence results after disconnect/change. Nine scene/time/finale probe samples replace the former first-frame check, without claiming exhaustive execution analysis. Real-provider quality remains unverified.

@@ -37,3 +37,7 @@ Historical privacy cleanup now includes the two published branch histories, not 
 ## Current AI-native checkpoint — 2026-10-03
 
 Current AI-first requests share only the explicitly public brief on user action. Private answers/photos/originals/metadata/reference HTML and credentials are not sent. Disabled existing letter is excluded. Online inference sends that public brief to OpenRouter/selected providers under their terms; local loopback inference assumes correctly configured Local-only Ollama. Credentials live only in a tab closure, not browser persistence or gift/draft/prompt/log/URL. Generated drawing source is public gift content, with no access to Studio/private storage in its opaque Worker.
+
+## Revision preview/privacy
+
+ExperiencePlan carries only bounded public presentation enums; no raw answers, private relationship dimensions, credentials or filenames. Three demo directions use fictional public words and do not save projects. Theatre generation IDs reject late personal reads after closing/changing an example, protecting labeling/content isolation. AI still receives only deliberate public brief and photo availability, never photo bytes or private reference content. Model/buyer/real-device checks are not inferred from mock success.

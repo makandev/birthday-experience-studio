@@ -52,3 +52,7 @@ The later user instruction to remove the benchmark recipient identity including 
 ## Current AI-native checkpoint — 2026-10-03
 
 2026-10-03: user rejected the new gift animation quality and changed direction to AI-native animation programming with local/free API inference. ADR 0009 supersedes AI-never-executable ONLY for reviewed drawing code in an opaque CSP Worker. No Studio/agent/tool execution or community code platform. Preserve existing projects/manual recovery; new AI-first creation needs explicit connection/review. Prior internal Challenger default judgment is not user acceptance.
+
+## Three-direction revision decision — 2026-10-04
+
+The user chose all three concepts and authorized completing/integrating checked work, replacing the earlier proposal-only hold. ADR 0010 keeps one creator/runtime and three bounded spaces, validates AI ordering and drawing, preserves legacy projects and selected final content, and simplifies full rehearsal/refinement. No winner is assumed. Published Shopify/37signals guidance and independent AI reviews informed the decision; no human sales expert endorsement or actual buyer study is claimed. Main is a development preview while model/physical iPhone/qualitative gates remain open.

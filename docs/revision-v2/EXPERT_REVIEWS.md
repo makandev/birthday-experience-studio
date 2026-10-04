@@ -26,6 +26,12 @@ Empfehlung: bestehenden Storage-/Media-/Export-/Security-Kern behalten. Neuer Cr
 
 Stopregeln: Datenverlust, Secret-Leak, Isolationdurchbruch oder paid fallback blockieren. Erfundenes Persönliches, nicht erreichbare Buttons oder eine weitere Kartenfolge verwerfen den Kandidaten. Keine Übernahme ohne sichtbaren Mehrwert.
 
-## Zusammenführung
+## Historische Zusammenführung des Vorschlags
 
 Alle drei Kritiken stimmen überein: der strukturelle Produktablauf muss sich ändern; nur neue Hintergrundanimation ist zu wenig. Übernommen werden der große Probenmodus, vier Creator-Momente, Handlungen mit Konsequenzen, eine echte Ablaufentscheidung durch KI und der Erhalt bestehender Schutzgrenzen. Nicht übernommen werden größere Budgets, unbewiesene Sieger-/Zeitversprechen oder drei gleichzeitig ausgebaute Produktionssysteme. A wird empfohlen, B bleibt Vergleich, C bleibt begrenzte Konzeptstudie. Die Nutzerbewertung entscheidet den nächsten Schritt.
+
+## Zweite Runde: Umsetzung aller drei Richtungen
+
+Die aktuelle Nutzeranweisung wählt alle drei Richtungen und erlaubt geprüfte Integration nach main/Pages. Es gibt keinen automatisch gewählten Champion. Produkt-, Motion- und Engineering-Empfehlungen wurden gemeinsam angewendet: ein Creator, wirkliche Auswahlfolge, eigene Räume/Finales, sichere gemeinsame Laufzeit und explizite Legacy-Kompatibilität.
+
+Die zweite Codeprüfung fand falschen Partikel-Selector, späte Worker-Frames nach Stop, veraltete Theatre-Anfragen, verlorenes Schlussmotiv bei Skip, doppelte Wortöffnung und zu lange generische Finalphasen. Diese Befunde wurden konkret korrigiert, statt nur weitere Effekte anzuhängen. Regressionen decken Auswahl, Stillstand, Finale/Closing und Preview-Races ab. Die beiden Fachdurchgänge waren KI-Reviews, keine Gespräche mit realen Verkaufsexperten.

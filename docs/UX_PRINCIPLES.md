@@ -50,3 +50,7 @@ Read the complete [Experience North Star](../BES_EXPERIENCE_NORTH_STAR.md) befor
 ## Current AI-native checkpoint — 2026-10-03
 
 Current AI-first creation adds provider connection and generated-result review to the short public-input flow. Do not repeat the historical two-action/1–2-minute claim for first-time provider setup without novice timing evidence. No long questionnaire or mandatory private data; generation is cancellable and cannot discard the draft. Regenerating animation preserves authored copy by default, adoption/undo remain explicit.
+
+## Revision interaction model
+
+One required name; relationship, public sentence and staging are optional. Further tone choices are progressively disclosed rather than competing with three staging options. Users can experience three plainly fictional examples before connecting AI. New plan-based gifts have whole candidate rehearsal and two main actions: large probe or gift download. Changes reveal only words/staging/photos. No required scene-by-scene approval after adopting a revision gift. Native opaque full-screen frames preserve an external accessible exit; stale media reads cannot replace newer rehearsals. Existing detailed/legacy workflows remain for saved gifts, not mandatory first-run effort.

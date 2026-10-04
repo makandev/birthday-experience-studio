@@ -39,3 +39,9 @@ ExportExperience/recipient envelope v1 optionally adds the same settings plus de
 ## Current AI-native checkpoint — 2026-10-03
 
 CreatorProject v2 / recipient envelope v1 gain optional strict experience.animation {version:1, source:string≤16000}. Absent fields preserve older projects; no IndexedDB schema rewrite. Older clients fail closed on newer fields. This explicit projected field is public untrusted drawing code, not CreatorProject/credential serialization. Import/byte limits and isolated execution still apply; new requests are reviewed before adoption.
+
+## Additive ExperiencePlan v1 (ADR 0010)
+
+Optional experience.plan = {version:1,concept:atelier|surprise-box|light-premiere,sceneOrder:[opening,choice?,moments?,letter?,surprise?,finale,closing] in validated variable order,pace:gentle|bright}. Strict shape; unique roles, opening first and finale/closing last; choice precedes at least two content roles. Public enabled content cannot be omitted; absent photos/words/wishes cannot be fabricated. Compiler rejects bad candidate routes; explicit creator edits align available roles. The plan contains no arbitrary HTML/CSS/code/URL or creator state. Only the separate reviewed drawing source can execute in the opaque Worker.
+
+CreatorProject v2/workspace IDB v2/private envelope v1 stay unchanged. Old files acquire no plan implicitly; adoption/undo uses existing revision-fenced writes. Recipient v1 explicitly carries the same plan and validates it again. Old clients fail closed on additive fields. Historical generated replies without plan preserve legacy behavior, or an existing revision plan during non-destructive regeneration, and are not portrayed as a newly invented AI route.

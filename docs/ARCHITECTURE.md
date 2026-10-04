@@ -11,7 +11,7 @@ BES is a focused local-first birthday app, not a generic platform. Use the simpl
 | Persistence   | Shared `bes-media` IndexedDB v2, transactional WorkspaceRepository; old localStorage modules are read-only migration adapters    |
 | Media         | Bounded raster decode/re-encoding, immutable originals/derivatives, source resolution and portable copies                        |
 | Recipient     | Explicit projection and maintained staged HTML/CSS + hash-allowed static runtime; isolated preview shares exporter               |
-| Integrations  | Provider-neutral manual capability catalog and structured proposal validation; no concrete API/key broker                        |
+| Integrations  | Provider-neutral manual review plus local Ollama/free-only OpenRouter sessions; isolated volatile credentials                    |
 
 ## Storage integrity and concurrency
 
@@ -32,3 +32,7 @@ Historical architecture proof tradeoffs are in ADRs 0001–0004. ADR 0005 supers
 ## Current AI-native checkpoint — 2026-10-03
 
 User-directed AI-first generation now lives in integrations/generation.ts and providers.ts. domain/animation.ts defines a bounded program contract; animation-host.ts owns the fixed CSP controller, runtime.ts paints validated commands from an opaque Worker. No generated code gets Studio/main DOM access. Optional additive data fields preserve storage/CAS/migrations. Creation uses researched free-only PKCE or local Ollama; recipient playback requires neither. Legacy manual Director remains a maintenance tool, not the current core authoring engine.
+
+## Three-direction revision — current contract
+
+ADR 0010 adds one shared domain/experience-plan.ts schema: concept, bounded unique public sceneOrder and pace. It is optional in CreatorProject and explicitly projected/validated in recipient data. engines/scenes.ts checks content availability and coverage; creator edits reconcile actual public roles. experience/revision.ts renders three distinct maintained spaces; runtime keeps selected content and rejects stopped/stale drawing replies. Legacy renderer remains for projects without a plan. Studio offers full-screen candidate/rehearsal, contextual refinement and clearly fictional examples without storing demo projects. Theatre generation identity fences asynchronous personal reads; provider epoch and existing workspace CAS fence stale generation. The animation probe is abortable and covers nine scene/time/finale samples, not every possible program branch. No new dependency, service or storage database schema.

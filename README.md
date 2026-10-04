@@ -107,3 +107,9 @@ Community extensibility is safe declarative birthday content, not arbitrary exec
 New creation connects local Ollama or OpenRouter's free-only router, then previews generated gift text and a newly programmed animation before adoption. A provider connection is needed; no silent template or paid-model fallback. OpenRouter requires signup; reviewed limits are 20 requests/minute and 50/day without buying credits, subject to change. OAuth uses PKCE and a temporary user-owned in-memory token, no embedded app secret. Local Ollama requires installed local weights, Local-only mode and an explicit Studio CORS origin; browser/iPhone access may be unavailable. No models are downloaded automatically. See [integration setup and official sources](docs/INTEGRATIONS.md).
 
 Generated drawing JavaScript executes only inside an opaque, network-blocked Worker with command/size/time limits. Gifts remain one offline HTML file with no provider credentials or runtime AI. Existing gifts remain editable/exportable. Actual model quality, real OAuth login and physical iPhone delivery are not proved by mocked integration tests.
+
+## Three gift directions
+
+The Studio now offers Moment Atelier, Surprise Box and Light Premiere. Try **Drei Geschenkbeispiele erleben** without an account: these are clearly fictional examples, not AI-generated personal gifts. For your own gift, connect local/free-only AI, give a name and optional public words, review the full experience, then optionally change words/staging/photos. The gift download is still one standalone HTML file, with no AI or login at playback. Existing saved gifts retain their previous rendering until explicit new-plan adoption.
+
+See [revision plan](docs/revision-v2/PLAN.md) and [ADR 0010](docs/adr/0010-three-revision-experiences.md). Current technical/live evidence and unresolved real-model/iPhone/human checks are recorded in [STATUS](docs/STATUS.md). Live Studio: https://makandev.github.io/birthday-experience-studio/.

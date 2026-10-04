@@ -35,3 +35,7 @@ Standalone HTML is the primary gift artifact on every device, including iPhone/i
 ## Current AI-native checkpoint — 2026-10-03
 
 ADR 0009 adds optional reviewed drawing code as escaped inert template content and an embedded, isolated data-URL Worker. Top-level maintained JS does not interpolate/execute that source. Parent/child CSP includes only the two maintained script hashes, closed connect/default/base/form and embedded worker loading. One physical HTML remains sufficient, no cloud/provider/credential at playback. Older recipient/project files without animation still work; future clients must fail closed on unsupported versions.
+
+## Revision export (ADR 0010)
+
+Optional strict ExperiencePlan is explicitly projected public presentation data. It never serializes CreatorProject, relationships, answers, originals or provider state. Recipient import validates shape plus real content availability/coverage before rendering. Three maintained spaces share the same static CSP-hashed runtime and opaque drawing Worker. Selection/late reveals/keepsake/replay and all assets stay within the single Offline HTML; no model at playback. Finale photo nodes reuse the existing validated derivative in memory, avoiding duplicate embedded bytes. Old projects/recipient files without plan keep their previous renderer.

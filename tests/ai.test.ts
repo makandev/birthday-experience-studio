@@ -173,3 +173,27 @@ describe('AI generation and capability boundaries', () => {
     expect(mock).toHaveBeenCalledTimes(4);
   });
 });
+
+it('rejects a response from a provider session changed during generation', async () => {
+  let finish!: (r: Response) => void;
+  const mock = vi
+    .fn()
+    .mockResolvedValueOnce(response({ key: 'SYNTHETIC_MEMORY_KEY' }))
+    .mockImplementationOnce(
+      () =>
+        new Promise<Response>((resolve) => {
+          finish = resolve;
+        }),
+    );
+  vi.stubGlobal('fetch', mock);
+  const ai = createAiSession();
+  await ai.beginOpenRouter();
+  await ai.finishOpenRouter('synthetic-code');
+  const pending = ai.generate(brief, new AbortController().signal);
+  ai.clear();
+  finish(
+    response({ choices: [{ message: { content: JSON.stringify(gift) } }] }),
+  );
+  await expect(pending).rejects.toThrow('inzwischen');
+  expect(ai.connected).toBe(false);
+});
