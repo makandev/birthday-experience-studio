@@ -187,7 +187,7 @@ test('mobile creator: full-screen examples are tappable, reversible and never ch
   page,
 }) => {
   await verifiedLiveResponses(page);
-  await page.goto('/');
+  await page.goto('./');
   const before = await readStoredProject(page);
   await page.locator('#try-examples').tap();
   for (const concept of ['atelier', 'surprise-box', 'light-premiere']) {
