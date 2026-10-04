@@ -189,6 +189,7 @@ export function createAiSession() {
     ): Promise<GeneratedGift> {
       if (!provider) throw new Error('Bitte zuerst eine KI verbinden.');
       const activeProvider = provider;
+      const generationEpoch = epoch;
       const messages = generationMessages(brief);
       const response = await fetch(
         provider === 'openrouter'
@@ -242,6 +243,10 @@ export function createAiSession() {
           : z
               .object({ message: z.object({ content: z.string().max(64000) }) })
               .parse(result).message.content;
+      if (epoch !== generationEpoch || signal.aborted)
+        throw new Error(
+          'Die KI-Verbindung wurde inzwischen geändert. Der Entwurf bleibt erhalten.',
+        );
       return readGeneratedGift(content);
     },
   };

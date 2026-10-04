@@ -1,3 +1,4 @@
+import type { ExperiencePlan } from '../domain/experience-plan';
 import type { AnimationProgram } from '../domain/animation';
 import { parseProject, type CreatorProject } from '../domain/project';
 import { blocks } from '../registries/blocks';
@@ -14,6 +15,7 @@ export interface ExportExperience {
   profile: 'offline' | 'online';
   externalDomains: string[];
   animation?: AnimationProgram;
+  plan?: ExperiencePlan;
   composition?: {
     version: 1;
     variant: 'champion' | 'challenger';
@@ -78,6 +80,9 @@ export function projectExperience(
     externalDomains: capabilities.externalDomains,
     themeId: themes.get(project.experience.themeId)?.id ?? 'warm',
     blocks: exported,
+    ...(project.experience.plan
+      ? { plan: structuredClone(project.experience.plan) }
+      : {}),
     ...(project.experience.animation
       ? {
           animation: {

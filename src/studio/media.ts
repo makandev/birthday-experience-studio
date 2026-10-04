@@ -1,5 +1,5 @@
 import type { CreatorProject } from '../domain/project';
-import { syncComposition } from '../engines/composition';
+import { syncComposition, alignExperiencePlan } from '../engines/composition';
 import { escapeHtml as e } from '../experience/text';
 import { mediaBudget } from '../media/budgets';
 import { processPhoto } from '../media/process';
@@ -87,6 +87,7 @@ export class MediaController {
         position: 'center',
       },
     });
+    alignExperiencePlan(project);
     project.exportConfig.externalMediaConsent = false;
     try {
       await this.hooks.changed(assets);
@@ -95,6 +96,7 @@ export class MediaController {
       project.experience.blocks = project.experience.blocks.filter(
         (block) => block.data.mediaId !== media.id,
       );
+      alignExperiencePlan(project);
       throw cause;
     }
   }
@@ -231,6 +233,7 @@ export class MediaController {
           project.experience.blocks = project.experience.blocks.filter(
             (b) => b.data.mediaId !== id,
           );
+          alignExperiencePlan(project);
           void this.hooks.changed();
           this.hooks.message(
             'Foto aus diesem Geschenk entfernt. Die lokalen Bilddateien bleiben für Wiederherstellung erhalten.',

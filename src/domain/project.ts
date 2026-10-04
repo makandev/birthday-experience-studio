@@ -1,3 +1,4 @@
+import { experiencePlanSchema } from './experience-plan';
 import { animationProgramSchema } from './animation';
 import { z } from 'zod';
 import { safeExternalUrl } from '../security/urls';
@@ -124,6 +125,7 @@ export const projectSchema = legacyProjectSchema
         directionId: z.enum(['emotional', 'funny', 'elegant', 'cinematic']),
         intensity: z.number().int().min(0).max(3),
         animation: animationProgramSchema.optional(),
+        plan: experiencePlanSchema.optional(),
         composition: z
           .object({
             version: z.literal(1),

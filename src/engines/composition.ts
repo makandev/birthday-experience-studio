@@ -74,4 +74,28 @@ export function syncComposition(project: CreatorProject): void {
   for (const block of suggested)
     if (!existing.some((item) => item.id === block.id))
       project.experience.blocks.push(block);
+  alignExperiencePlan(project);
+}
+
+// A deliberate creator edit keeps the validated route aligned with available public content.
+export function alignExperiencePlan(project: CreatorProject): void {
+  const plan = project.experience.plan;
+  if (!plan) return;
+  const active = project.experience.blocks.filter((b) => b.enabled);
+  const roles = [
+    ['moments', 'photo'],
+    ['letter', 'letter'],
+    ['surprise', 'wish'],
+  ] as const;
+  for (const [role, type] of roles) {
+    const present = active.some(
+      (b) => b.type === type || (role === 'surprise' && b.type === 'reveal'),
+    );
+    if (!present) plan.sceneOrder = plan.sceneOrder.filter((id) => id !== role);
+    else if (!plan.sceneOrder.includes(role))
+      plan.sceneOrder.splice(plan.sceneOrder.indexOf('finale'), 0, role);
+  }
+  const choice = plan.sceneOrder.indexOf('choice');
+  if (choice >= 0 && plan.sceneOrder.slice(choice + 1, -2).length < 2)
+    plan.sceneOrder.splice(choice, 1);
 }

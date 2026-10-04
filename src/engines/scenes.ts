@@ -26,13 +26,22 @@ export interface ExperienceStrategy {
 export function experienceStrategy(
   experience: ExportExperience,
 ): ExperienceStrategy {
-  const archetype =
-    experience.directionId === 'funny'
+  const archetype = experience.plan
+    ? (
+        {
+          atelier: 'emotional',
+          'surprise-box': 'playful',
+          'light-premiere': 'cinematic',
+        } as const
+      )[experience.plan.concept]
+    : experience.directionId === 'funny'
       ? 'playful'
       : ['cinematic', 'elegant'].includes(experience.directionId)
         ? 'cinematic'
         : 'emotional';
-  const variant = experience.composition?.variant ?? 'champion';
+  const variant = experience.plan
+    ? 'challenger'
+    : (experience.composition?.variant ?? 'champion');
   const respectful =
     experience.composition?.register === 'respectful' ||
     experience.directionId === 'elegant';
@@ -48,8 +57,19 @@ export function experienceStrategy(
           : archetype === 'playful'
             ? 'celebration'
             : 'cinema',
-    phaseMs:
-      variant === 'champion'
+    phaseMs: experience.plan
+      ? archetype === 'emotional'
+        ? experience.plan.pace === 'gentle'
+          ? 1100
+          : 800
+        : archetype === 'playful'
+          ? experience.plan.pace === 'gentle'
+            ? 1400
+            : 900
+          : experience.plan.pace === 'gentle'
+            ? 1800
+            : 1200
+      : variant === 'champion'
         ? 4500
         : archetype === 'emotional'
           ? 3200
@@ -192,6 +212,36 @@ export function composeScenes(experience: ExportExperience): RecipientScene[] {
         (id !== 'choice' || letter || surprise) &&
         (id !== 'encore' || !strategy.respectful),
     );
+  }
+  if (experience.plan) {
+    order = [...experience.plan.sceneOrder];
+    for (const [role, type] of [
+      ['moments', 'photo'],
+      ['letter', 'letter'],
+      ['surprise', 'wish'],
+      ['surprise', 'reveal'],
+    ] as const) {
+      const present = experience.blocks.some((b) => b.type === type);
+      if (present && !order.includes(role))
+        throw new Error(
+          'Der KI-Ablauf würde freigegebene Inhalte auslassen. Bitte neu gestalten.',
+        );
+    }
+    if (
+      order.includes('moments') &&
+      !experience.blocks.some((b) => b.type === 'photo')
+    )
+      throw new Error('Der KI-Ablauf benötigt ein nicht vorhandenes Foto.');
+    if (
+      order.includes('letter') &&
+      !experience.blocks.some((b) => b.type === 'letter')
+    )
+      throw new Error('Der KI-Ablauf benötigt nicht vorhandene Worte.');
+    if (
+      order.includes('surprise') &&
+      !experience.blocks.some((b) => ['wish', 'reveal'].includes(b.type))
+    )
+      throw new Error('Der KI-Ablauf benötigt einen nicht vorhandenen Wunsch.');
   }
   const championLabels = [
     'Geschenk öffnen',

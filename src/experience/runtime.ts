@@ -6,14 +6,16 @@ export const RECIPIENT_RUNTIME =
 'use strict';
 const originalScenes = [...document.querySelectorAll('.gift-scene')];
 let scenes = [...originalScenes];
+const revision = !!document.body.dataset.concept;
+const initialCore = document.querySelector('.core-message p')?.textContent || '';
 const challenger = document.body.dataset.variant === 'challenger';
-const phaseMs = Math.min(4500, Math.max(2000, Number(document.body.dataset.phaseMs) || 4500));
+const phaseMs = Math.min(4500, Math.max(revision ? 600 : 2000, Number(document.body.dataset.phaseMs) || 4500));
 const finaleStyle = document.body.dataset.finaleStyle;
 const originalChoiceResponse = document.getElementById('choice-response')?.textContent || '';
 const originalMomentIntro = document.getElementById('moment-intro')?.textContent || '';
 const gotoLabels = {choice:'Deinen Weg wählen',curiosity:'Einen Moment auspacken',moments:'Das Bild entdecken',letter:'Zu deinen persönlichen Worten',surprise:'Den Wunsch auspacken',encore:'Zum Abspann?',finale:'Diesen Moment feiern',closing:'Zum Mitnehmen'};
 const originalEcho = document.querySelector('.choice-echo')?.textContent || '';
-if (challenger && finaleStyle === 'keepsake') {
+if (challenger && !revision && finaleStyle === 'keepsake') {
   const source = document.querySelector('.photo-deck .photo-image');
   if (source) {
     const photo = source.cloneNode(false); photo.classList.add('keepsake-photo'); photo.removeAttribute('loading'); photo.setAttribute('aria-hidden','true');
@@ -33,8 +35,10 @@ const ctx = canvas.getContext('2d');
 const messages = [...document.querySelectorAll('.finale-message')];
 
 let current = 0;
+let sceneAt=performance.now();
 let frame = 0;
 let timers = [];
+let openingTimer=0;
 let clockTimer = 0;
 let animationFrame = 0, animationHost = null, animationPending = false, animationSequence = 0, animationAt = 0;
 const animationCanvas = document.getElementById('ai-animation');
@@ -43,24 +47,26 @@ const moving = () => intensity > 0 && !matchMedia('(prefers-reduced-motion: redu
 const clearFinale = () => { timers.forEach(clearTimeout); timers = []; };
 const stopConfetti = () => { cancelAnimationFrame(frame); frame = 0; if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); };
 function animationStop() {
- document.body.dataset.animationActive='false';cancelAnimationFrame(animationFrame); animationFrame=0;animationPending=false;
+ document.body.dataset.animationActive='false';animationSequence++;cancelAnimationFrame(animationFrame); animationFrame=0;animationPending=false;
  animationHost?.contentWindow?.postMessage({type:'bes-animation-stop'},'*');
  if(animationContext)animationContext.clearRect(0,0,animationCanvas.width,animationCanvas.height);
 }
+const animateScene = () => !revision || ['opening','choice','finale'].includes(scenes[current]?.dataset.scene) && !(sceneIs('finale') && document.body.dataset.finaleComplete==='true') && (sceneIs('finale') || performance.now()-sceneAt<3000);
 function animationStart() {
- if(!animationCanvas||!moving()||document.body.dataset.animationFailed==='true')return;
+ if(!animationCanvas||!animateScene()||!moving()||document.body.dataset.animationFailed==='true')return;
  if(!animationHost){
   animationHost=document.createElement('iframe');animationHost.hidden=true;animationHost.sandbox='allow-scripts';
   animationHost.srcdoc=BES_ANIMATION_HOST;
-  animationHost.onload=()=>{animationHost.contentWindow.postMessage({type:'bes-animation-init',source:document.getElementById('animation-program').content.textContent},'*'); animationPending=false;animationLoop(performance.now());};
+  animationHost.onload=()=>{if(!animationHost.isConnected||!animationHost.contentWindow||!animateScene()||!moving())return;animationHost.contentWindow.postMessage({type:'bes-animation-init',source:document.getElementById('animation-program').content.textContent},'*'); animationPending=false;animationLoop(performance.now());};
   document.body.append(animationHost);
  }else{
+  if(!animationHost.isConnected||!animationHost.contentWindow)return;
   animationHost.contentWindow.postMessage({type:'bes-animation-init',source:document.getElementById('animation-program').content.textContent},'*');animationPending=false;animationLoop(performance.now());
  }
 }
 function animationLoop(now){
  cancelAnimationFrame(animationFrame);
- if(!moving()||document.body.dataset.animationFailed==='true'){animationStop();return;}
+ if(!animationHost?.isConnected||!animationHost.contentWindow||!animateScene()||!moving()||document.body.dataset.animationFailed==='true'){animationStop();return;}
  if(!animationPending&&now-animationAt>=33){
   animationAt=now;animationPending=true;animationSequence++;
   animationHost.contentWindow.postMessage({type:'bes-animation-tick',request:animationSequence,input:{time:now/1000,scene:scenes[current].dataset.scene,phase:Number(document.body.dataset.finalePhase)||0,width:Math.min(innerWidth,4096),height:Math.min(innerHeight,4096),intensity}},'*');
@@ -70,7 +76,7 @@ function animationLoop(now){
 addEventListener('message',event=>{
  if(!animationHost||event.source!==animationHost.contentWindow)return;
  if(event.data?.type==='bes-animation-failed'){document.body.dataset.animationFailureKind=event.data.reason;document.body.dataset.animationFailed='true';animationStop();return;}
- if(!moving()||event.data?.request!==animationSequence||event.data?.type!=='bes-animation-frame'||!Array.isArray(event.data.commands)||event.data.commands.length>160||!animationContext)return;
+ if(!animationPending||!animateScene()||!moving()||event.data?.request!==animationSequence||event.data?.type!=='bes-animation-frame'||!Array.isArray(event.data.commands)||event.data.commands.length>160||!animationContext)return;
  animationPending=false;
  const width=Math.min(innerWidth,2048),height=Math.min(innerHeight,2048);
  animationCanvas.width=width;animationCanvas.height=height;
@@ -93,7 +99,7 @@ function burst(strong = false) {
   const pieces = Array.from({length: count}, (_, i) => ({x: ((i * 73 + 19) % 101) / 100, y: ((i * 31) % 53) / 100, turn: i % 7}));
   const started = performance.now();
   function draw(now) {
-    if (!moving()) { stopConfetti(); return; }
+    if (!moving()) { if(openingTimer){clearTimeout(openingTimer);openingTimer=0;show(current+1);}stopConfetti(); return; }
     const t = (now - started) / 1600;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (t >= 1) { frame = 0; return; }
@@ -116,7 +122,7 @@ function fireworks() {
   const started = performance.now();
   const colors = document.body.dataset.archetype === 'playful' ? ['#ef9a66','#b1dbbe','#dfb0da'] : ['#edcb80','#fff6df','#bf9754'];
   function draw(now) {
-    if (!moving()) { stopConfetti(); return; }
+    if (!moving()) { if(openingTimer){clearTimeout(openingTimer);openingTimer=0;show(current+1);}stopConfetti(); return; }
     const t = (now - started) / 3200;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (t >= 1) { frame = 0; return; }
@@ -134,10 +140,10 @@ function fireworks() {
   }
   frame=requestAnimationFrame(draw);
 }
-function finaleEffect() { if (!challenger) burst(true); else if (finaleStyle !== 'keepsake') fireworks(); }
+function finaleEffect() { if(revision&&finaleStyle==='celebration'){burst(true);return;}if (!challenger) burst(true); else if (finaleStyle !== 'keepsake') fireworks(); }
 function finishFinale() {
-  clearFinale(); messages.forEach(message => message.classList.add('active'));
-  next.disabled = false; document.body.dataset.finaleComplete = 'true'; document.getElementById('finale-status').textContent = 'Dein Abschluss ist bereit.';
+  clearFinale(); messages.forEach((message,i) => message.classList.toggle('active',!revision||i===2));if(revision)document.body.dataset.finalePhase='2';
+  next.disabled = false; document.body.dataset.finaleComplete = 'true'; if(revision)animationStop(); document.getElementById('finale-status').textContent = 'Dein Abschluss ist bereit.';
 }
 function startFinale() {
   document.body.dataset.finaleComplete = 'false';document.body.dataset.finalePhase='0';
@@ -145,7 +151,7 @@ function startFinale() {
   if (!moving()) { finishFinale(); return; }
   next.disabled = true; messages[0].classList.add('active'); if (!challenger) burst(true);
   const phase = index => { document.body.dataset.finalePhase=String(index); messages.forEach((message, i) => message.classList.toggle('active', i === index)); if (index === 2) finaleEffect(); };
-  timers = [setTimeout(() => phase(1), phaseMs), setTimeout(() => phase(2), phaseMs * 2), setTimeout(() => { next.disabled = false; document.body.dataset.finaleComplete = 'true'; document.getElementById('finale-status').textContent = 'Dein Abschluss ist bereit.'; }, phaseMs * 3)];
+  timers = [setTimeout(() => phase(1), phaseMs), setTimeout(() => phase(2), phaseMs * 2), setTimeout(() => { next.disabled = false; document.body.dataset.finaleComplete = 'true'; if(revision)animationStop(); document.getElementById('finale-status').textContent = 'Dein Abschluss ist bereit.'; }, phaseMs * 3)];
 }
 function updateClock() {
   clearInterval(clockTimer);
@@ -158,7 +164,7 @@ function updateClock() {
 }
 function show(index, focus = true) {
   if (!Number.isInteger(index) || index < 0 || index >= scenes.length) return;
-  clearFinale(); stopConfetti(); current = index;
+  clearTimeout(openingTimer);openingTimer=0;document.body.dataset.opened='false';clearFinale(); stopConfetti(); current = index; sceneAt=performance.now();
   scenes.forEach((scene, i) => { scene.hidden = i !== index; });
   counter.textContent = sceneIs('closing') ? 'Dein Abschluss' : 'Station ' + (index + 1) + ' von ' + (scenes.length - 1);
   progress.max = scenes.length - 1; progress.value = Math.min(index + 1, scenes.length - 1);
@@ -168,13 +174,14 @@ function show(index, focus = true) {
   document.body.dataset.sceneOrder = scenes.map(scene => scene.dataset.scene).join(',');
   if (focus) { const heading = scenes[index].querySelector('[data-scene-heading]'); if (heading) heading.focus(); scrollTo(0, 0); }
   updateClock();
-  if (sceneIs('finale')) startFinale(); else if (index > 0 && index < scenes.length - 1 && (!challenger || document.body.dataset.archetype === 'playful' && sceneIs('surprise'))) burst();
+  if (revision) { animationStop(); if(!sceneIs('finale')&&animateScene())animationStart(); }
+  if (sceneIs('finale')) { startFinale(); if(revision&&moving())animationStart(); } else if (index > 0 && index < scenes.length - 1 && (!challenger || !revision && document.body.dataset.archetype === 'playful' && sceneIs('surprise'))) burst();
 }
 function motionChanged() {
   if(moving())animationStart();else animationStop();
   document.body.dataset.paused = moving() ? 'false' : 'true';
   motionOff.disabled = reduce.matches || intensity === 0;
-  if (!moving()) { stopConfetti(); if (sceneIs('finale')) finishFinale(); }
+  if (!moving()) { if(openingTimer){clearTimeout(openingTimer);openingTimer=0;show(current+1);}stopConfetti(); if (sceneIs('finale')) finishFinale(); }
 }
 // Activate a deliberate touch once using its actual target/coordinates. Some
 // mobile opaque-frame paths misplace the compatibility mouse click. Keep native
@@ -205,7 +212,7 @@ function activate(control, action) {
     run(event);
   });
 }
-activate(next, () => show(current + 1));
+activate(next, () => {if(revision&&sceneIs('opening')&&moving()){next.disabled=true;document.body.dataset.opened='true';openingTimer=setTimeout(()=>show(current+1),document.body.dataset.concept==='surprise-box'?350:650);}else show(current+1);});
 activate(back, () => show(current - 1));
 document.querySelectorAll('[data-choice]').forEach(button => activate(button, () => {
   const choices = {warm: 'Dann nehmen wir uns Zeit für einen warmen Moment.', joy: 'Dann darf ein Lächeln den Anfang machen.', wonder: 'Dann wartet ein kleines Staunen auf dich.'};
@@ -222,11 +229,18 @@ document.querySelectorAll('[data-choice]').forEach(button => activate(button, ()
       document.getElementById('choice-response').textContent = 'Deine Wahl kommt als Nächstes. Die anderen Momente bleiben für später.';
     }
     const echo = document.querySelector('.choice-echo'); if (echo) echo.textContent = button.dataset.echo || originalEcho;
+    if(revision) {
+      document.body.dataset.finalFocus=button.dataset.finalFocus==='photo'?'photo':'words';
+      const core = document.querySelector('.core-message p'); if(core && button.dataset.finalFocus!=='photo')core.textContent='„'+button.dataset.echo+'“';
+      if(button.dataset.finalFocus!=='photo')document.querySelectorAll('[data-final-sentence]').forEach(sentence=>sentence.textContent=button.dataset.echo);
+      show(current+1);if(sceneIs('letter'))document.querySelector('.letter-reveal').open=true;
+    }
   } else burst();
 }));
-activate(document.getElementById('skip-finale'), () => { finishFinale(); show(scenes.findIndex(scene => scene.dataset.scene === 'closing')); });
+activate(document.getElementById('skip-finale'), () => { finishFinale(); if(!revision)show(scenes.findIndex(scene => scene.dataset.scene === 'closing')); });
 activate(document.getElementById('replay'), () => {
   scenes = [...originalScenes];
+  if(revision){document.body.dataset.finalFocus='words';const core=document.querySelector('.core-message p');if(core)core.textContent=initialCore;document.querySelectorAll('[data-final-sentence]').forEach(sentence=>sentence.textContent=initialCore.replace(/^„|“$/g,''));}
   document.querySelectorAll('[data-choice]').forEach(item => item.setAttribute('aria-pressed','false'));
   const echo = document.querySelector('.choice-echo'); if (echo) echo.textContent=originalEcho;
   const response = document.getElementById('choice-response'); if(response) response.textContent=originalChoiceResponse;
@@ -238,6 +252,7 @@ function selectPhoto(index) {
   const photos = [...document.querySelectorAll('[data-photo]')];
   if (!photos.length || !Number.isInteger(index) || index < 0 || index >= photos.length) return;
   photos.forEach((photo,i) => photo.hidden = i !== index);
+  if(revision){const target=document.querySelector('[data-revision-photo]'),source=photos[index].querySelector('.photo-image');if(target&&source){const clone=source.cloneNode(false);clone.removeAttribute('loading');clone.setAttribute('aria-hidden','true');target.replaceChildren(clone);document.querySelectorAll('[data-revision-final-keepsake]').forEach(final=>final.replaceChildren(clone.cloneNode(false)));}}
   document.querySelectorAll('[data-photo-select]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.photoSelect) === index)));
 }
 document.querySelectorAll('[data-photo-select]').forEach(button => activate(button, () => selectPhoto(Number(button.dataset.photoSelect))));
@@ -246,7 +261,7 @@ document.querySelectorAll('summary').forEach(summary => activate(summary, event 
 motionOff.addEventListener('change', motionChanged);
 reduce.addEventListener('change', motionChanged);
 document.addEventListener('visibilitychange', () => { updateClock(); motionChanged(); });
-window.addEventListener('pagehide', () => { clearFinale(); stopConfetti(); animationStop(); clearInterval(clockTimer); });
+window.addEventListener('pagehide', () => { if(animationHost)animationHost.onload=null;clearTimeout(openingTimer);clearFinale(); stopConfetti(); animationStop(); clearInterval(clockTimer); });
 document.body.classList.add('enhanced'); motionChanged();
 const previewIndex = scenes.findIndex(scene => scene.dataset.scene === document.body.dataset.previewScene);
 show(previewIndex >= 0 ? previewIndex : 0, false);
@@ -254,4 +269,4 @@ if (previewIndex >= 0 && scenes[previewIndex].dataset.scene === 'letter') docume
 })();})();`;
 // Regenerate deliberately after runtime edits; the module test pins the exact bytes.
 export const RECIPIENT_RUNTIME_HASH =
-  'Ipny7R69pr0w/kdd9zvArl/nuJ6dw079clp7Q62JWIQ=';
+  'dCNBsp9gJ3sxgtf1CK3Oieyt8RicsdQvIcAIsyFfNEE=';

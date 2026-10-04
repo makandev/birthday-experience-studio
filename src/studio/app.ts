@@ -1,3 +1,4 @@
+import { concepts, type ExperiencePlan } from '../domain/experience-plan';
 import { createAiSession } from '../integrations/providers';
 import { probeAnimation } from '../integrations/animation-probe';
 import { isIosDevice } from './delivery';
@@ -14,6 +15,7 @@ import { activeQuestions, questionProgress } from '../engines/questions';
 import {
   recommendBlocks,
   syncComposition,
+  alignExperiencePlan,
   orderForDirection,
 } from '../engines/composition';
 import { writingHelpers } from '../engines/writing';
@@ -118,6 +120,8 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     once: true,
   });
   let undo: CreatorProject | null = null;
+  let theatreGeneration = 0;
+  let selectedConcept: ExperiencePlan['concept'] = 'atelier';
   let creatorMoment: 'opening' | 'personal' | 'photo' | 'full' = 'full';
   let previewScene: SceneId = 'opening';
   let detailBase: CreatorProject | null = null;
@@ -315,7 +319,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       .join('')}</fieldset>`;
   }
   function startPage(): string {
-    return `<div class="hero-copy"><p class="eyebrow">Dein Mensch. Ein besonderer Moment.</p><h1>Für wen machen wir<br><em>etwas Schönes?</em></h1><p class="lead">Ein Name, eine Stimmung – die KI schreibt und inszeniert dein Geschenk. Du prüfst das Ergebnis und behältst, was dir gefällt.</p>${
+    return `<div class="hero-copy"><p class="eyebrow">Dein Mensch. Ein besonderer Moment.</p><h1>Ein Name.<br><em>Ein Geschenk, das bleibt.</em></h1><p class="lead">BES entwirft mit KI dein persönliches Geburtstagserlebnis. Erlebe das ganze Geschenk, ändere nur das Nötige und verschenke eine einzige Datei.</p>${
       canMagicStart()
         ? `<form id="magic-form" class="first-start"><label for="magic-name">Wie heißt die Geburtstagsperson?</label><input id="magic-name" maxlength="120" required autocomplete="off" placeholder="Name der Geburtstagsperson" value="${e(project.recipient.name)}"><label for="magic-relationship">Was verbindet euch?</label><select id="magic-relationship">${relationships
             .all()
@@ -325,9 +329,12 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
             )
             .join(
               '',
-            )}</select>${vibeChoices()}<p id="magic-error" role="alert"></p><p class="field-help" id="ai-connection-label">${e(ai.label)}</p><button type="button" class="button secondary" id="ai-settings">KI verbinden / ändern</button>${primary('Mit KI mein Geschenk gestalten')}</form>`
+            )}</select><details class="advanced"><summary>Stimmung genauer wählen · optional</summary>${vibeChoices()}</details><label for="magic-words">Ein Satz, den du verschenken möchtest <span class="optional">optional</span></label><textarea id="magic-words" rows="2" maxlength="2000" placeholder="Zum Beispiel: Danke für die vielen kleinen Glücksmomente.">${e(project.writing.letter)}</textarea>${conceptPicker()}<p id="magic-error" role="alert"></p><p class="field-help" id="ai-connection-label">${e(ai.label)}</p><button type="button" class="button secondary" id="ai-settings">KI verbinden / ändern</button>${primary('Mit KI mein Geschenk gestalten')}</form>`
         : '<button class="button primary" data-go="preview">Geschenk weitergestalten →</button>'
-    }<button type="button" class="text-button" data-go="person">Lieber Schritt für Schritt gestalten</button><p class="privacy-line">Lokale KI oder kostenlose Online-KI. Keine bezahlten Modelle.<br>Online-KI erhält nur die hier bewusst freigegebenen Angaben; private Frageantworten und Fotos werden nicht gesendet.</p></div><aside class="hero-art" aria-label="Ein persönlicher Geburtstagsmoment"><span class="art-star star-one" aria-hidden="true">✦</span><div class="gift-paper"><p class="eyebrow">Ein Moment nur für dich</p><span class="paper-flower" aria-hidden="true">${flower}</span><h2>Heute darf es<br>besonders sein.</h2><p>Ein kleiner Weg.<br>Deine Worte. Eine Überraschung.<br>Und ein Abschluss zum Erinnern.</p><div class="paper-line"></div><span class="paper-sign">Persönlich gemacht</span></div></aside>`;
+    }<button type="button" class="button secondary" id="try-examples">Drei Geschenkbeispiele erleben</button><button type="button" class="text-button" data-go="person">Lieber Schritt für Schritt gestalten</button><p class="privacy-line">Lokale KI oder kostenlose Online-KI. Keine bezahlten Modelle.<br>Online-KI erhält nur die hier bewusst freigegebenen Angaben; private Frageantworten und Fotos werden nicht gesendet.</p></div><aside class="hero-art" aria-label="Ein persönlicher Geburtstagsmoment"><span class="art-star star-one" aria-hidden="true">✦</span><div class="gift-paper"><p class="eyebrow">Ein Moment nur für dich</p><span class="paper-flower" aria-hidden="true">${flower}</span><h2>Heute darf es<br>besonders sein.</h2><p>Ein kleiner Weg.<br>Deine Worte. Eine Überraschung.<br>Und ein Abschluss zum Erinnern.</p><div class="paper-line"></div><span class="paper-sign">Persönlich gemacht</span></div></aside>`;
+  }
+  function conceptPicker(): string {
+    return `<fieldset class="concept-picker"><legend>Welche Inszenierung passt? <span class="optional">optional</span></legend>${concepts.map((c) => `<label><input type="radio" name="gift-concept" value="${c.id}" ${selectedConcept === c.id ? 'checked' : ''}><strong>${c.label}</strong><span>${c.description}</span></label>`).join('')}</fieldset>`;
   }
   function personPage(): string {
     return `<div class="section-head"><p class="eyebrow">01 · Dein Mensch</p><h1>Für wen ist<br>dein Geschenk?</h1><p class="lead">Ein Name. Eine Verbindung. Hier beginnt eure Geschichte.</p></div><form id="person-form" class="panel"><label for="recipient-name">Wie heißt die Geburtstagsperson?</label><input id="recipient-name" name="recipient-name" maxlength="120" required autocomplete="off" placeholder="Name der Geburtstagsperson" value="${e(project.recipient.name)}"><label for="relationship">Was verbindet euch?</label><select id="relationship">${relationships
@@ -357,6 +364,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     return `<dialog id="detail-dialog" aria-labelledby="detail-title"><h2 id="detail-title">Ein persönlicher Satz – wenn du magst.</h2><p>Eine Erinnerung, ein Dankeschön oder ein Wunsch. Nur was du verschenken möchtest.</p><form id="detail-form"><label for="public-detail">Dein persönlicher Satz <span class="badge">Im Geschenk sichtbar</span></label><textarea id="public-detail" rows="4" maxlength="2000" placeholder="Zum Beispiel: Unser verregneter Ausflug bringt mich immer noch zum Lächeln."></textarea><div class="detail-chips"><button type="button" data-seed="Ich wünsche dir Zeit für das, was dir gut tut.">Zeit für dich</button><button type="button" data-seed="Danke, dass es dich gibt.">Ein herzliches Danke</button><button type="button" data-seed="Ich wünsche dir viele kleine Glücksmomente.">Glücksmomente</button></div><p class="field-help">Deine Worte werden lokal gespeichert. Private Frageantworten werden nicht übernommen.</p><p id="detail-error" role="alert"></p><div class="actions"><button type="button" class="button quiet" id="skip-detail">Ohne weiteren Satz weiter</button>${primary('Meine Worte ansehen')}</div></form></dialog>`;
   }
   function previewPage(): string {
+    if (project.experience.plan) return revisionPreviewPage();
     const settings = `${directionControls()}<details id="appearance-settings" class="advanced"><summary>Bewegung und Farben anpassen</summary>${intensityControls()}<label for="theme">Welche Farben passen?</label><select id="theme">${themes
       .all()
       .map(
@@ -409,11 +417,62 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     const report = analyzeCapabilities(project);
     return `<label for="export-profile">Wo soll das Geschenk funktionieren?</label><select id="export-profile"><option value="offline" ${project.exportConfig.profile === 'offline' ? 'selected' : ''}>Überall ohne Internet (empfohlen)</option><option value="online" ${project.exportConfig.profile === 'online' ? 'selected' : ''}>Online, mit optionalen externen Quellen</option></select><p class="field-help">Offline benötigt lokale Inhalte. Online-Fotos können ausfallen; eine beschreibende Bildunterschrift bleibt sichtbar.</p>${report.externalDomains.length ? `<div class="external-warning"><p>Ausgewählte externe Fotoquellen: ${e(report.externalDomains.join(', '))}</p><label><input type="checkbox" id="external-consent" ${project.exportConfig.externalMediaConsent ? 'checked' : ''}>Ich möchte diese externen Fotos verwenden. Die Dienste können beim Öffnen die Empfängeradresse sehen.</label></div>` : '<p class="field-help">Dieses Geschenk braucht derzeit keine externen Quellen.</p>'}`;
   }
+  function revisionPreviewPage(): string {
+    return `<div class="section-head compact"><p class="eyebrow">Deine Geschenkprobe</p><h1>Das möchtest du verschenken.</h1><p>${e(concepts.find((c) => c.id === project.experience.plan?.concept)!.label)} · Deine Worte, deine Fotos.</p></div><div class="revision-review"><p id="preview-error" role="alert"></p><iframe id="gift-preview" title="Vorschau des Geburtstagsgeschenks" sandbox="allow-scripts"></iframe><div class="review-actions"><button class="button primary" id="open-theatre">Geschenkprobe groß öffnen</button><button class="button secondary" id="download">Geschenkdatei herunterladen ↓</button></div><p>Eine einzelne HTML-Datei. Zum Abspielen braucht niemand KI, Konto oder Internet.</p>${isIosDevice(navigator) ? '<p>iPhone: WhatsApp/Dateien können HTML nur als nicht bedienbare Vorschau öffnen. Die tatsächliche Dateizustellung ist noch nicht zuverlässig verifiziert.</p>' : ''}<details id="revision-refine"><summary>Etwas ändern</summary><div class="review-actions"><button class="button secondary" id="edit-visible-copy">Worte ändern</button><button class="button secondary" id="ai-recompose">Inszenierung mit KI ändern</button><button class="button secondary" id="add-photo">Fotos ergänzen</button></div><button class="text-button" id="try-examples">Fiktive Beispiele vergleichen</button>${mediaController.panel(project)}</details><details id="manual-preview"><summary>Weitere Details · freiwillig</summary><button class="button secondary" data-go="writing">Texte & Fotos bearbeiten</button>${directionControls()}${intensityControls()}${profileControls()}</details></div><dialog id="scene-edit-dialog" aria-labelledby="scene-edit-title"><h2 id="scene-edit-title">Die Worte im Geschenk</h2><form id="scene-edit-form"><label for="scene-edit-text">Deine freigegebenen Worte</label><textarea id="scene-edit-text" rows="7" maxlength="20000" required>${e(project.writing.letter)}</textarea><div class="actions"><button type="button" class="button quiet" id="cancel-scene-edit">Behalten</button>${primary('Änderung ansehen')}</div></form></dialog>${detailDialog()}`;
+  }
+  function theatreDialog(): string {
+    return `<dialog id="gift-theatre" aria-labelledby="theatre-title"><div class="theatre-toolbar"><h2 id="theatre-title">Geschenkprobe</h2><button class="button quiet" id="theatre-close">Probe beenden</button></div><div id="theatre-concepts" hidden>${concepts.map((c) => `<button class="button secondary" data-demo-concept="${c.id}">${c.label}</button>`).join('')}</div><iframe id="theatre-preview" title="Große Geschenkprobe" sandbox="allow-scripts"></iframe><p id="theatre-error" role="alert"></p></dialog>`;
+  }
+  async function openTheatre(
+    example?: ExperiencePlan['concept'],
+  ): Promise<void> {
+    const generation = ++theatreGeneration;
+    const dialog = root.querySelector<HTMLDialogElement>('#gift-theatre')!;
+    if (!dialog.open) dialog.showModal();
+    root.querySelector<HTMLIFrameElement>('#theatre-preview')!.srcdoc = '';
+    root.querySelector<HTMLElement>('#theatre-error')!.textContent = '';
+    root.querySelector<HTMLElement>('#theatre-concepts')!.hidden = !example;
+    root.querySelector<HTMLElement>('#theatre-title')!.textContent = example
+      ? 'Fiktives Beispiel · keine KI-Generation'
+      : 'Deine Geschenkprobe';
+    let gift = structuredClone(project);
+    if (example) {
+      gift = createProject();
+      gift.recipient.name = 'Demo';
+      gift = createMagicStart(gift, 'Ein kleiner Moment, nur für dich.');
+      gift.writing.wish = 'Zeit für das, was dir gut tut.';
+      gift.experience.blocks = recommendBlocks(gift);
+      gift.experience.plan = {
+        version: 1,
+        concept: example,
+        pace: 'gentle',
+        sceneOrder:
+          example === 'surprise-box'
+            ? ['opening', 'choice', 'surprise', 'letter', 'finale', 'closing']
+            : ['opening', 'choice', 'letter', 'surprise', 'finale', 'closing'],
+      };
+    }
+    try {
+      const sources = await resolvePhotoSources(gift, assetStore);
+      if (
+        !dialog.open ||
+        generation !== theatreGeneration ||
+        !dialog.isConnected
+      )
+        return;
+      root.querySelector<HTMLIFrameElement>('#theatre-preview')!.srcdoc =
+        exporters.get(gift.exportConfig.exporterId)!.export(gift, sources);
+    } catch {
+      if (generation !== theatreGeneration || !dialog.isConnected) return;
+      root.querySelector<HTMLElement>('#theatre-error')!.textContent =
+        'Die Probe konnte nicht geladen werden. Prüfe die Fotos und freigegebenen Inhalte.';
+    }
+  }
   function integrationDialog(): string {
     return `<dialog id="integration-dialog" aria-labelledby="integration-title"><h2 id="integration-title">Optionale Hilfe für dein Geschenk</h2><p>Hier kannst du ergänzende Regie-Ideen manuell mit einer KI deiner Wahl austauschen: Stimmung, Reihenfolge und Fragen. Dieser manuelle Dialog sendet nichts automatisch. Die separate KI-Verbindung programmiert deine Animation.</p><p>Für manuelles Kopieren hängen Kosten und Anmeldung vom selbst gewählten Dienst ab. Unter „Mit KI neu inszenieren“ stehen lokale KI und die kostenlose Online-Verbindung zur Verfügung.</p><label for="director-prompt">Das würdest du manuell weitergeben</label><textarea id="director-prompt" rows="7" readonly>${e(directorPrompt(project))}</textarea><p class="field-help">Diese Anweisung enthält deine freigegebenen Geschenktexte. Prüfe sie vor dem Kopieren. Zugangsdaten gehören niemals hierher.</p><label for="director-json">Regie-Vorschlag als JSON einfügen</label><textarea id="director-json" rows="6" maxlength="65536" placeholder="Nur die JSON-Antwort, ohne Code oder Markdown"></textarea><button class="button secondary" id="review-director">Vorschlag prüfen</button><pre id="director-review" class="director-review" role="status"></pre><button class="button primary" id="apply-director" hidden>Geprüfte Stimmung &amp; Reihenfolge übernehmen</button><div class="actions"><button class="button quiet" id="close-integrations">Zurück zum Geschenk</button></div></dialog>`;
   }
   function aiDialog(): string {
-    return `<dialog id="ai-dialog" aria-labelledby="ai-title"><h2 id="ai-title">Deine KI fürs Geschenk</h2><p id="ai-status" role="status">${e(ai.label)}</p><p>Die KI programmiert eine eigene Animation und formuliert dein Geschenk. Du siehst und prüfst das Ergebnis vor dem Übernehmen. Private Antworten, Fotos und Zugangsdaten gehören nicht in die Anfrage.</p><section><h3>Kostenlose Online-KI</h3><p>OpenRouter benötigt ein Konto. BES verwendet ausschließlich den kostenlosen Modell-Router, ohne Wechsel zu bezahlten Modellen. Laut geprüfter Dokumentation: 20 Anfragen/Minute und 50/Tag ohne Guthabenkauf; Bedingungen können sich ändern. OpenRouter und ausgewählte Modellanbieter erhalten deine freigegebenen Angaben.</p><button type="button" class="button secondary" id="ai-auth-start">Bei OpenRouter anmelden</button><a id="ai-auth-link" hidden target="_blank" rel="noopener noreferrer">Anmeldung öffnen</a><label for="ai-auth-code">Anmeldecode von OpenRouter</label><input id="ai-auth-code" type="password" maxlength="512" autocomplete="off"><button type="button" class="button secondary" id="ai-auth-finish">Online-KI verbinden</button><p class="field-help">Keine App-Secrets. Deine Verbindung gilt nur in diesem Tab und endet beim Neuladen. Codes und Schlüssel werden nicht gespeichert oder exportiert.</p></section><section><h3>Lokale KI mit Ollama</h3><p>Auf deinem Computer muss Ollama mit einem lokalen Modell laufen. Keine Modellinstallation durch BES. Nur 127.0.0.1:11434 wird angesprochen. Lokale KI läuft nicht automatisch auf einem iPhone; Safari/Browser können den Zugriff blockieren.</p><details><summary>Lokale Verbindung vorbereiten</summary><p>Ollama im Local-only-Modus starten: OLLAMA_NO_CLOUD=1. Erlaube mit OLLAMA_ORIGINS ausschließlich die Studio-Origin, zum Beispiel https://makandev.github.io oder deine lokale Entwicklungs-Origin. Nicht im gesamten Netzwerk freigeben. Modell-Lizenz und Hardwarebedarf separat prüfen.</p></details><button type="button" class="button secondary" id="ai-local-find">Lokale Modelle suchen</button><label for="ai-local-model">Installiertes lokales Modell</label><select id="ai-local-model"><option value="">Zuerst suchen</option></select><button type="button" class="button secondary" id="ai-local-connect">Lokale KI verbinden</button></section><label for="ai-request">Was soll sich ändern? <span class="optional">optional · an die KI gesendet</span></label><textarea id="ai-request" maxlength="1000" rows="3" placeholder="Zum Beispiel: Warme Lichtreflexe, ein später Brief-Reveal und ein eindrucksvolles goldenes Finale."></textarea><label><input id="ai-rewrite-copy" type="checkbox">Auch meine vorhandenen Geschenktexte neu formulieren</label><p id="ai-error" role="alert"></p><div class="actions"><button type="button" class="button primary" id="ai-generate">Geschenk mit KI inszenieren</button><button type="button" class="button quiet" id="ai-close">Zurück</button><button type="button" class="text-button" id="ai-disconnect">Verbindung vergessen</button></div></dialog><dialog id="ai-review" aria-labelledby="ai-review-title"><h2 id="ai-review-title">Dein KI-Entwurf</h2><p>Prüfe die persönlichen Aussagen. Die KI darf keine Erlebnisse erfinden. Die Animation läuft isoliert; du kannst den ganzen Entwurf verwerfen.</p><iframe id="ai-review-preview" title="KI-Geschenkentwurf prüfen" sandbox="allow-scripts"></iframe><p id="ai-review-error" role="alert"></p><div class="actions"><button type="button" class="button primary" id="ai-accept">Diesen Entwurf übernehmen</button><button type="button" class="button quiet" id="ai-reject">Verwerfen</button></div></dialog>`;
+    return `<dialog id="ai-dialog" aria-labelledby="ai-title"><h2 id="ai-title">Deine KI fürs Geschenk</h2><p id="ai-status" role="status">${e(ai.label)}</p><p>Die KI programmiert eine eigene Animation und formuliert dein Geschenk. Du siehst und prüfst das Ergebnis vor dem Übernehmen. Private Antworten, Fotos und Zugangsdaten gehören nicht in die Anfrage.</p><section><h3>Kostenlose Online-KI</h3><p>OpenRouter benötigt ein Konto. BES verwendet ausschließlich den kostenlosen Modell-Router, ohne Wechsel zu bezahlten Modellen. Laut geprüfter Dokumentation: 20 Anfragen/Minute und 50/Tag ohne Guthabenkauf; Bedingungen können sich ändern. OpenRouter und ausgewählte Modellanbieter erhalten deine freigegebenen Angaben.</p><button type="button" class="button secondary" id="ai-auth-start">Bei OpenRouter anmelden</button><a id="ai-auth-link" hidden target="_blank" rel="noopener noreferrer">Anmeldung öffnen</a><label for="ai-auth-code">Anmeldecode von OpenRouter</label><input id="ai-auth-code" type="password" maxlength="512" autocomplete="off"><button type="button" class="button secondary" id="ai-auth-finish">Online-KI verbinden</button><p class="field-help">Keine App-Secrets. Deine Verbindung gilt nur in diesem Tab und endet beim Neuladen. Codes und Schlüssel werden nicht gespeichert oder exportiert.</p></section><section><h3>Lokale KI mit Ollama</h3><p>Auf deinem Computer muss Ollama mit einem lokalen Modell laufen. Keine Modellinstallation durch BES. Nur 127.0.0.1:11434 wird angesprochen. Lokale KI läuft nicht automatisch auf einem iPhone; Safari/Browser können den Zugriff blockieren.</p><details><summary>Lokale Verbindung vorbereiten</summary><p>Ollama im Local-only-Modus starten: OLLAMA_NO_CLOUD=1. Erlaube mit OLLAMA_ORIGINS ausschließlich die Studio-Origin, zum Beispiel https://makandev.github.io oder deine lokale Entwicklungs-Origin. Nicht im gesamten Netzwerk freigeben. Modell-Lizenz und Hardwarebedarf separat prüfen.</p></details><button type="button" class="button secondary" id="ai-local-find">Lokale Modelle suchen</button><label for="ai-local-model">Installiertes lokales Modell</label><select id="ai-local-model"><option value="">Zuerst suchen</option></select><button type="button" class="button secondary" id="ai-local-connect">Lokale KI verbinden</button></section>${conceptPicker()}<label for="ai-request">Was soll sich ändern? <span class="optional">optional · an die KI gesendet</span></label><textarea id="ai-request" maxlength="1000" rows="3" placeholder="Zum Beispiel: Warme Lichtreflexe, ein später Brief-Reveal und ein eindrucksvolles goldenes Finale."></textarea><label><input id="ai-rewrite-copy" type="checkbox">Auch meine vorhandenen Geschenktexte neu formulieren</label><p id="ai-error" role="alert"></p><div class="actions"><button type="button" class="button primary" id="ai-generate">Geschenk mit KI inszenieren</button><button type="button" class="button quiet" id="ai-close">Zurück</button><button type="button" class="text-button" id="ai-disconnect">Verbindung vergessen</button></div></dialog><dialog id="ai-review" aria-labelledby="ai-review-title"><h2 id="ai-review-title">Dein KI-Entwurf</h2><p>Prüfe die persönlichen Aussagen. Die KI darf keine Erlebnisse erfinden. Die Animation läuft isoliert; du kannst den ganzen Entwurf verwerfen.</p><iframe id="ai-review-preview" title="KI-Geschenkentwurf prüfen" sandbox="allow-scripts"></iframe><p id="ai-review-error" role="alert"></p><div class="actions"><button type="button" class="button primary" id="ai-accept">Diesen Entwurf übernehmen</button><button type="button" class="button quiet" id="ai-reject">Verwerfen</button></div></dialog>`;
   }
   async function generateAiGift(): Promise<void> {
     const error = root.querySelector<HTMLElement>('#ai-error')!;
@@ -451,6 +510,10 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
             relationships.get(snapshot.relationship.typeId)?.label ??
             'Andere Beziehung',
           direction: snapshot.experience.directionId,
+          concept: selectedConcept,
+          hasPhoto: snapshot.experience.blocks.some(
+            (b) => b.enabled && b.type === 'photo',
+          ),
           publicWords: first
             ? snapshot.writing.letter
             : snapshot.experience.blocks.some(
@@ -463,7 +526,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
         },
         controller.signal,
       );
-      await probeAnimation(generated.animation);
+      await probeAnimation(generated.animation, controller.signal);
       if (
         controller.signal.aborted ||
         conflict ||
@@ -484,7 +547,12 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
         candidate.writing.wish = generated.wish;
         candidate.writing.surprise = generated.surprise;
       }
+      if (generated.plan && generated.plan.concept !== selectedConcept)
+        throw new Error(
+          'Die KI hat die gewählte Inszenierung nicht umgesetzt. Bitte neu versuchen.',
+        );
       candidate.experience.animation = generated.animation;
+      if (generated.plan) candidate.experience.plan = generated.plan;
       candidate.experience.composition = {
         version: 1,
         variant: 'challenger',
@@ -553,7 +621,7 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     const stepIndex = steps.findIndex(
       (step) => step.id === project.workflow.step,
     );
-    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.2</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav ${['start', 'preview'].includes(project.workflow.step) ? 'optional-progress' : ''}" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Letzte Änderung rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer><section id="conflict-panel" class="panel" role="alert" ${conflict ? '' : 'hidden'}><h2>Deine Geschenke wurden in einem anderen Tab geändert</h2><p>Dieser Tab überschreibt keine neueren Daten. Sichere zuerst deine Eingaben; danach kannst du den aktuellen gespeicherten Stand übernehmen. Bei gelöschten Fotos kann nur der Text gesichert werden.</p><button class="button secondary" id="conflict-backup">Eingaben dieses Tabs sichern</button><button class="button primary" id="conflict-reload">Gespeicherten Stand übernehmen</button></section>${draftDialog()}${integrationDialog()}${aiDialog()}<dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Dieses Geschenk endgültig löschen?</h2><p>Private Antworten, Geschenktext und die Wiederherstellung dieses Geschenks werden gelöscht. Originalfotos und Fotokopien werden nur gelöscht, wenn kein anderes Geschenk sie benötigt. Sichere wichtige Daten vorher als Datei. Diese Löschung kann nicht rückgängig gemacht werden.</p><button class="button quiet" id="cancel-delete">Geschenk behalten</button><button class="button primary" id="confirm-delete">Endgültig löschen</button></dialog><dialog id="cleanup-dialog" aria-labelledby="cleanup-title"><h2 id="cleanup-title">Unbenutzte Fotodaten endgültig entfernen?</h2><p>Dadurch endet die lokale Rückgängig-Möglichkeit für alle Geschenke. Nur Fotos ohne verbleibende Projektreferenz werden gelöscht. Sichere wichtige Originale vorher.</p><button class="button quiet" id="cancel-cleanup">Fotodaten behalten</button><button class="button primary" id="confirm-cleanup">Fotodaten bereinigen</button></dialog><dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
+    root.innerHTML = `<header class="site-header"><a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true">${flower}</span><span>Birthday<br><strong>Experience Studio</strong></span></a><span class="version">Früher Entwicklungsstand · 0.2</span><span id="save-status" role="status">${protectedDraft ? 'Gespeicherten Entwurf nicht verändert' : saved ? 'Auf diesem Gerät gespeichert' : 'Deine Daten bleiben auf diesem Gerät'}</span></header><nav class="step-nav ${['start', 'preview'].includes(project.workflow.step) ? 'optional-progress' : ''}" aria-label="Geschenk gestalten"><ol>${steps.map((step, index) => `<li><button data-go="${step.id}" ${step.id === project.workflow.step ? 'aria-current="step"' : ''} ${protectedDraft || (index > 1 && !project.recipient.name.trim()) ? 'disabled' : ''}><span class="step-number" aria-hidden="true">${index < stepIndex ? '✓' : index + 1}</span><span>${step.short}</span></button></li>`).join('')}</ol></nav><div id="notice" class="notice ${notice ? 'visible' : ''}" role="status">${e(notice)}</div>${protectedDraft ? '<div class="blocked-draft panel"><h1>Dein vorhandener Entwurf bleibt geschützt.</h1><p>Diese Version kann ihn nicht öffnen. Sichere die gespeicherten Daten, bevor du neu anfängst.</p><button class="button secondary" id="backup">Gespeicherte Daten sichern</button></div>' : `<main id="main" class="${project.workflow.step === 'start' ? 'hero' : 'workspace'}">${page()}</main>`}<footer class="site-footer"><span>Persönlich gemacht. Privat gespeichert.</span><div><button class="text-button" id="drafts" ${protectedDraft ? 'disabled' : ''}>Meine Geschenke &amp; Sicherung</button>${undo ? '<button class="text-button" id="undo-reset">Letzte Änderung rückgängig machen</button>' : ''}<button class="text-button" id="reset">Neu anfangen</button></div></footer><section id="conflict-panel" class="panel" role="alert" ${conflict ? '' : 'hidden'}><h2>Deine Geschenke wurden in einem anderen Tab geändert</h2><p>Dieser Tab überschreibt keine neueren Daten. Sichere zuerst deine Eingaben; danach kannst du den aktuellen gespeicherten Stand übernehmen. Bei gelöschten Fotos kann nur der Text gesichert werden.</p><button class="button secondary" id="conflict-backup">Eingaben dieses Tabs sichern</button><button class="button primary" id="conflict-reload">Gespeicherten Stand übernehmen</button></section>${draftDialog()}${integrationDialog()}${aiDialog()}${theatreDialog()}<dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Dieses Geschenk endgültig löschen?</h2><p>Private Antworten, Geschenktext und die Wiederherstellung dieses Geschenks werden gelöscht. Originalfotos und Fotokopien werden nur gelöscht, wenn kein anderes Geschenk sie benötigt. Sichere wichtige Daten vorher als Datei. Diese Löschung kann nicht rückgängig gemacht werden.</p><button class="button quiet" id="cancel-delete">Geschenk behalten</button><button class="button primary" id="confirm-delete">Endgültig löschen</button></dialog><dialog id="cleanup-dialog" aria-labelledby="cleanup-title"><h2 id="cleanup-title">Unbenutzte Fotodaten endgültig entfernen?</h2><p>Dadurch endet die lokale Rückgängig-Möglichkeit für alle Geschenke. Nur Fotos ohne verbleibende Projektreferenz werden gelöscht. Sichere wichtige Originale vorher.</p><button class="button quiet" id="cancel-cleanup">Fotodaten behalten</button><button class="button primary" id="confirm-cleanup">Fotodaten bereinigen</button></dialog><dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">Ein neues Geschenk beginnen?</h2><p>Dein aktueller Entwurf wird ersetzt. Wir sichern die bisherigen Daten lokal. In „Meine Geschenke“ kannst du außerdem mehrere Geschenke behalten. Du kannst den Neustart bis zum Neuladen rückgängig machen.</p><div class="actions"><button type="button" class="button quiet" id="cancel-reset">Entwurf behalten</button><button type="button" class="button primary" id="confirm-reset">Neues Geschenk beginnen</button></div></dialog>`;
     for (const details of root.querySelectorAll<HTMLDetailsElement>(
       'details[id]',
     )) {
@@ -595,8 +663,8 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
     const recipientExport =
       root.querySelector<HTMLButtonElement>('#recipient-export')!;
     const share = root.querySelector<HTMLButtonElement>('#recipient-share')!;
-    recipientExport.disabled = true;
-    share.hidden = true;
+    if (recipientExport) recipientExport.disabled = true;
+    if (share) share.hidden = true;
     try {
       const sources = await resolvePhotoSources(snapshot, assetStore);
       if (generation !== previewGeneration || !iframe.isConnected) return;
@@ -633,11 +701,12 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
           ),
           { type: 'application/json' },
         );
-        recipientExport.disabled = false;
+        if (recipientExport) recipientExport.disabled = false;
         download.disabled = false;
-        share.hidden = !navigator.canShare?.({
-          files: [preparedRecipientFile],
-        });
+        if (share)
+          share.hidden = !navigator.canShare?.({
+            files: [preparedRecipientFile],
+          });
       } catch {
         /* This recipient file currently accepts only embedded/offline sources. */
       }
@@ -887,6 +956,44 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       event.preventDefault();
       go('start');
     });
+    listen('magic-words', 'input', (event) => {
+      project.writing.letter = (event.target as HTMLTextAreaElement).value;
+      persist();
+    });
+    root
+      .querySelectorAll<HTMLInputElement>('input[name="gift-concept"]')
+      .forEach((input) =>
+        input.addEventListener('change', () => {
+          selectedConcept = input.value as ExperiencePlan['concept'];
+          root
+            .querySelectorAll<HTMLInputElement>('input[name="gift-concept"]')
+            .forEach(
+              (other) => (other.checked = other.value === selectedConcept),
+            );
+        }),
+      );
+    listen('try-examples', 'click', () => void openTheatre('atelier'));
+    listen('open-theatre', 'click', () => void openTheatre());
+    root
+      .querySelectorAll<HTMLButtonElement>('[data-demo-concept]')
+      .forEach((button) =>
+        button.addEventListener(
+          'click',
+          () =>
+            void openTheatre(
+              button.dataset.demoConcept as ExperiencePlan['concept'],
+            ),
+        ),
+      );
+    listen('theatre-close', 'click', () => {
+      theatreGeneration++;
+      root.querySelector<HTMLDialogElement>('#gift-theatre')!.close();
+      root.querySelector<HTMLIFrameElement>('#theatre-preview')!.srcdoc = '';
+    });
+    listen('gift-theatre', 'cancel', () => {
+      theatreGeneration++;
+      root.querySelector<HTMLIFrameElement>('#theatre-preview')!.srcdoc = '';
+    });
     listen('magic-name', 'input', (event) => {
       project.recipient.name = (event.target as HTMLInputElement).value;
       persist();
@@ -917,9 +1024,15 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       if (ai.connected) void generateAiGift();
     });
     for (const id of ['ai-settings', 'ai-recompose'])
-      listen(id, 'click', () =>
-        root.querySelector<HTMLDialogElement>('#ai-dialog')!.showModal(),
-      );
+      listen(id, 'click', () => {
+        selectedConcept = project.experience.plan?.concept ?? selectedConcept;
+        root
+          .querySelectorAll<HTMLInputElement>('input[name="gift-concept"]')
+          .forEach(
+            (input) => (input.checked = input.value === selectedConcept),
+          );
+        root.querySelector<HTMLDialogElement>('#ai-dialog')!.showModal();
+      });
     listen('ai-close', 'click', () => {
       aiController?.abort();
       pendingAi = null;
@@ -1012,14 +1125,20 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       }
       undo = structuredClone(project);
       project = pendingAi.candidate;
-      creatorMoment = pendingAi.first ? 'opening' : 'full';
+      creatorMoment = pendingAi.candidate.experience.plan
+        ? 'full'
+        : pendingAi.first
+          ? 'opening'
+          : 'full';
       previewScene = 'opening';
       pendingAi = null;
       root.querySelector<HTMLDialogElement>('#ai-review')!.close();
       persist();
       render(true);
       message(
-        'Dein KI-Geschenk ist übernommen. Text, Fotos und Rückgängig bleiben verfügbar.',
+        project.experience.plan
+          ? 'Dein KI-Geschenk ist übernommen. Text, Fotos und Rückgängig bleiben verfügbar.'
+          : 'Die KI hat einen älteren Ablauf geliefert. Dieser Entwurf bleibt nutzbar; für die neue Inszenierung kannst du erneut anfragen.',
       );
     });
     listen('question-mode', 'change', (event) => {
@@ -1106,6 +1225,14 @@ export async function mountStudio(root: HTMLDivElement): Promise<void> {
       }
     });
     listen('add-photo', 'click', () => {
+      if (project.experience.plan) {
+        const panel =
+          root.querySelector<HTMLDetailsElement>('#media-workspace')!;
+        panel.open = true;
+        panel.querySelector<HTMLInputElement>('#photo-files')!.focus();
+        panel.scrollIntoView({ block: 'start' });
+        return;
+      }
       creatorMoment = 'photo';
       previewScene = 'moments';
       render(true);
@@ -1449,6 +1576,7 @@ ${pendingDirector.followUpQuestions.join('\n') || 'Keine weiteren Fragen.'}`;
         project.experience.blocks.find(
           (b) => b.id === input.dataset.block,
         )!.enabled = input.checked;
+        alignExperiencePlan(project);
         persist();
         updatePreview();
       }),

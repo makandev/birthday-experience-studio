@@ -1,3 +1,5 @@
+import { composeScenes } from '../engines/scenes';
+import { experiencePlanSchema } from '../domain/experience-plan';
 import { animationProgramSchema } from '../domain/animation';
 import { z } from 'zod';
 import { parseBoundedJson } from '../security/json';
@@ -21,6 +23,7 @@ const envelope = z.strictObject({
     profile: z.literal('offline'),
     externalDomains: z.array(z.never()).length(0),
     animation: animationProgramSchema.optional(),
+    plan: experiencePlanSchema.optional(),
     composition: z
       .strictObject({
         version: z.literal(1),
@@ -91,6 +94,7 @@ export function readRecipientFile(raw: string): ExportExperience {
       validateProcessedDataUrl(block.data.src);
     }
   }
+  if (experience.plan) composeScenes(experience);
   return experience;
 }
 export function exportRecipientFile(
